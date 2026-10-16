@@ -1,0 +1,27 @@
+# Core data handling
+pandas
+numpy
+pyarrow
+requests
+
+# Geospatial
+geopandas
+shapely
+pyproj
+rioxarray
+xarray
+
+# Satellite data access (Notebook 02)
+openeo
+
+# Modelling (Notebooks 03 and 04)
+scikit-learn
+statsmodels
+
+# Charts and dashboard
+matplotlib
+streamlit
+folium
+streamlit-folium
+
+# Pin exact versions (pip freeze) before the final submission, so results are reproducible.

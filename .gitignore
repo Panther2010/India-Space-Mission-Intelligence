@@ -1,0 +1,27 @@
+# Raw downloads stay out of git (size and licence terms); hand-compiled research data is committed
+data/raw/*
+!data/raw/README.md
+!data/raw/research/
+
+# Large intermediate files
+*.parquet
+*.tif
+*.tiff
+*.nc
+*.zip
+
+# Python and notebooks
+__pycache__/
+.ipynb_checkpoints/
+.venv/
+venv/
+
+# Secrets: never commit keys or passwords
+.env
+*.key
+.streamlit/secrets.toml
+
+# OS clutter
+.DS_Store
+Thumbs.db
+desktop.ini

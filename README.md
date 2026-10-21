@@ -49,7 +49,7 @@ flowchart LR
 
 | # | Deliverable | Where | Status |
 |---|---|---|---|
-| 1 | Research datasets: Indian space ecosystem (A) and satellite missions (B) | `data/raw/research/` | B drafted, under verification; A in progress |
+| 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted; spot-checks under way (workbooks in `sources/`) |
 | 2 | Python notebooks | `notebooks/` | 01 ready to run |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | Planned |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |

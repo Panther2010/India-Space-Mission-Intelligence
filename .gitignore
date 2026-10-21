@@ -18,6 +18,7 @@ venv/
 
 # Secrets: never commit keys or passwords
 .env
+.env.txt
 *.key
 .streamlit/secrets.toml
 

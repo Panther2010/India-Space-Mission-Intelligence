@@ -78,12 +78,34 @@ India-Space-Mission-Intelligence/
 └── report/                  report, one-pager, demo script
 ```
 
-## Quick start (Google Colab)
+## Quick start
+
+No GPU is needed. Every step runs on an ordinary laptop CPU, and the Sentinel-2 processing runs on Copernicus servers through openEO. Outputs go to `data/processed/` and `maps/`, and every dataset used is logged in `sources/source_register.csv`.
+
+### On your computer (VS Code)
+
+You need Python 3.11 or 3.12, Git, and VS Code with the Python and Jupyter extensions.
+
+```bash
+git clone https://github.com/Panther2010/India-Space-Mission-Intelligence.git
+cd India-Space-Mission-Intelligence
+python -m venv .venv
+.venv\Scripts\python -m pip install -r requirements.txt     # Windows
+.venv/bin/python -m pip install -r requirements.txt         # macOS or Linux
+```
+
+1. Get a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/area/csv).
+2. In VS Code, create a file named `.env` in the project folder, next to this README, with one line: `FIRMS_MAP_KEY=your_key`. Git ignores `.env`, so the key never reaches GitHub.
+3. Open `notebooks/01_fire_counts.ipynb`, select the `.venv` kernel (top right) and click **Run All**.
+
+If a geospatial library fails to install, install [Miniforge](https://github.com/conda-forge/miniforge), create an environment with `conda create -n eo -c conda-forge python=3.12 geopandas rioxarray`, then run `pip install -r requirements.txt` inside it. Or use Colab.
+
+### In Google Colab
 
 1. Copy this repository to Google Drive as `MyDrive/India-Space-Mission-Intelligence`.
 2. Open `notebooks/01_fire_counts.ipynb` in Google Colab.
-3. Add a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/area/csv) as a Colab secret named `FIRMS_MAP_KEY` (key icon in the left sidebar).
-4. Choose **Runtime → Run all**. Outputs go to `data/processed/` and `maps/`, and every dataset used is logged in `sources/source_register.csv`.
+3. Add the FIRMS map key as a Colab secret named `FIRMS_MAP_KEY` (key icon in the left sidebar).
+4. Choose **Runtime → Run all**.
 
 ## Data and licences
 
@@ -116,10 +138,10 @@ These come from the project brief:
 
 | Week | Dates (2026) | Focus |
 |---|---|---|
-| 1 | 17–23 Oct | Set-up, fire counts, district choice, datasets A and B, problem statement |
-| 2 | 24–30 Oct | Sentinel-2 burnt-area mapping, validation, maps, mission trade-off |
-| 3 | 31 Oct–6 Nov | ML classifier, forecast, 2021 comparison, dashboard v1 |
-| 4 | 7–13 Nov | Product concept, report, one-pager, demo |
+| 1 | 22–28 Oct | Set-up, fire counts, district choice, datasets A and B, problem statement |
+| 2 | 29 Oct–4 Nov | Sentinel-2 burnt-area mapping, validation, maps, mission trade-off |
+| 3 | 5–11 Nov | ML classifier, forecast, 2021 comparison, dashboard v1 (light days 7–9 Nov for Diwali) |
+| 4 | 12–18 Nov | Product concept, report, one-pager, demo |
 
 ## Author
 

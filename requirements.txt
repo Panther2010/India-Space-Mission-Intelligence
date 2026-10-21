@@ -24,4 +24,7 @@ streamlit
 folium
 streamlit-folium
 
+# Running notebooks in VS Code
+ipykernel
+
 # Pin exact versions (pip freeze) before the final submission, so results are reproducible.

@@ -84,21 +84,25 @@ No GPU is needed. Every step runs on an ordinary laptop CPU, and the Sentinel-2 
 
 ### On your computer (VS Code)
 
-You need Python 3.11 or 3.12, Git, and VS Code with the Python and Jupyter extensions.
+You need Git, VS Code with the Python and Jupyter extensions, and either conda or Python 3.11/3.12.
 
-```bash
-git clone https://github.com/Panther2010/India-Space-Mission-Intelligence.git
-cd India-Space-Mission-Intelligence
-python -m venv .venv
-.venv\Scripts\python -m pip install -r requirements.txt     # Windows
-.venv/bin/python -m pip install -r requirements.txt         # macOS or Linux
-```
+1. **Get the code.** In VS Code, press Ctrl+Shift+P, run **Git: Clone**, paste `https://github.com/Panther2010/India-Space-Mission-Intelligence.git` and choose a folder. From a terminal, the same thing is `git clone https://github.com/Panther2010/India-Space-Mission-Intelligence.git`.
+2. **Install the libraries** into an environment of their own, from the project folder.
 
-1. Get a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/area/csv).
-2. In VS Code, create a file named `.env` in the project folder, next to this README, with one line: `FIRMS_MAP_KEY=your_key`. Git ignores `.env`, so the key never reaches GitHub.
-3. Open `notebooks/01_fire_counts.ipynb`, select the `.venv` kernel (top right) and click **Run All**.
-
-If a geospatial library fails to install, install [Miniforge](https://github.com/conda-forge/miniforge), create an environment with `conda create -n eo -c conda-forge python=3.12 geopandas rioxarray`, then run `pip install -r requirements.txt` inside it. Or use Colab.
+   With conda (easiest on Windows; use the Anaconda Prompt):
+   ```
+   conda create -n eo -c conda-forge python=3.12 geopandas rioxarray -y
+   conda activate eo
+   pip install -r requirements.txt
+   ```
+   Or with Python's built-in venv:
+   ```
+   python -m venv .venv
+   .venv\Scripts\python -m pip install -r requirements.txt     # Windows
+   .venv/bin/python -m pip install -r requirements.txt         # macOS or Linux
+   ```
+3. **Add your key.** Get a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/map_key/). In VS Code, create a file named `.env` in the project folder, next to this README, with one line: `FIRMS_MAP_KEY=your_key`. Git ignores `.env`, so the key never reaches GitHub.
+4. **Run.** Open `notebooks/01_fire_counts.ipynb`, choose the `eo` (or `.venv`) kernel at the top right and click **Run All**.
 
 ### In Google Colab
 

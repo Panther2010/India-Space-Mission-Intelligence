@@ -50,7 +50,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted; spot-checks under way (workbooks in `sources/`) |
-| 2 | Python notebooks | `notebooks/` | 01 ready to run |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02–04 planned |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | Planned |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
@@ -118,6 +118,7 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
 | VIIRS active fire detections | [NASA FIRMS](https://www.earthdata.nasa.gov/faq/firms-faq) | NASA open data policy; cite per the FIRMS citation policy |
 | Sentinel-2 L2A imagery | [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) | Free and open; credit "Contains modified Copernicus Sentinel data [year]" ([licence](https://ads.atmosphere.copernicus.eu/licences/ec-sentinel)) |
 | District boundaries | [geoBoundaries via HDX](https://data.humdata.org/m/dataset/geoboundaries-admin-boundaries-for-india) | ODbL |
+| State boundaries | [geoBoundaries](https://www.geoboundaries.org/) ADM1, from the DataMeet India community and the Election Commission of India ([source](https://github.com/datameet/maps)) | Creative Commons Attribution 2.5 India (CC BY 2.5 IN); credit the source |
 | Cropland mask | [ESA WorldCover 2021](https://registry.opendata.aws/esa-worldcover-vito/index.html) | CC BY 4.0 |
 
 Access dates and preprocessing steps are in `sources/source_register.csv`, and context sources are in `sources/references.md`. Raw downloads are not committed, because of their size and their licence terms.

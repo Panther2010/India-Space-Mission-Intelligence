@@ -8,8 +8,10 @@ requests
 geopandas
 shapely
 pyproj
+rasterio
 rioxarray
 xarray
+scipy
 
 # Satellite data access (Notebook 02)
 openeo

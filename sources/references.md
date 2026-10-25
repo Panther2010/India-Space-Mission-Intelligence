@@ -1,6 +1,6 @@
 # References (context sources)
 
-These pages give context, not analysis data; datasets go in `source_register.csv`. Each entry is labelled by type, so readers know whether a claim comes from a primary source or from coverage of one. All were accessed on 2026-10-16.
+These pages give context, not analysis data; datasets go in `source_register.csv`. Each entry is labelled by type, so readers know whether a claim comes from a primary source or from coverage of one. All were accessed on 2026-10-16 unless the entry gives another date.
 
 ## Stubble burning and monitoring
 
@@ -19,17 +19,21 @@ These pages give context, not analysis data; datasets go in `source_register.csv
 | NASA FIRMS FAQ | Official documentation | Pixel sizes and archive start dates. Its NOAA-20/21 overpass figure (about 12:40 pm) predates the April 2024 orbit change, so don't use it. | [link](https://www.earthdata.nasa.gov/faq/firms-faq) |
 | CIRA RAMMB, "NOAA-21 designated as the primary satellite of the JPSS constellation", 3 May 2024 | Agency-affiliated technical blog (NOAA cooperative institute) | Current VIIRS pass order: NOAA-21, then Suomi NPP about 25 minutes later, then NOAA-20 about 25 minutes after that | [link](https://rammb2.cira.colostate.edu/visit-blog/2024/05/03/noaa-21-designated-as-the-primary-satellite-of-the-jpss-constellation) |
 | NASA EOSPSO, JPSS-1 (NOAA-20) mission page | Official mission page | NOAA-20 launch (18 Nov 2017, Delta II 7920-10C), 833 km orbit, 1:30 pm local node | [link](https://eospso.gsfc.nasa.gov/missions/joint-polar-satellite-system-1) |
-| FIRMS area API | Official documentation | Download method for Notebook 01. The page says requests can cover 1–10 days, but the live API accepted at most 5 when tested on 21 Oct 2026. | [link](https://firms.modaps.eosdis.nasa.gov/api/area/csv) |
+| FIRMS area API | Official documentation | Download method for Notebooks 01 and 02. The page says requests can cover 1–10 days, but the live API accepted at most 5 when tested on 21 Oct 2026. Its list of products has no standard-processing NOAA-21 product (checked 25 Oct 2026). | [link](https://firms.modaps.eosdis.nasa.gov/api/area/csv) |
+| FIRMS, "How to use FIRMS API in Python" (accessed 2026-10-25) | Official tutorial | The data-availability service (columns `data_id`, `min_date`, `max_date`), which Notebook 02 uses to pick standard or near-real-time data. Standard processing arrives with a multi-month lag. | [link](https://firms.modaps.eosdis.nasa.gov/content/academy/data_api/firms_api_use.html) |
 | FIRMS MAP_KEY page (accessed 2026-10-22) | Official documentation | Getting a free key; limit of 5,000 transactions per 10 minutes, where longer requests can count as several | [link](https://firms.modaps.eosdis.nasa.gov/api/map_key/) |
 | NOAA NESDIS, cessation of S-NPP data on or after 1 Nov 2026 (posted 3 Aug 2026) | Official notice | Suomi NPP data ends mid-season; switch to NOAA-21 and NOAA-20 | [link](https://www.nesdis.noaa.gov/news/cessation-of-suomi-national-polar-orbiting-partnership-s-npp-data-users-onafter-november-01-2026) |
 | NASA Earthdata, transition from MODIS to VIIRS | Official notice | Terra and Aqua shutdown expected late 2026 or early 2027 | [link](https://www.earthdata.nasa.gov/data/alerts-outages/transition-from-modis-viirs) |
 | Copernicus Data Space Ecosystem | Official portal | Sentinel data access, openEO, JupyterLab | [link](https://dataspace.copernicus.eu/) |
-| CDSE openEO credit usage | Official documentation | 10,000 free openEO credits a month for general users | [link](https://documentation.dataspace.copernicus.eu/APIs/openEO/credit_usage.html) |
+| CDSE openEO credit usage (re-checked 2026-10-25) | Official documentation | 10,000 free openEO credits a month for general users. Worked example at March 2026 rates: 5,099 CPU-seconds cost 2.3 credits, 13,400,773 MB-seconds of memory cost 3.9 credits, plus 2 credits per batch job. Notebook 02 uses these rates when a job doesn't report its cost. | [link](https://documentation.dataspace.copernicus.eu/APIs/openEO/credit_usage.html) |
+| CDSE openEO batch-job example notebook (accessed 2026-10-25) | Official documentation | Batch jobs write one GeoTIFF per date (`openEO_YYYY-MM-DDZ.tif`), and `connection.job(job_id)` reconnects to a job, which Notebook 02 uses to resume | [link](https://documentation.dataspace.copernicus.eu/notebook-samples/openeo/Batch_job.html) |
+| openEO GitHub issue #873, "possible extra parameter in save_result to set output dtype" (Mar–Dec 2025; accessed 2026-10-25) | Developer discussion | `linear_scale_range(1, 65534, 1, 65534)` at the end of a process graph gave 16-bit output, which Notebook 02 uses to halve its download. Developers note that output types can be hard to predict, so the notebook prints the type it receives. | [link](https://github.com/Open-EO/openeo-geotrellis-extensions/issues/873) |
+| CDSE forum, "NDVI with Radiometric Offset of Sentinel-2 L2A", CDSE reply of 19 Jun 2026 (accessed 2026-10-25) | Forum reply from the CDSE team account | Sentinel-2 L2A products on CDSE carry a radiometric offset that must be applied before computing indices. Whether openEO already removes it is unclear, so Notebook 02 detects it from the data. | [link](https://forum.dataspace.copernicus.eu/t/ndvi-with-radiometric-offset-of-sentinel-2-l2a/5243) |
 | CDSE, Sentinel-1D user data opening | Official notice | Sentinel-1 6-day revisit restored in July 2026 | [link](https://dataspace.copernicus.eu/node/3176) |
 | Copernicus Sentinel data licence | Official licence | Free use and the required credit line | [link](https://ads.atmosphere.copernicus.eu/licences/ec-sentinel) |
 | Sentinel Hub documentation, HLS | Documentation | HLS: 30 m, every 2–3 days, Landsat 8–9 plus Sentinel-2 | [link](https://docs.sentinel-hub.com/api/latest/data/hls/) |
 | NRSC Bhoonidhi Brochure 2025 | Official brochure | Indian satellite data coarser than 5 m is open to all users | [link](https://www.nrsc.gov.in/nrscnew/assets/pdf/brochures/Bhoonidhi_Brochure_2025.pdf) |
-| ESA WorldCover on the AWS Open Data Registry | Dataset listing | Cropland mask: 10 m, CC BY 4.0 | [link](https://registry.opendata.aws/esa-worldcover-vito/index.html) |
+| ESA WorldCover on the AWS Open Data Registry | Dataset listing | Considered as a cropland mask (10 m, CC BY 4.0); not used in Notebook 02 (decision log, 25 Oct 2026) | [link](https://registry.opendata.aws/esa-worldcover-vito/index.html) |
 | geoBoundaries India on HDX | Dataset listing | District boundaries: ODbL; sources cover 2011–2021 | [link](https://data.humdata.org/m/dataset/geoboundaries-admin-boundaries-for-india) |
 
 ## Market context
@@ -37,3 +41,11 @@ These pages give context, not analysis data; datasets go in `source_register.csv
 | Source | Type | Used for | Link |
 |---|---|---|---|
 | Verbio press release, 26 Oct 2022 | Company statement | A paddy-straw compressed-biogas plant at Lehragaga, Punjab, using 100,000 t of agricultural residue a year | [link](https://verbio.de/en/press/news/press-releases/detail/verbio-betreibt-indiens-erste-und-groesste-bioraffinerie-zur-herstellung-von-biomethan-aus-stroh) |
+| Indian Chemical News, "Puri inaugurates Asia's largest compressed biogas plant in Sangrur", 19 Oct 2022 (accessed 2026-10-25) | Trade news report | Places the Verbio plant at Lehragaga in Sangrur district; 100,000 t of paddy straw a year. Its current output hasn't been checked. | [link](https://www.indianchemicalnews.com/gas/lite/puri-inaugurates-asias-largest-compressed-biogas-plant-in-sangrur-15129) |
+
+## Methods
+
+| Source | Type | Used for | Link |
+|---|---|---|---|
+| Olofsson et al. (2014), "Good practices for estimating area and assessing accuracy of land change", *Remote Sensing of Environment* 148, 42–57 | Peer-reviewed paper | Stratified sampling, area-weighted accuracy and burnt area estimated from reference labels with a confidence interval (Notebook 02, section 11) | [link](https://doi.org/10.1016/j.rse.2014.02.015) |
+| Stehman (2014), "Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes", *International Journal of Remote Sensing* 35, 4923–4939 | Peer-reviewed paper | The estimator used when a recalibrated map is scored against points drawn from the original map | [link](https://doi.org/10.1080/01431161.2014.930207) |

@@ -21,11 +21,11 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - Keep only points inside Punjab and Haryana districts. Districts get their state from their representative point.
 - **Outputs:** detections by season, state and district; time of detection; season shape; the Suomi NPP to NOAA-20 ratio; the district shortlist.
 
-## 4. Burnt-area mapping (Notebook 02; built, first run pending)
+## 4. Burnt-area mapping (Notebook 02; pilot run 26 Oct 2026, whole district next)
 - **Imagery:** Sentinel-2 L2A bands B04, B08, B11 and B12, through openEO on the Copernicus Data Space Ecosystem. They are resampled to 20 m in UTM zone 43N by nearest neighbour.
-- **Clear pixels:** the scene classification (SCL) keeps classes 2, 4, 5, 6 and 7 (dark area, vegetation, bare soil, water, unclassified). It masks cloud, cirrus, cloud shadow, snow, saturated and no-data pixels. Scenes over 80% cloud are skipped. A pilot job checks which classes burnt-looking pixels fall in, in case burn scars are being masked as shadow.
+- **Clear pixels:** the scene classification (SCL) keeps classes 2, 4, 5, 6 and 7 (dark area, vegetation, bare soil, water, unclassified). It masks cloud, cirrus, cloud shadow, snow, saturated and no-data pixels. Scenes over 80% cloud are skipped. A pilot job checks which classes burnt-looking pixels fall in, in case burn scars are being masked as shadow. In the pilot, 98.8% fell in class 5 (bare soil) and about 0.1% in masked classes, so there the mask isn't hiding burn scars.
 - **Composites:** median of the clear observations in each 5-day window, 5 Sep–4 Dec 2025 (18 windows). They are computed on Copernicus's servers and downloaded as 16-bit integers.
-- **Scaling:** values are reflectance × 10,000. Whether the +1,000 offset of processing baseline 04.00 is present is detected from the pilot's red band.
+- **Scaling:** values are reflectance × 10,000. Whether the +1,000 offset of processing baseline 04.00 is present is detected from the pilot's red band. The pilot found none: the red band's 2nd percentile is 186, too low to carry the offset.
 - **Indices, per window:**
   - NDVI = (B08 − B04) / (B08 + B04)
   - NBR = (B08 − B12) / (B08 + B12)
@@ -33,17 +33,21 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Rule, per pixel, in window order:**
   - **Green:** NDVI has reached 0.6 in an earlier window.
   - **Harvested:** after that, NDVI falls below 0.35.
-  - **Burnt:** in a harvested window, NBR ≤ −0.05 and MIRBI ≥ 1.65.
+  - **Burnt:** in a harvested window, NBR ≤ −0.05, MIRBI ≥ 1.65 and NIR (B08) reflectance ≤ 0.13.
   - The harvest window, the burn window and the last clear view before the burn are recorded. The thresholds are provisional until Checkpoint 3.
+- **Why NIR:** the NIR condition was added after the pilot (decision log, 26 Oct 2026). Bare soil after harvest passes the NBR and MIRBI tests too, but it is brighter in NIR than fresh char. Without the condition the pilot marked 91% of harvested land burnt; with it, 25%.
 - **No land-cover mask:** the green-then-harvested sequence already restricts the analysis to fields harvested during the season. Trees, towns, water and crops still standing in December never meet it.
-- **Cost control:** a 10 km pilot runs first. The whole district runs only if the pilot's cost, scaled up by area, fits the credit budget and the projected download fits on disk.
+- **Cost control:** a 10 km pilot runs first. The whole district runs only if the pilot's cost, scaled up by area, fits the credit budget and the projected download fits on disk. The pilot cost 4 credits for the composites and 4 for the cloud-mask check. It projects about 135 credits and a 1.8 GB download for the whole district.
 
 ## 5. Validation (Notebook 02; labels due by Checkpoint 3)
 - **Sample:** 240 points drawn at random by mapped class: 100 burnt, 100 harvested but not burnt, and 40 from the rest of the district, to catch burns the rule missed entirely. Each point is the centre of a 3 × 3 block of one class.
 - **Labels:** burnt, not burnt or unsure, judged blind from image strips of all 18 windows in false colour (SWIR 2, NIR, red), 1.5 km across.
-- **Calibration:** half the points choose the NBR and MIRBI thresholds (best F1). The other half check them.
+- **Calibration:** half the points choose the NBR, MIRBI and NIR thresholds (best F1). The other half check them.
 - **Measures:** precision, recall and F1 on the check half. Area-weighted user's, producer's and overall accuracy use the stratified estimator of Stehman (2014), which allows the scored map to differ from the sampled one. The burnt area is also estimated from the labels alone, with a 95% confidence interval, following Olofsson et al. (2014).
-- **Limits:** labels come from interpreting 20 m imagery, not field visits. Points avoid field edges, so edge accuracy isn't measured.
+- **Limits:**
+  - Labels come from interpreting 20 m imagery, not field visits.
+  - Labels are judged from the same 5-day composites the rule reads. A burn that never shows in a composite, such as a field tilled within a day or two of burning, is invisible to both.
+  - Points avoid field edges, so edge accuracy isn't measured.
 
 ## 6. Missed share (Notebook 02)
 - **Definition:** burnt area with no fire detection nearby, divided by total burnt area.

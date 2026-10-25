@@ -5,7 +5,7 @@ Run them in order. Each notebook writes to `data/processed/` and `maps/`, and lo
 | Notebook | Question | Status | Key or login needed |
 |---|---|---|---|
 | `01_fire_counts.ipynb` | How many VIIRS fire detections per season, where, and at what time of day? Which district should we study? | Run on 22 Oct 2026 | `FIRMS_MAP_KEY` |
-| `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Ready for its pilot run (tested on synthetic data) | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
+| `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Pilot run on 26 Oct 2026; whole district next | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
 | `03_ml_burn_classifier.ipynb` | Does a Random Forest beat the rule-based burn map? | Week 3 | none |
 | `04_fire_forecast.ipynb` | When will the season peak, and how high? | Week 3 | `FIRMS_MAP_KEY` |
 
@@ -18,4 +18,4 @@ Notebook 02 runs in steps, because its openEO jobs use Copernicus credits:
 2. The whole district, after you set `RUN_FULL = True`.
 3. A final run after the validation points are labelled.
 
-Its downloads go to `data/raw/sentinel2/`, which git ignores. The whole district is estimated at several GB, and the pilot measures it; that run is best done on a computer rather than in Colab.
+Its downloads go to `data/raw/sentinel2/`, which git ignores. The pilot projects about 1.8 GB and 135 credits for the whole district; that run is best done on a computer rather than in Colab.

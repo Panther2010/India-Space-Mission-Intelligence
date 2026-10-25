@@ -17,6 +17,11 @@ Hand-compiled from public sources. Every row carries the page it came from and t
 
 **Claims.** Press releases and funding announcements are company statements. `notes` flags these, along with old sources and anything not yet checked, such as whether a planned launch happened.
 
+## Verification
+
+- **Dataset B:** all 170 checks in its workbook were done on 25 Oct 2026, and 159 were confirmed. The rest, plus three items found on review, were re-checked on 26 Oct 2026. Eleven rows were corrected or given a better source. Details are in `sources/verification_log.md`.
+- **Dataset A:** spot-check under way.
+
 ## Updating a row
 
-Change `evidence_url` and `date_accessed` together, use a dated and credible page, and log the change in `decision_log.md` if it changes a conclusion.
+Change the source and its date together: `evidence_url` and `date_accessed` in dataset A, `source_url` and `access_date` in dataset B. Use a dated and credible page. Record the change in `sources/verification_log.md`, and in `decision_log.md` too if it changes a conclusion.

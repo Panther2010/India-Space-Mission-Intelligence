@@ -25,7 +25,7 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 
 - Official stubble-burning monitoring counts fires seen by MODIS and VIIRS in a narrow midday window.
 - A December 2025 report by iFOREST says most large Punjab farm fires in 2024 and 2025 occurred after 3 pm ([as reported by The Tribune](https://www.tribuneindia.com/news/delhi/satellites-miss-majority-of-stubble-fires-delhi-air-pollution-underestimated-report)).
-- NOAA ends Suomi NPP data delivery on 1 Nov 2026 ([NOAA notice](https://www.nesdis.noaa.gov/news/cessation-of-suomi-national-polar-orbiting-partnership-s-npp-data-users-onafter-november-01-2026)).
+- NOAA ends Suomi NPP data delivery at 13:00 UTC on 2 Nov 2026 ([NOAA update, 19 Oct 2026](https://www.nesdis.noaa.gov/news/administrative-update-2-cessation-of-suomi-national-polar-orbiting-partnership-s-npp-data-users-november-02-2026-1300-utc-and-decommissioning-issued-october-19-2026-1400-utc)).
 - The two VIIRS satellites that remain pass about 25 minutes before and after Suomi NPP ([CIRA, May 2024](https://rammb2.cira.colostate.edu/visit-blog/2024/05/03/noaa-21-designated-as-the-primary-satellite-of-the-jpss-constellation)). So no VIIRS sensor looks later in the afternoon.
 - Burnt area measured from Sentinel-2 is an established method ([NRSC, 2023](https://www.nrsc.gov.in/sites/default/files/ScienceStory/Science_Story_Stubble_burning_Pun_Har_2023.pdf)). This project applies it at district level and quantifies what fire counts miss.
 
@@ -50,7 +50,7 @@ flowchart LR
 
 | # | Deliverable | Where | Status |
 |---|---|---|---|
-| 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted; spot-checks under way (workbooks in `sources/`) |
+| 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
 | 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 built and tested on synthetic data, ready for its pilot run; 03–04 planned |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | Planned |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |

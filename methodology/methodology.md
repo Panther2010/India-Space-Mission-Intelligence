@@ -12,7 +12,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Source:** VIIRS 375 m active fire detections from the NASA FIRMS area API, one request per block of up to 5 days (the live API's limit).
 - **Trends:** Suomi NPP standard processing (`VIIRS_SNPP_SP`), 2012–2025, so seasons compare like for like.
 - **Sensor overlap:** NOAA-20 standard processing, 2020–2025.
-- **2026 season:** near-real-time data from Suomi NPP (until 1 Nov 2026), NOAA-20 and NOAA-21.
+- **2026 season:** near-real-time data from Suomi NPP (until 13:00 UTC on 2 Nov 2026), NOAA-20 and NOAA-21.
 - **Cleaning:**
   - Drop exact duplicates.
   - Keep the "presumed vegetation fire" type where the field exists.
@@ -64,7 +64,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Target:** weekly Suomi NPP detections.
 - **Models:** a seasonal-naive baseline against SARIMA on log counts.
 - **Backtests:** the 2024 and 2025 seasons.
-- **2026 comparison:** the forecast is compared with NOAA-20 actuals after 1 Nov, using the ratio from Notebook 01.
+- **2026 comparison:** the forecast is compared with NOAA-20 actuals after Suomi NPP stops on 2 Nov, using the ratio from Notebook 01.
 - **Caveat:** this forecasts detections, not burnt area.
 
 ## 9. Limitations

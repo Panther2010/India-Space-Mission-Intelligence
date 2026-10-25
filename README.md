@@ -15,9 +15,9 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 
 | | |
 |---|---|
-| **Users** | Buyers of paddy straw for energy, such as compressed-biogas plants, deciding where and when to collect straw. State agriculture departments deciding where to send residue-management machinery. |
-| **Area and period** | One Punjab district. Main season: 15 Sep–30 Nov 2025. Comparison: 2021. The 2026 season serves as a live demo. |
-| **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS active fires (NASA FIRMS), ESA WorldCover cropland. Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
+| **Users** | Lead: buyers of paddy straw for energy, such as the compressed-biogas plant at Lehragaga in Sangrur, deciding where and when to collect straw. Second dashboard tab: the state agriculture department, deciding where to send residue-management machinery and where burning went undetected. |
+| **Area and period** | Sangrur district, Punjab (pre-2021 boundary, including Malerkotla). Main season: 15 Sep–30 Nov 2025. Comparison: 2021. The 2026 season serves as a live demo. |
+| **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS and MODIS active fires (NASA FIRMS). Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
 | **Methods** | Multi-date burn indices (NBR, MIRBI, NDVI), accuracy assessment against reference points, a Random Forest classifier, and a fire-activity forecast (SARIMA vs a seasonal baseline) |
 | **Outputs** | Burnt-area maps, the share of burning the fire counts missed, a Streamlit dashboard, an 8–12 page report and a product one-pager |
 
@@ -33,9 +33,10 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 
 ```mermaid
 flowchart LR
-    firms["NASA FIRMS<br/>VIIRS fire detections"] --> nb1["01 · Fire counts<br/>trend, timing, districts"]
+    firms["NASA FIRMS<br/>fire detections"] --> nb1["01 · Fire counts<br/>trend, timing, districts"]
     s2["Copernicus<br/>Sentinel-2 L2A"] --> nb2["02 · Burnt-area map<br/>and validation"]
     nb1 -- "district choice" --> nb2
+    firms -- "detections to match" --> nb2
     nb2 --> missed["Missed share<br/>burnt area with no VIIRS detection"]
     nb2 --> nb3["03 · ML burn classifier"]
     firms --> nb4["04 · Fire-activity forecast"]
@@ -50,7 +51,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted; spot-checks under way (workbooks in `sources/`) |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02–04 planned |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 built and tested on synthetic data, ready for its pilot run; 03–04 planned |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | Planned |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
@@ -103,6 +104,7 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
    ```
 3. **Add your key.** Get a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/map_key/). In VS Code, create a file named `.env` in the project folder, next to this README, with one line: `FIRMS_MAP_KEY=your_key`. Git ignores `.env`, so the key never reaches GitHub.
 4. **Run.** Open `notebooks/01_fire_counts.ipynb`, choose the `eo` (or `.venv`) kernel at the top right and click **Run All**.
+5. **For Notebook 02,** create a free [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) account. The first run prints a login link for openEO; later runs reuse the saved login. Notebook 02 runs in steps (a small pilot first, then the whole district), explained at its top.
 
 ### In Google Colab
 
@@ -115,11 +117,10 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
 
 | Data | Provider | Terms |
 |---|---|---|
-| VIIRS active fire detections | [NASA FIRMS](https://www.earthdata.nasa.gov/faq/firms-faq) | NASA open data policy; cite per the FIRMS citation policy |
+| VIIRS and MODIS active fire detections | [NASA FIRMS](https://www.earthdata.nasa.gov/faq/firms-faq) | NASA open data policy; cite per the FIRMS citation policy |
 | Sentinel-2 L2A imagery | [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) | Free and open; credit "Contains modified Copernicus Sentinel data [year]" ([licence](https://ads.atmosphere.copernicus.eu/licences/ec-sentinel)) |
 | District boundaries | [geoBoundaries via HDX](https://data.humdata.org/m/dataset/geoboundaries-admin-boundaries-for-india) | ODbL |
 | State boundaries | [geoBoundaries](https://www.geoboundaries.org/) ADM1, from the DataMeet India community and the Election Commission of India ([source](https://github.com/datameet/maps)) | Creative Commons Attribution 2.5 India (CC BY 2.5 IN); credit the source |
-| Cropland mask | [ESA WorldCover 2021](https://registry.opendata.aws/esa-worldcover-vito/index.html) | CC BY 4.0 |
 
 Access dates and preprocessing steps are in `sources/source_register.csv`, and context sources are in `sources/references.md`. Raw downloads are not committed, because of their size and their licence terms.
 

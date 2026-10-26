@@ -15,6 +15,7 @@ scipy
 
 # Satellite data access (Notebook 02)
 openeo
+netCDF4       # reads the single-date label strips openEO returns as netCDF
 
 # Modelling (Notebooks 03 and 04)
 scikit-learn

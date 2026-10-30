@@ -22,7 +22,8 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `validation_unsure_bounds_sangrur_2025.csv` | Notebook 02 | Accuracy of the map as reported, with `unsure` points left out, counted as not burnt and counted as burnt |
 | `validation_late_window_check_sangrur_2025.csv` | Notebook 02 | Labels against the window in which the rule first calls each point burnt (before or from 19 Nov) |
 | `burn_rule_calibration_grid_sangrur_2025.csv` | Notebook 02 | F1 on half A for every combination of thresholds tried |
-
+| `hls_l30_scenes_sangrur_2025.csv` | Notebook 02b | Landsat (HLSL30) scenes over the validation points: tile, date, cloud cover, whether read, points inside |
+| `validation_landsat_views_sangrur_2025.csv` | Notebook 02b | For each point read: its Landsat strip, and its clear, hazy and cloudy Landsat dates. It lists dates and notes, not the map's class, so it is safe to open while relabelling. |
 | `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
 | `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 

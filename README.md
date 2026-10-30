@@ -17,7 +17,7 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 |---|---|
 | **Users** | Lead: buyers of paddy straw for energy, such as the compressed-biogas plant at Lehragaga in Sangrur, deciding where and when to collect straw. Second dashboard tab: the state agriculture department, deciding where to send residue-management machinery and where burning went undetected. |
 | **Area and period** | Sangrur district, Punjab (pre-2021 boundary, including Malerkotla). Main season: 15 Sep–30 Nov 2025. Comparison: 2021. The 2026 season serves as a live demo. |
-| **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS and MODIS active fires (NASA FIRMS). Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
+| **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS and MODIS active fires (NASA FIRMS), and Landsat 8/9 surface reflectance (NASA HLS, through Earthdata) to settle doubtful validation points. Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
 | **Methods** | Multi-date burn indices (NBR, MIRBI, NDVI), accuracy assessment against reference points, a Random Forest classifier, and a fire-activity forecast (SARIMA vs a seasonal baseline) |
 | **Outputs** | Burnt-area maps, the share of burning the fire counts missed, a Streamlit dashboard, an 8–12 page report and a product one-pager |
 
@@ -51,7 +51,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 03–04 planned |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b built (31 Oct 2026) to settle `unsure` points with Landsat views; 03–04 planned |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
@@ -105,6 +105,7 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
 3. **Add your key.** Get a free [FIRMS map key](https://firms.modaps.eosdis.nasa.gov/api/map_key/). In VS Code, create a file named `.env` in the project folder, next to this README, with one line: `FIRMS_MAP_KEY=your_key`. Git ignores `.env`, so the key never reaches GitHub.
 4. **Run.** Open `notebooks/01_fire_counts.ipynb`, choose the `eo` (or `.venv`) kernel at the top right and click **Run All**.
 5. **For Notebook 02,** create a free [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) account. The first run prints a login link for openEO; later runs reuse the saved login. Notebook 02 runs in steps (a small pilot first, then the whole district), explained at its top.
+6. **For Notebook 02b,** create a free [NASA Earthdata](https://urs.earthdata.nasa.gov/) account, generate a token there, and add the line `EARTHDATA_TOKEN=your_token` to `.env`.
 
 ### In Google Colab
 
@@ -118,6 +119,7 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
 | Data | Provider | Terms |
 |---|---|---|
 | VIIRS and MODIS active fire detections | [NASA FIRMS](https://www.earthdata.nasa.gov/faq/firms-faq) | NASA open data policy; cite per the FIRMS citation policy |
+| Landsat 8/9 surface reflectance, HLS v2.0 (HLSL30) | [NASA LP DAAC, through Earthdata](https://doi.org/10.5067/HLS/HLSL30.002) | Free and open NASA Earth science data; cite the dataset (Masek et al., 2021) |
 | Sentinel-2 L2A imagery | [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) | Free and open; credit "Contains modified Copernicus Sentinel data [year]" ([licence](https://ads.atmosphere.copernicus.eu/licences/ec-sentinel)) |
 | District boundaries | [geoBoundaries via HDX](https://data.humdata.org/m/dataset/geoboundaries-admin-boundaries-for-india) | ODbL |
 | State boundaries | [geoBoundaries](https://www.geoboundaries.org/) ADM1, from the DataMeet India community and the Election Commission of India ([source](https://github.com/datameet/maps)) | Creative Commons Attribution 2.5 India (CC BY 2.5 IN); credit the source |

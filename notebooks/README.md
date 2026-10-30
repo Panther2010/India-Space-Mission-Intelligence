@@ -5,7 +5,7 @@ Run them in order. Each notebook writes to `data/processed/` and `maps/`, and lo
 | Notebook | Question | Status | Key or login needed |
 |---|---|---|---|
 | `01_fire_counts.ipynb` | How many VIIRS fire detections per season, where, and at what time of day? Which district should we study? | Run on 22 Oct 2026 | `FIRMS_MAP_KEY` |
-| `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Whole district run on 26 Oct 2026; validation labels next | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
+| `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Whole district run on 26 Oct 2026; validation labels completed 30 Oct 2026; calibration next | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
 | `03_ml_burn_classifier.ipynb` | Does a Random Forest beat the rule-based burn map? | Week 3 | none |
 | `04_fire_forecast.ipynb` | When will the season peak, and how high? | Week 3 | `FIRMS_MAP_KEY` |
 

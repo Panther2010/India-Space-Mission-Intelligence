@@ -1,0 +1,7 @@
+scl_class,burnt_like_px,class_name,kept_in_composites,share
+3,76,cloud shadow,False,0.0005
+4,68,vegetation,True,0.0005
+5,144580,bare soil,True,0.9882
+6,499,water,True,0.0034
+7,979,unclassified,True,0.0067
+8,111,"cloud, medium probability",False,0.0008

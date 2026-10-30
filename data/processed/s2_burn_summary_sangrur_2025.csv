@@ -1,0 +1,26 @@
+metric,value
+area,Sangrur (pre-2021 boundary)
+area_km2,3583.9
+season_windows,"2025-09-05 to 2025-12-04 (end exclusive), 5-day median composites"
+mean_clear_share,0.954
+harvested_ha,306487.7
+burnt_ha,63420.7
+burnt_unconfirmed_ha,8194.0
+harvested_not_burnt_ha,234873.0
+burnt_share_of_harvested,0.2069
+median_days_harvest_to_burn,10.0
+missed_share_viirs_375m,0.906
+missed_share_viirs_750m,0.7381
+missed_share_viirs_750m_or_modis_1000m,0.6042
+missed_share_viirs_375m_including_unconfirmed,0.916
+viirs_detections_inside,1500
+modis_detections_inside,490
+firms_products,VIIRS_SNPP: VIIRS_SNPP_SP 2025-09-05 to 2025-12-04; VIIRS_NOAA20: VIIRS_NOAA20_SP 2025-09-05 to 2025-12-04; VIIRS_NOAA21: VIIRS_NOAA21_NRT 2025-09-05 to 2025-12-04; MODIS: MODIS_SP 2025-09-05 to 2025-12-04
+firms_gaps,none
+rule,"{""green_ndvi"": 0.6, ""harvest_ndvi"": 0.35, ""burn_nbr_max"": -0.05, ""burn_mirbi_min"": 1.65, ""burn_nir_max"": 0.13}"
+unconfirmed_from,2025-11-19
+rule_status,checked against the validation labels at Checkpoint 3 (30 Oct 2026); thresholds kept; burns first seen from 19 Nov unconfirmed
+scl_classes_kept,"2,4,5,6,7"
+scaling,"offset 0, scale 10000"
+openeo_credits_pilot,4.0
+openeo_credits_district,8.0

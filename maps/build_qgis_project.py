@@ -11,7 +11,8 @@ What it does
 2. Writes the district and state outlines to data/processed/ if they are missing, from the geoBoundaries files
    that Notebook 01 downloads to data/raw/boundaries/.
 3. Saves maps/burnt_area.qgz, with paths relative to the project file, so the project opens from any copy of
-   the repository.
+   the repository. QGIS 3.x refuses projects saved by QGIS 4, so the committed project is saved with QGIS 3.44:
+   it opens in 3.44 and in 4.x.
 4. Exports each print layout to maps/qgis/ as a 300 dpi PNG and a PDF.
 
 It only reads and writes files inside the project folder and never touches the project open in QGIS.
@@ -541,7 +542,10 @@ def build():
         print(f'Exported maps/qgis/{stem}.png and .pdf')
     if not project.write(str(project_file)):
         raise RuntimeError(f'Could not save {project_file}: {project.error()}')
-    print(f'Saved {project_file.relative_to(root)}. Open it in QGIS with Project > Open.')
+    print(f'Saved {project_file.relative_to(root)} with QGIS {Qgis.version()}. Open it with Project > Open.')
+    if Qgis.versionInt() >= 40000:
+        print('Note: QGIS 3.x cannot open a project saved by QGIS 4. The committed project is saved with QGIS 3.44 '
+              'so that it opens in both; commit a rebuilt burnt_area.qgz only if everyone uses QGIS 4.')
 
 
 _app = None

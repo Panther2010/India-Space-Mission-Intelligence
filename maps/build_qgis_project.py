@@ -31,7 +31,8 @@ from qgis.core import (Qgis, QgsApplication, QgsCategorizedSymbolRenderer, QgsCo
                        QgsLayoutItemPage, QgsLayoutItemPicture, QgsLayoutItemScaleBar, QgsLayoutPoint,
                        QgsLayoutSize, QgsLegendRenderer, QgsLegendStyle, QgsMapLayerLegendUtils, QgsMarkerSymbol,
                        QgsPalettedRasterRenderer, QgsPrintLayout, QgsProject, QgsRasterLayer, QgsRasterRange,
-                       QgsRasterShader, QgsRectangle, QgsRendererCategory, QgsRendererRange, QgsRuleBasedRenderer,
+                       QgsRasterShader, QgsRectangle, QgsReferencedRectangle, QgsRendererCategory, QgsRendererRange,
+                       QgsRuleBasedRenderer,
                        QgsSingleBandPseudoColorRenderer, QgsSingleSymbolRenderer, QgsTextFormat, QgsVectorFileWriter,
                        QgsVectorLayer)
 from qgis.PyQt.QtCore import QMetaType, Qt
@@ -445,6 +446,12 @@ def build():
     # Map extent: the burn map's extent (UTM 43N) plus a small margin; inset: Punjab.
     extent = burnt.extent()
     extent.grow(2500)
+    # A project saved without QGIS's window has no map view, so QGIS would open it on an empty view. Store the
+    # district as the view to open on and as the extent of View > Zoom Full.
+    view = project.viewSettings()
+    view.setDefaultViewExtent(QgsReferencedRectangle(extent, map_crs))
+    if hasattr(view, 'setPresetFullExtent'):
+        view.setPresetFullExtent(QgsReferencedRectangle(extent, map_crs))
     state_extent = QgsCoordinateTransform(state.crs(), map_crs, project).transformBoundingBox(state.extent())
     state_extent.grow(8000)
 

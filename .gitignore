@@ -6,6 +6,8 @@ data/raw/*
 # Large intermediate files
 *.parquet
 *.tif
+# ... except the final burn map, which the QGIS project needs (about 5 MB)
+!data/processed/s2_burn_classes_sangrur_2025.tif
 *.tiff
 *.nc
 *.zip

@@ -34,12 +34,13 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - **Green:** NDVI has reached 0.6 in an earlier window.
   - **Harvested:** after that, NDVI falls below 0.35.
   - **Burnt:** in a harvested window, NBR ≤ −0.05, MIRBI ≥ 1.65 and NIR (B08) reflectance ≤ 0.13.
-  - The harvest window, the burn window and the last clear view before the burn are recorded. The thresholds are provisional until Checkpoint 3.
+  - The harvest window, the burn window and the last clear view before the burn are recorded. The thresholds were checked against the validation labels at Checkpoint 3 (30 Oct 2026) and kept (section 5).
 - **Why NIR:** the NIR condition was added after the pilot (decision log, 26 Oct 2026). Bare soil after harvest passes the NBR and MIRBI tests too, but it is brighter in NIR than fresh char. Without the condition the pilot marked 91% of harvested land burnt; with it, 25%.
+- **Unconfirmed late burns:** burns first seen in a window from 19 Nov are mapped as a class of their own and kept out of the headline figures (decision log, 30 Oct 2026). Damp soil under a young crop can pass all three burn tests: one field labelled `no` (P016) does so on 22 and 24 Nov. In 2025 these late burns cover about 8,200 ha, against 63,400 ha of confirmed burns.
 - **No land-cover mask:** the green-then-harvested sequence already restricts the analysis to fields harvested during the season. Trees, towns, water and crops still standing in December never meet it.
 - **Cost control:** a 10 km pilot runs first. The whole district runs only if the pilot's cost, scaled up by area, fits the credit budget and the projected download fits on disk. The pilot cost 4 credits for the composites and 4 for the cloud-mask check. It projected about 135 credits and a 1.8 GB download for the whole district; the district job then used 8 credits, took 11 minutes and downloaded about 1 GB.
 
-## 5. Validation (Notebook 02; all 240 points labelled 30 Oct 2026)
+## 5. Validation (Notebook 02; 240 points labelled and the rule checked, 30 Oct 2026)
 - **Sample:** 240 points drawn at random by mapped class: 100 burnt, 100 harvested but not burnt, and 40 from the rest of the district, to catch burns the rule missed entirely. Each point is the centre of a 3 × 3 block of one class.
 - **Labels:** `yes` (burnt), `no` or `unsure`, judged blind from image strips:
   - **Main evidence:** single Sentinel-2 dates from 20 Sep to 4 Dec 2025 at 10 m, 640 m across, in true colour and in false colour (SWIR 2, NIR, red). Only dates on which the scene classification shows the point's 60 m block clear are included. A separate small openEO job fetches them, one file per point.
@@ -49,10 +50,15 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
     - `no`: the same colour as the tilled fields. Damp soil (navy or blue-grey in false colour) and new crops are also `no`.
     - `unsure` carries a reason in the notes: `dull` (darker than the tilled fields but not black), `gap` (no clear view for a week or more while the straw went), `edge` (a burn edge through the centre of the square) or `hazy` (dark only on a hazy date).
   - **Second reading:** every point was also read independently by Claude, an AI assistant, from the same strips and the underlying reflectance values. Disagreements were discussed and resolved, and points that stayed in doubt became `unsure`. Agreement between the first pass and the second reading rose from about three-quarters in the first batches to 90% in the last 40 points.
-- **Calibration:** half the points choose the NBR, MIRBI and NIR thresholds (best F1). The other half check them. `unsure` points are left out.
-- **Measures:** precision, recall and F1 on the check half. Area-weighted user's, producer's and overall accuracy use the stratified estimator of Stehman (2014), which allows the scored map to differ from the sampled one. The burnt area is also estimated from the labels alone, with a 95% confidence interval, following Olofsson et al. (2014).
-- **Unsure points, both ways:** leaving them out can flatter the accuracy, because the hard cases go. So the check-half accuracy and the label-based burnt area are repeated with every `unsure` counted as not burnt, then as burnt.
-- **Late-window check:** the window in which the rule first calls each labelled point burnt is set against its label. The map has about 8,200 ha of burns in the windows from 19 Nov but only 24 VIIRS detections there. In the label strips, one field labelled `no` (P016) shows damp soil on 14 Nov and a young crop from 22 Nov, most likely wheat. Its single-date values pass all three burn tests on 22 and 24 Nov, so damp soil under a young crop may be passing as burns. Any rule change waits for this check.
+- **Checking the rule:** half the points (A) fit NBR, MIRBI and NIR thresholds (best F1). The other half (B) checks them against the thresholds already in use. `unsure` points are left out. Thresholds fitted on half A are judged on half B only; thresholds that no label helped choose are also scored on all labelled points.
+- **Measures:** precision, recall and F1. Area-weighted user's, producer's and overall accuracy use the stratified estimator of Stehman (2014), which allows the scored map to differ from the sampled one. The burnt area is also estimated from the labels alone, with a 95% confidence interval, following Olofsson et al. (2014).
+- **Unsure points, both ways:** leaving them out can flatter the accuracy, because the hard cases go. So the accuracy of the map as reported and the label-based burnt area are repeated with every `unsure` counted as not burnt, then as burnt.
+- **Late-window check:** the window in which the rule first calls each labelled point burnt is set against its label. The map has about 8,200 ha of burns in the windows from 19 Nov but only 24 VIIRS detections there. In the label strips, one field labelled `no` (P016) shows damp soil on 14 Nov and a young crop from 22 Nov, most likely wheat. Its single-date values pass all three burn tests on 22 and 24 Nov, so damp soil under a young crop may be passing as burns. Result: none of the 5 labelled points the rule first calls burnt from 19 Nov is a confirmed burn (1 `no`, 4 `unsure`), so those burns are now unconfirmed (section 4).
+- **Results (30 Oct 2026; 68 `yes`, 116 `no`, 56 `unsure`):**
+  - Thresholds fitted on half A (NBR ≤ −0.10, MIRBI ≥ 1.30, NIR ≤ 0.12) scored F1 0.83 on half B, against 0.90 for the thresholds in use, which were kept.
+  - The map as reported, on all 184 `yes` and `no` points: precision 0.88, recall 0.97, F1 0.92. Area-weighted accuracy for burnt: user's 0.88, producer's 0.90; overall accuracy 0.96 (standard error 0.015). On half B alone: F1 0.91, overall accuracy 0.93 (0.03).
+  - With every `unsure` point counted as not burnt, then as burnt: F1 0.81 and 0.79; overall accuracy 0.93 and 0.75.
+  - Burnt area from the labels alone: 69,100 ha (95% CI 58,100–80,100 ha). The map's 63,400 ha of confirmed burns lies inside that interval. Counting every `unsure` point as not burnt gives 52,000 ha, and as burnt 144,300 ha. The upper end comes from the 32 `unsure` points in fields mapped as harvested but not burnt, each standing for about 2,300 ha; 17 of them are `gap` cases.
 - **Limits:**
   - Labels come from interpreting satellite imagery, not field visits. The second reader is an AI assistant, not an independent field expert.
   - Labels come mainly from single dates at 10 m, not from the 5-day composites the rule reads, so they don't simply repeat the rule.
@@ -62,7 +68,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - Points come from pure 3 × 3 blocks of one map class, yet some still sit on a field or burn edge. Those are `unsure` (`edge`), so edge accuracy isn't measured.
 
 ## 6. Missed share (Notebook 02)
-- **Definition:** burnt area with no fire detection nearby, divided by total burnt area.
+- **Definition:** confirmed burnt area with no fire detection nearby, divided by confirmed burnt area. Unconfirmed late burns (section 4) are left out, and the strict share with them included is reported too. In 2025 the strict share is 90.6% (91.6% with the unconfirmed burns).
 - **Detections:** VIIRS from Suomi NPP, NOAA-20 and NOAA-21, plus MODIS, for the district plus 0.05°. Standard processing is used where FIRMS has it, near real time elsewhere, with duplicates and non-vegetation fire types removed.
 - **When:** a detection counts if it falls between the pixel's last clear view before the burn and the window in which the burn shows.
 - **Where, three rules:**

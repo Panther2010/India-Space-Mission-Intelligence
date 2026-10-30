@@ -39,18 +39,27 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **No land-cover mask:** the green-then-harvested sequence already restricts the analysis to fields harvested during the season. Trees, towns, water and crops still standing in December never meet it.
 - **Cost control:** a 10 km pilot runs first. The whole district runs only if the pilot's cost, scaled up by area, fits the credit budget and the projected download fits on disk. The pilot cost 4 credits for the composites and 4 for the cloud-mask check. It projected about 135 credits and a 1.8 GB download for the whole district; the district job then used 8 credits, took 11 minutes and downloaded about 1 GB.
 
-## 5. Validation (Notebook 02; labels due by Checkpoint 3)
+## 5. Validation (Notebook 02; all 240 points labelled 30 Oct 2026)
 - **Sample:** 240 points drawn at random by mapped class: 100 burnt, 100 harvested but not burnt, and 40 from the rest of the district, to catch burns the rule missed entirely. Each point is the centre of a 3 × 3 block of one class.
-- **Labels:** burnt, not burnt or unsure, judged blind from image strips:
+- **Labels:** `yes` (burnt), `no` or `unsure`, judged blind from image strips:
   - **Main evidence:** single Sentinel-2 dates from 20 Sep to 4 Dec 2025 at 10 m, 640 m across, in true colour and in false colour (SWIR 2, NIR, red). Only dates on which the scene classification shows the point's 60 m block clear are included. A separate small openEO job fetches them, one file per point.
   - **Context:** the 18 five-day composites in false colour, 1.5 km across.
-- **Calibration:** half the points choose the NBR, MIRBI and NIR thresholds (best F1). The other half check them.
+  - **Rules:** on the first clear date after the straw goes, the field is compared with the tilled fields around it on that date.
+    - `yes`: black or near-black up to the field's edges, covering most of the square, centre included.
+    - `no`: the same colour as the tilled fields. Damp soil (navy or blue-grey in false colour) and new crops are also `no`.
+    - `unsure` carries a reason in the notes: `dull` (darker than the tilled fields but not black), `gap` (no clear view for a week or more while the straw went), `edge` (a burn edge through the centre of the square) or `hazy` (dark only on a hazy date).
+  - **Second reading:** every point was also read independently by Claude, an AI assistant, from the same strips and the underlying reflectance values. Disagreements were discussed and resolved, and points that stayed in doubt became `unsure`. Agreement between the first pass and the second reading rose from about three-quarters in the first batches to 90% in the last 40 points.
+- **Calibration:** half the points choose the NBR, MIRBI and NIR thresholds (best F1). The other half check them. `unsure` points are left out.
 - **Measures:** precision, recall and F1 on the check half. Area-weighted user's, producer's and overall accuracy use the stratified estimator of Stehman (2014), which allows the scored map to differ from the sampled one. The burnt area is also estimated from the labels alone, with a 95% confidence interval, following Olofsson et al. (2014).
+- **Unsure points, both ways:** leaving them out can flatter the accuracy, because the hard cases go. So the check-half accuracy and the label-based burnt area are repeated with every `unsure` counted as not burnt, then as burnt.
+- **Late-window check:** the window in which the rule first calls each labelled point burnt is set against its label. The map has about 8,200 ha of burns in the windows from 19 Nov but only 24 VIIRS detections there. In the label strips, one field labelled `no` (P016) shows damp soil on 14 Nov and a young crop from 22 Nov, most likely wheat. Its single-date values pass all three burn tests on 22 and 24 Nov, so damp soil under a young crop may be passing as burns. Any rule change waits for this check.
 - **Limits:**
-  - Labels come from interpreting satellite imagery, not field visits.
-  - Labels come mainly from single dates at 10 m, not from the 5-day composites the rule reads, so they don't simply repeat the rule. A burn tilled before the next clear overpass is still invisible to both.
+  - Labels come from interpreting satellite imagery, not field visits. The second reader is an AI assistant, not an independent field expert.
+  - Labels come mainly from single dates at 10 m, not from the 5-day composites the rule reads, so they don't simply repeat the rule.
+  - Burn scars fade fast. In the strips, a black field looked like tilled soil again within two to three days. A burn between two clear views can be invisible to both the labels and the map, so `no` means "no burn visible".
   - Damp soil after irrigation and missed cloud shadows can look dark, like a burn. The labelling guide in Notebook 02 says how to tell them apart.
-  - Points avoid field edges, so edge accuracy isn't measured.
+  - Small and partial burns may never pass the rule. These include burns covering only a small part of a 20 m pixel, such as straw burnt in small heaps, and burns of the loose straw only, with the stubble left standing. A farmer in Maharashtra described the small-heap practice to us; how common it is in Sangrur is unknown. Loose-straw burning followed by a super seeder was reported from Sangrur and Patiala in 2022 (Rajpurohit 2022). VIIRS can detect small fires (Schroeder et al. 2014), but only those burning at an overpass, so brief fires are rarely caught either. Burnt area is therefore a field-scale lower bound, and it isn't the same as the amount of straw burnt.
+  - Points come from pure 3 × 3 blocks of one map class, yet some still sit on a field or burn edge. Those are `unsure` (`edge`), so edge accuracy isn't measured.
 
 ## 6. Missed share (Notebook 02)
 - **Definition:** burnt area with no fire detection nearby, divided by total burnt area.
@@ -79,6 +88,8 @@ See the README's running list. Every output states its own limits.
 
 ## References
 - Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E. and Wulder, M. A. (2014). Good practices for estimating area and assessing accuracy of land change. *Remote Sensing of Environment* 148, 42–57. https://doi.org/10.1016/j.rse.2014.02.015
+- Rajpurohit, S. (2022). Punjab's farmers are burning less stubble. Thanks to super seeders. *Newslaundry*, 14 November 2022. https://www.newslaundry.com/2022/11/14/punjabs-farmers-are-only-partially-burning-stubble-thanks-to-super-seeders
+- Schroeder, W., Oliva, P., Giglio, L. and Csiszar, I. A. (2014). The new VIIRS 375 m active fire detection data product: algorithm description and initial assessment. *Remote Sensing of Environment* 143, 85–96. https://doi.org/10.1016/j.rse.2013.12.008
 - Stehman, S. V. (2014). Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes. *International Journal of Remote Sensing* 35, 4923–4939. https://doi.org/10.1080/01431161.2014.930207
 
 ## 10. Reproducibility

@@ -1,6 +1,6 @@
 # Processed data
 
-Files here are written by the notebooks and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
+Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
 
 | File | Written by | Contents |
 |---|---|---|
@@ -22,5 +22,8 @@ Files here are written by the notebooks and can be recreated by re-running them.
 | `validation_unsure_bounds_sangrur_2025.csv` | Notebook 02 | Accuracy of the map as reported, with `unsure` points left out, counted as not burnt and counted as burnt |
 | `validation_late_window_check_sangrur_2025.csv` | Notebook 02 | Labels against the window in which the rule first calls each point burnt (before or from 19 Nov) |
 | `burn_rule_calibration_grid_sangrur_2025.csv` | Notebook 02 | F1 on half A for every combination of thresholds tried |
+
+| `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
+| `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 
 `<area>` is `pilot` (a 10 km box) or `sangrur` (the whole district, pre-2021 boundary).

@@ -281,7 +281,9 @@ def add_label(layout, text, x, y, w, h, fmt):
 
 def add_map(layout, layers, extent, crs, x, y, w, h, frame=True):
     item = QgsLayoutItemMap(layout)
-    item.setRect(0, 0, w, h)
+    # Start smaller than the target: attemptResize() ignores a size equal to the current one, and then the
+    # project file would record the map as 0 x 0 mm.
+    item.setRect(0, 0, 10, 10)
     layout.addLayoutItem(item)
     item.attemptMove(QgsLayoutPoint(x, y, MM))
     item.attemptResize(QgsLayoutSize(w, h, MM))

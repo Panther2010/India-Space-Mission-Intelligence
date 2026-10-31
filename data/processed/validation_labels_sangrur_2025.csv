@@ -93,7 +93,7 @@ P091,data/raw/validation_chips/P091.png,data/raw/validation_chips/P091_dates.png
 P092,data/raw/validation_chips/P092.png,data/raw/validation_chips/P092_dates.png,30.175874,75.715321,yes,,
 P093,data/raw/validation_chips/P093.png,data/raw/validation_chips/P093_dates.png,29.856235,75.809314,no,,
 P094,data/raw/validation_chips/P094.png,data/raw/validation_chips/P094_dates.png,30.022985,75.947135,no,,
-P095,data/raw/validation_chips/P095.png,data/raw/validation_chips/P095_dates.png,30.556083,75.924329,unsure,,gap
+P095,data/raw/validation_chips/P095.png,data/raw/validation_chips/P095_dates.png,30.556083,75.924329,no,,"gap; Landsat 27 Oct: plain soil, no burn"
 P096,data/raw/validation_chips/P096.png,data/raw/validation_chips/P096_dates.png,30.151044,75.880864,no,,
 P097,data/raw/validation_chips/P097.png,data/raw/validation_chips/P097_dates.png,30.430765,75.798813,unsure,,gap
 P098,data/raw/validation_chips/P098.png,data/raw/validation_chips/P098_dates.png,29.766941,76.035325,yes,,
@@ -117,7 +117,7 @@ P115,data/raw/validation_chips/P115.png,data/raw/validation_chips/P115_dates.png
 P116,data/raw/validation_chips/P116.png,data/raw/validation_chips/P116_dates.png,30.556485,75.717471,no,,
 P117,data/raw/validation_chips/P117.png,data/raw/validation_chips/P117_dates.png,30.572032,75.988716,no,,
 P118,data/raw/validation_chips/P118.png,data/raw/validation_chips/P118_dates.png,30.212615,75.696053,no,,
-P119,data/raw/validation_chips/P119.png,data/raw/validation_chips/P119_dates.png,29.804692,75.854427,unsure,,gap
+P119,data/raw/validation_chips/P119.png,data/raw/validation_chips/P119_dates.png,29.804692,75.854427,no,,"gap; Landsat 27 Oct: plain soil, no burn"
 P120,data/raw/validation_chips/P120.png,data/raw/validation_chips/P120_dates.png,30.178118,75.795729,no,,
 P121,data/raw/validation_chips/P121.png,data/raw/validation_chips/P121_dates.png,30.191888,75.816407,yes,,
 P122,data/raw/validation_chips/P122.png,data/raw/validation_chips/P122_dates.png,29.835046,76.072667,yes,,
@@ -216,7 +216,7 @@ P214,data/raw/validation_chips/P214.png,data/raw/validation_chips/P214_dates.png
 P215,data/raw/validation_chips/P215.png,data/raw/validation_chips/P215_dates.png,30.246499,75.960289,yes,,
 P216,data/raw/validation_chips/P216.png,data/raw/validation_chips/P216_dates.png,30.083192,75.664638,unsure,,gap
 P217,data/raw/validation_chips/P217.png,data/raw/validation_chips/P217_dates.png,30.296105,75.803127,yes,,
-P218,data/raw/validation_chips/P218.png,data/raw/validation_chips/P218_dates.png,30.277813,75.783848,unsure,,gap
+P218,data/raw/validation_chips/P218.png,data/raw/validation_chips/P218_dates.png,30.277813,75.783848,yes,,"gap; Landsat 27 Oct: dark, burnt"
 P219,data/raw/validation_chips/P219.png,data/raw/validation_chips/P219_dates.png,30.308049,76.139139,no,,
 P220,data/raw/validation_chips/P220.png,data/raw/validation_chips/P220_dates.png,30.547521,75.770159,unsure,,gap
 P221,data/raw/validation_chips/P221.png,data/raw/validation_chips/P221_dates.png,30.158573,76.03607,no,,

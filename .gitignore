@@ -8,6 +8,8 @@ data/raw/*
 *.tif
 # ... except the final burn map, which the QGIS project needs (about 5 MB)
 !data/processed/s2_burn_classes_sangrur_2025.tif
+# ... and Notebook 03's map of where the Random Forest and the rule agree (about 2 MB)
+!data/processed/ml_burn_agreement_sangrur_2025.tif
 *.tiff
 *.nc
 *.zip

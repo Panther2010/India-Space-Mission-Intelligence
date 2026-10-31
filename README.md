@@ -51,7 +51,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03–04 planned |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 planned |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
@@ -141,6 +141,7 @@ These come from the project brief:
 - Optical imagery misses burns under cloud or smoke, and burn scars can vanish once fields are tilled, sometimes within two to three days.
 - Small or partial burns, such as straw burnt in small heaps or only the loose straw burnt, may never show as burnt at 20 m, and small, brief fires are rarely caught by fire counts either. Burnt area is a field-scale lower bound, not the amount of straw burnt.
 - Late in the season, damp soil under a young crop can look like a burn. Burns first seen from 19 Nov are therefore mapped as unconfirmed and kept out of the headline figures.
+- Validation points sit at the centres of uniform 3 × 3 blocks (60 m across), so accuracy at field edges and in small burnt patches hasn't been measured, for the burn rule or the Random Forest. That is where the two disagree most.
 - Reference labels come from interpreting imagery, not from field visits. Every point was read twice, the second time by an AI assistant, and doubtful points are reported both ways.
 - Health impacts are context only; this project does not measure them.
 

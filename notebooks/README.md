@@ -1,13 +1,13 @@
 # Notebooks
 
-Run them in order. Each notebook writes to `data/processed/` and `maps/`, and logs every dataset it uses in `sources/source_register.csv`.
+Run them in order. Each notebook writes to `data/processed/` and `maps/`, and logs every dataset it downloads in `sources/source_register.csv`.
 
 | Notebook | Question | Status | Key or login needed |
 |---|---|---|---|
 | `01_fire_counts.ipynb` | How many VIIRS fire detections per season, where, and at what time of day? Which district should we study? | Run on 22 Oct 2026 | `FIRMS_MAP_KEY` |
 | `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Whole district run on 26 Oct 2026; validation labels completed and the burn rule checked against them on 30 Oct 2026 | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
 | `02b_landsat_views.ipynb` | Do Landsat 8 and 9 (HLS) add clear views where Sentinel-2 had none, so `unsure` validation points can be settled? | Run 31 Oct 2026: 3 of the 26 `gap` points relabelled; also draws a Sentinel-2 and Landsat timeline for each `gap` point | NASA Earthdata token (`EARTHDATA_TOKEN`) |
-| `03_ml_burn_classifier.ipynb` | Does a Random Forest beat the rule-based burn map? | Week 3 | none |
+| `03_ml_burn_classifier.ipynb` | Does a Random Forest beat the rule-based burn map? | Run 31 Oct 2026: the forest ties the rule at the labelled points (F1 0.92 each) but maps less burnt area, so the rule stays. Takes about 5 minutes and downloads nothing | none |
 | `04_fire_forecast.ipynb` | When will the season peak, and how high? | Week 3 | `FIRMS_MAP_KEY` |
 
 Where keys go: on your computer, in a `.env` file in the project folder (one `NAME=value` line each; git ignores the file). In Colab, in Secrets (key icon in the left sidebar).

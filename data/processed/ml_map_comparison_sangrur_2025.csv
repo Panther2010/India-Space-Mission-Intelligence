@@ -1,0 +1,15 @@
+measure,value
+"burnt in the rule map, every burn (ha)",71614.68000000001
+"burnt in the rule map, as reported (ha)",63420.72
+burnt in the forest map (ha),55652.92
+burnt in both (ha),49106.32
+burnt in the rule map only (ha),22508.36
+burnt in the forest map only (ha),6546.6
+burnt area from the labels alone (ha),68323.0868896321
+"burnt area from the labels, 95% CI low (ha)",57427.61504428285
+"burnt area from the labels, 95% CI high (ha)",79218.55873498136
+share of rule-only pixels on a patch edge,0.906957237222081
+share of pixels burnt in both on a patch edge,0.7075276664999536
+share of rule-only pixels in patches under 1 ha,0.3814458272393013
+share of pixels burnt in both in patches under 1 ha,0.1911713196997861
+share of the rule's unconfirmed late burns the forest calls burnt,0.4209979057744973

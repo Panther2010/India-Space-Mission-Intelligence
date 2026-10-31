@@ -1,0 +1,29 @@
+kind,name,features,f1_drop_mean,f1_drop_sd
+group,how dark the field turned after harvest,"min_nbr, max_mirbi, min_nir, min_red, min_swir2, nbr_drop, dark_red, dark_nir, dark_swir1, dark_swir2, dark_ndvi, dark_nbr, dark_mirbi",0.4534812962261238,0.04915234822104966
+group,after the darkest view,"ndvi_after_dark, nir_rise_after_dark, max_ndvi_after_harvest, last_ndvi",0.003136120584396447,0.010663010041525034
+group,the crop before harvest,"peak_ndvi, pre_harvest_nbr",0.0,0.0
+group,timing,"harvest_day, dark_day, days_harvest_to_dark",0.0,0.0
+group,number of clear views after harvest,views_after_harvest,0.0,0.0
+feature,dark_swir2,dark_swir2,0.02150806281840766,0.016595590290944005
+feature,dark_swir1,dark_swir1,0.010291412291412293,0.011040422884752613
+feature,dark_nir,dark_nir,0.009424832638625766,0.032477163870417644
+feature,dark_ndvi,dark_ndvi,0.004809902740937212,0.01681289039706725
+feature,ndvi_after_dark,ndvi_after_dark,0.0002352462352462336,0.002563312215473654
+feature,peak_ndvi,peak_ndvi,0.0,0.0
+feature,harvest_day,harvest_day,0.0,0.0
+feature,pre_harvest_nbr,pre_harvest_nbr,0.0,0.0
+feature,views_after_harvest,views_after_harvest,0.0,0.0
+feature,min_nbr,min_nbr,0.0,0.0
+feature,max_mirbi,max_mirbi,0.0,0.0
+feature,min_red,min_red,0.0,0.0
+feature,min_swir2,min_swir2,0.0,0.0
+feature,nbr_drop,nbr_drop,0.0,0.0
+feature,dark_red,dark_red,0.0,0.0
+feature,dark_nbr,dark_nbr,0.0,0.0
+feature,dark_mirbi,dark_mirbi,0.0,0.0
+feature,dark_day,dark_day,0.0,0.0
+feature,days_harvest_to_dark,days_harvest_to_dark,0.0,0.0
+feature,max_ndvi_after_harvest,max_ndvi_after_harvest,0.0,0.0
+feature,last_ndvi,last_ndvi,0.0,0.0
+feature,nir_rise_after_dark,nir_rise_after_dark,-0.003935272900790143,0.008771369040617554
+feature,min_nir,min_nir,-0.005195009332940357,0.018425057181661205

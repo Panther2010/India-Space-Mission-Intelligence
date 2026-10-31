@@ -52,7 +52,7 @@ flowchart LR
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
 | 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03–04 planned |
-| 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
+| 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
 | 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); the rest planned |

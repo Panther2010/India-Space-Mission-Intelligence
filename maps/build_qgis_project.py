@@ -536,7 +536,7 @@ def build():
             [district, labels, background],
             [(labels, None), (district, 'District boundary')],
             f'Labels: {counts["yes"]} burnt, {counts["no"]} not burnt, {counts["unsure"]} unsure. Each point was read '
-            'twice, the second time by an AI assistant.', legend_columns=2)))
+            'twice, by the author and by an AI assistant.', legend_columns=2)))
 
     for stem, layout in layouts:
         exporter = QgsLayoutExporter(layout)

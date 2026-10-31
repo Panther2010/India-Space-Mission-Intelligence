@@ -81,10 +81,28 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - VIIRS within 750 m or MODIS within 1 km (any satellite)
 - **Why "nearby" needs care:** a detection marks the centre of a 375 m pixel, and the real footprint grows away from the satellite track. The generous rules make the missed share conservative.
 
-## 7. ML burn classifier (Notebook 03, *planned*)
-- **Model:** Random Forest on Sentinel-2 bands, indices and index changes.
-- **Training data:** the Week 2 labels.
-- **Comparison:** scored against the rule on the same held-out points.
+## 7. ML burn classifier (Notebook 03; run 31 Oct 2026)
+- **Question:** does a classifier trained on the validation labels map burnt fields better than the three-threshold rule? Walker et al. (2022) trained a Random Forest on PlanetScope and Sentinel-2 data against ground records of burning in Punjab and reached 82% overall accuracy. Here the question is narrower: does a forest add anything to a rule that already scores well against the same image-interpreted labels? Checkpoint 3 also left an NDVI ceiling on the burn test untried; the forest sees NDVI at and after the darkest view, so it can learn one if it helps.
+- **Features:** 23 numbers per harvested pixel from the 18 five-day composites, with the rule's own harvest test (green to NDVI 0.6, then below 0.35):
+  - the crop before harvest: green-peak NDVI, NBR just before harvest
+  - how dark the field turned after harvest: the lowest NBR, NIR, red and SWIR 2 and highest MIRBI, the NBR drop, and every band and index of the darkest view (lowest NIR)
+  - timing: harvest date, date of the darkest view, days between them
+  - after the darkest view: NDVI and the rise in NIR at the next view, highest NDVI after harvest, the season's last NDVI
+  - the number of clear views after harvest
+
+  Pixels never harvested get no features, and both methods call them not burnt. The notebook's harvest test matches Notebook 02's at every pixel of the district.
+- **Model:** a Random Forest (Breiman 2001) of 500 trees, at least 2 training points per leaf, classes weighted to balance, a burn called at a probability of 0.5, and a fixed seed. It learns from the 147 labelled, harvested points (69 burnt); `unsure` points are left out. Two variants tried while the notebook was being built did no better and were dropped: a probability threshold tuned within cross-validation, and the 19 Nov cut-off applied to the date of the forest's darkest view.
+- **Scoring:** as for the rule in section 5. Half A trains and half B tests; then 5-fold cross-validation on all labelled points, repeated 10 times with different splits, so every point is predicted by forests that never saw it. Both methods get precision, recall, F1 and the area-weighted accuracy of Stehman (2014), and an exact McNemar test (McNemar 1947) asks whether the points only one method gets right split unevenly. The rule's thresholds were set before any label existed, so it is scored on all labelled points as it stands; the map as reported adds one choice made after looking at the labels, the 19 Nov cut-off.
+- **Results (31 Oct 2026):**
+  - Half B: the forest scored F1 0.86 (overall accuracy 0.92), against 0.91 (0.94) for the map as reported. The rule alone was right on 5 points, the forest alone on 2 (McNemar p = 0.45).
+  - All 187 labelled points, cross-validated: forest F1 0.92 (0.88–0.94 across the 10 runs) and overall accuracy 0.95 (0.94–0.96), against F1 0.92 and 0.96 for the map as reported and 0.91 and 0.95 for every burn. McNemar p ranged from 0.39 to 1.00 across runs. The two tie.
+  - More labels of the same kind are unlikely to change this: on the same held-out points, the forest's F1 levels off at about 0.92 from 40 training points, level with the rule's.
+  - What the forest relies on: how dark the field turned after harvest, the signal the rule tests. Shuffling that group of features cuts its F1 on held-out points by 0.45; shuffling any other group changes it by less than 0.01. Shuffling NDVI at the darkest view alone, or the whole group of what followed it, cuts F1 by only 0.005 and 0.003, so an NDVI ceiling on the rule looks unlikely to help. At the darkest view, the rule's NIR limit alone is right on 133 of the 147 labelled, harvested points, against 92 for its NBR limit alone and 74 for its MIRBI limit alone.
+  - On the 53 `unsure` points, the rule (every burn) calls 22 burnt and the forest 18; they agree on 45. These calls are not labels.
+  - Across the district, the forest maps 55,700 ha burnt, against 71,600 ha for the rule's every burn (63,400 ha as reported) and 68,300 ha (95% CI 57,400–79,200 ha) from the labels alone. 49,100 ha are burnt in both maps, 22,500 ha in the rule's only and 6,500 ha in the forest's only.
+  - Of the pixels burnt in the rule's map only, 91% lie on the edge of a burnt patch and 38% in patches under 1 ha, against 71% and 19% of the pixels burnt in both. The forest calls 42% of the rule's unconfirmed late burns burnt.
+- **Decision:** the rule's map stays (decision log, 31 Oct). The forest adds no accuracy at the labelled points, needs labels to train, and is harder to explain or to carry to another season. Its area falls below the labels' interval, although the labels too come from block centres, so they say little about edges. The agreement map (`ml_burn_agreement_sangrur_2025.tif`) is kept as a cross-check of where the two methods agree and where they differ.
+- **Limits:** the labelled points are centres of uniform 3 × 3 blocks, so neither method has been checked at field edges or in small patches, which is where most of the disagreement lies. The forest learns from the same image-interpreted labels it is scored on. One season and one district.
 
 ## 8. Fire-activity forecast (Notebook 04, *planned*)
 - **Target:** weekly Suomi NPP detections.
@@ -97,10 +115,13 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 See the README's running list. Every output states its own limits.
 
 ## References
+- Breiman, L. (2001). Random forests. *Machine Learning* 45, 5–32. https://doi.org/10.1023/A:1010933404324
+- McNemar, Q. (1947). Note on the sampling error of the difference between correlated proportions or percentages. *Psychometrika* 12, 153–157. https://doi.org/10.1007/BF02295996
 - Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E. and Wulder, M. A. (2014). Good practices for estimating area and assessing accuracy of land change. *Remote Sensing of Environment* 148, 42–57. https://doi.org/10.1016/j.rse.2014.02.015
 - Rajpurohit, S. (2022). Punjab's farmers are burning less stubble. Thanks to super seeders. *Newslaundry*, 14 November 2022. https://www.newslaundry.com/2022/11/14/punjabs-farmers-are-only-partially-burning-stubble-thanks-to-super-seeders
 - Schroeder, W., Oliva, P., Giglio, L. and Csiszar, I. A. (2014). The new VIIRS 375 m active fire detection data product: algorithm description and initial assessment. *Remote Sensing of Environment* 143, 85–96. https://doi.org/10.1016/j.rse.2013.12.008
 - Stehman, S. V. (2014). Estimating area and map accuracy for stratified random sampling when the strata are different from the map classes. *International Journal of Remote Sensing* 35, 4923–4939. https://doi.org/10.1080/01431161.2014.930207
+- Walker, K., Moscona, B., Jack, K., Jayachandran, S., Kala, N., Pande, R., Xue, J. and Burke, M. (2022). Detecting crop burning in India using satellite data. arXiv:2209.10148 (preprint). https://arxiv.org/abs/2209.10148
 
 ## 10. Reproducibility
 - Run the notebooks in order: 01, 02, 03, 04.

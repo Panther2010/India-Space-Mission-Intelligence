@@ -1,6 +1,6 @@
 # Processed data
 
-Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
+Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs, and Notebook 03's agreement map. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
 
 | File | Written by | Contents |
 |---|---|---|
@@ -24,6 +24,12 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `burn_rule_calibration_grid_sangrur_2025.csv` | Notebook 02 | F1 on half A for every combination of thresholds tried |
 | `hls_l30_scenes_sangrur_2025.csv` | Notebook 02b | Landsat (HLSL30) scenes over the validation points: tile, date, cloud cover, whether read, points inside |
 | `validation_landsat_views_sangrur_2025.csv` | Notebook 02b | For each point read: its Landsat strip, and its clear, hazy and cloudy Landsat dates. It lists dates and notes, not the map's class, so it is safe to open while relabelling. |
+| `ml_point_features_sangrur_2025.csv` | Notebook 03 | The 240 validation points: label, the rule's calls (map as reported and every burn), the forest's out-of-sample probability of a burn, the half-A forest's call on half B, and the 23 season features |
+| `ml_accuracy_sangrur_2025.csv` | Notebook 03 | Precision, recall, F1 and area-weighted accuracy of the rule and the Random Forest: on half B, and on all labelled points (the forest cross-validated: mean, lowest and highest of 10 runs) |
+| `ml_learning_curve_sangrur_2025.csv` | Notebook 03 | The forest's F1 on held-out points by number of training points, with the rule's F1 on the same points |
+| `ml_feature_importance_sangrur_2025.csv` | Notebook 03 | Drop in the forest's F1 when each feature, or each group of related features, is shuffled |
+| `ml_map_comparison_sangrur_2025.csv` | Notebook 03 | The forest's and the rule's maps compared: hectares burnt in each, in both and in one only; the labels' estimate; shares of disagreeing pixels on patch edges and in patches under 1 ha |
+| `ml_burn_agreement_sangrur_2025.tif` | Notebook 03 | 20 m GeoTIFF on the class map's grid: 1 not a harvested crop, 2 harvested and burnt in neither map, 3 burnt in both, 4 burnt in the rule's map only, 5 burnt in the forest's map only (0 = outside the district). Committed. |
 | `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
 | `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 

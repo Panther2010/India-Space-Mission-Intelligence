@@ -13,9 +13,10 @@ rioxarray
 xarray
 scipy
 
-# Satellite data access (Notebook 02)
+# Satellite data access (Notebooks 02 and 02b)
 openeo
 netCDF4       # reads the single-date label strips openEO returns as netCDF
+earthaccess   # NASA Earthdata login and search, for the Landsat (HLS) views in Notebook 02b
 
 # Modelling (Notebooks 03 and 04)
 scikit-learn

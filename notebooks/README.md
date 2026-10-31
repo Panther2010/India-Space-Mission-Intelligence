@@ -6,6 +6,7 @@ Run them in order. Each notebook writes to `data/processed/` and `maps/`, and lo
 |---|---|---|---|
 | `01_fire_counts.ipynb` | How many VIIRS fire detections per season, where, and at what time of day? Which district should we study? | Run on 22 Oct 2026 | `FIRMS_MAP_KEY` |
 | `02_eo_analysis_burnt_area.ipynb` | How much area burned in Sangrur in 2025, when, and what share did fire counts miss? | Whole district run on 26 Oct 2026; validation labels completed and the burn rule checked against them on 30 Oct 2026 | Copernicus Data Space login (openEO) and `FIRMS_MAP_KEY` |
+| `02b_landsat_views.ipynb` | Do Landsat 8 and 9 (HLS) add clear views where Sentinel-2 had none, so `unsure` validation points can be settled? | Built 31 Oct 2026; first run next, then relabelling | NASA Earthdata token (`EARTHDATA_TOKEN`) |
 | `03_ml_burn_classifier.ipynb` | Does a Random Forest beat the rule-based burn map? | Week 3 | none |
 | `04_fire_forecast.ipynb` | When will the season peak, and how high? | Week 3 | `FIRMS_MAP_KEY` |
 

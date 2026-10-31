@@ -18,7 +18,7 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 | **Users** | Lead: buyers of paddy straw for energy, such as the compressed-biogas plant at Lehragaga in Sangrur, deciding where and when to collect straw. Second dashboard tab: the state agriculture department, deciding where to send residue-management machinery and where burning went undetected. |
 | **Area and period** | Sangrur district, Punjab (pre-2021 boundary, including Malerkotla). Main season: 15 Sep–30 Nov 2025. Comparison: 2021. The 2026 season serves as a live demo. |
 | **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS and MODIS active fires (NASA FIRMS), and Landsat 8/9 surface reflectance (NASA HLS, through Earthdata) to settle doubtful validation points. Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
-| **Methods** | Multi-date burn indices (NBR, MIRBI, NDVI), accuracy assessment against reference points, a Random Forest classifier, and a fire-activity forecast (SARIMA vs a seasonal baseline) |
+| **Methods** | Multi-date burn indices (NBR, MIRBI, NDVI), accuracy assessment against reference points, a Random Forest classifier, and a fire-activity forecast (SARIMA, a seasonal baseline and rescaled past seasons, backtested on ten seasons) |
 | **Outputs** | Burnt-area maps, the share of burning the fire counts missed, a Streamlit dashboard, an 8–12 page report and a product one-pager |
 
 ## Why this matters
@@ -51,7 +51,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 planned |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 built (1 Nov 2026): its first run makes and saves the 2026 forecast |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |

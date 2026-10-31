@@ -3,6 +3,7 @@
 - `notebook01/`: charts and district maps written by Notebook 01.
 - `notebook02/`: study area, pilot and cloud-mask checks, burnt-area map, timeline, missed share and burn-rule diagnostic, written by Notebook 02. These are working charts; the export-ready maps come from QGIS.
 - `notebook03/`: learning curve, feature importance, the labelled points at their darkest view after harvest, and where the Random Forest's map and the rule's agree, written by Notebook 03.
+- `notebook04/`: weekly detections since 2012, the forecast backtests for 2024 and 2025, the 2026 forecast and, as weeks end, the forecast against what happened, written by Notebook 04.
 - `burnt_area.qgz`: the QGIS project. Its paths are relative, so it opens from any copy of the repository. It is saved with QGIS 3.44, so it opens in QGIS 3.44 and in 4.x: QGIS 3 refuses projects saved by QGIS 4. The layer panel has one group per map, with only the burnt-area map ticked; each print layout keeps its own set of layers.
 - `qgis/`: the export-ready maps, A4 portrait, as 300 dpi PNG and as PDF. Each has a legend, a scale bar, a north arrow, an inset of Punjab, its coordinate reference system, data credits and a one-line method note.
   - `01_burnt_area_2025`: burnt area, split by whether a VIIRS detection fell within 375 m, with the unconfirmed late burns

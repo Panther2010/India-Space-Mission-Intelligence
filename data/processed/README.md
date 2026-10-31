@@ -30,6 +30,11 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `ml_feature_importance_sangrur_2025.csv` | Notebook 03 | Drop in the forest's F1 when each feature, or each group of related features, is shuffled |
 | `ml_map_comparison_sangrur_2025.csv` | Notebook 03 | The forest's and the rule's maps compared: hectares burnt in each, in both and in one only; the labels' estimate; shares of disagreeing pixels on patch edges and in patches under 1 ha |
 | `ml_burn_agreement_sangrur_2025.tif` | Notebook 03 | 20 m GeoTIFF on the class map's grid: 1 not a harvested crop, 2 harvested and burnt in neither map, 3 burnt in both, 4 burnt in the rule's map only, 5 burnt in the forest's map only (0 = outside the district). Committed. |
+| `fire_weekly_counts.csv` | Notebook 04 | Suomi NPP and NOAA-20 detections per week (15 Sep to 30 Nov) in Punjab and Sangrur, 2012–2026, with whether each 2026 week is complete |
+| `fire_forecast_backtests.csv` | Notebook 04 | Each method's forecast of the rest of every season 2016–2025, from the same week as the 2026 forecast, against what happened |
+| `fire_forecast_2026.csv` | Notebook 04 | The 2026 forecast week by week, as issued. Written once and never overwritten |
+| `fire_forecast_2026_summary.csv` | Notebook 04 | The 2026 forecast in brief, as issued: rest-of-season total and its 80% range, busiest week, the headline method and its typical backtest error |
+| `fire_forecast_check_2026.csv` | Notebook 04 | The forecast against the weeks that have ended: Suomi NPP to 2 Nov, then NOAA-20 converted. Refreshed at each run |
 | `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
 | `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 

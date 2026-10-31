@@ -8,7 +8,7 @@
 4. **Data.** The missions used and why (from dataset B), plus the source register.
 5. **Method.** Fire counts, burnt-area mapping, validation, the ML classifier and the forecast.
 6. **Findings.** Burnt area, the missed share, timing, trends and the forecast against actuals.
-7. **Mission trade-off.** Sentinel-2, HLS, VIIRS, Sentinel-1 and Resourcesat AWiFS compared on the brief's six factors.
+7. **Mission trade-off.** Sentinel-2, HLS, VIIRS, Sentinel-1, Resourcesat AWiFS and PlanetScope compared on the brief's six factors. Drafted in `mission_tradeoff.md` (31 Oct 2026).
 8. **Limitations.** What the analysis cannot conclude.
 9. **Product concept.** The MVP, risks, dependencies and validation needs.
 10. **Next steps.** The next experiment.

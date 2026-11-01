@@ -104,7 +104,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Decision:** the rule's map stays (decision log, 31 Oct). The forest adds no accuracy at the labelled points, needs labels to train, and is harder to explain or to carry to another season. Its area falls below the labels' interval, although the labels too come from block centres, so they say little about edges. The agreement map (`ml_burn_agreement_sangrur_2025.tif`) is kept as a cross-check of where the two methods agree and where they differ.
 - **Limits:** the labelled points are centres of uniform 3 × 3 blocks, so neither method has been checked at field edges or in small patches, which is where most of the disagreement lies. The forest learns from the same image-interpreted labels it is scored on. One season and one district.
 
-## 8. Fire-activity forecast (Notebook 04; built 1 Nov 2026)
+## 8. Fire-activity forecast (Notebook 04; forecast issued 1 Nov 2026)
 - **Question:** from the 2026 season so far, how many more Suomi NPP fire detections will Punjab and Sangrur (pre-2021 boundary) have by 30 Nov, and which week will be busiest? It forecasts detections, not burnt area.
 - **Data:** Suomi NPP detections counted by IST week, 11 whole weeks from 15 Sep to 30 Nov. Seasons 2012–2025 come from Notebook 01's standard-processing archive. The 2026 season is downloaded in near real time when the notebook runs, and cleaned by Notebook 01's rules.
 - **When:** the forecast starts after the last whole week of Suomi NPP data. Run on 1 or 2 Nov, that is week 6 (20–26 Oct); from 3 Nov, week 7 (27 Oct–2 Nov), the last week Suomi NPP covers.
@@ -118,7 +118,11 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - Past seasons rescaled had a typical error factor of 1.5 for Punjab over 2016–2025. It found the busiest week in 7 of the 10 seasons, and was within a week in 9.
 - **Made once:** the first run saves the forecast with its date, and later runs load it rather than forecast again. It is committed straight away, so the commit date shows it came before the outcome.
 - **The check:** weeks to 2 Nov are checked against Suomi NPP. From 3 Nov, Suomi NPP has stopped, so the actual counts are NOAA-20's multiplied by the ratio of the two sensors over the 2026 weeks both covered. Early 2026 data already ran below the 2020–2025 seasons' range of 0.87–1.01 (0.83 over weeks 1–5 in Notebook 01's download), so the same-season ratio is used rather than the 2020–2025 average. The notebook flags any week in which Suomi NPP saw far fewer detections than NOAA-20, a sign of missing data. The score is final after 30 Nov.
-- **Results:** after the first run.
+- **The forecast, issued 1 Nov 2026** from weeks 1–6 (data to 26 Oct). The headline method for both areas is past seasons rescaled. As issued, the forecast is in `data/processed/fire_forecast_2026.csv` and its summary; the git history shows when they were committed.
+  - **Punjab:** 749 Suomi NPP detections to 26 Oct. About 2,700 more are forecast by 30 Nov (80% range 2,200–6,400): about 3,500 for the season, against 4,269 in 2025. The busiest week is most likely week 8 (3–9 Nov), in 10 of the 14 scenarios, with about 1,200 detections.
+  - **Sangrur:** only 3 detections to 26 Oct, against 50 over the same weeks of 2025. About 44 more are forecast (range 23–65), about 47 for the season against 481 in 2025, with week 8 the most likely busiest week.
+  - **A fragile number:** the Sangrur forecast rests on 3 detections, fewer than in any backtest season, so its range is probably too narrow. In the five days to 31 Oct, already in the data when the forecast was made but after its cut-off, Suomi NPP saw 18 detections in Sangrur, more than the 14 forecast for the whole of week 7. The other two methods forecast about 400–430 more. The forecast stands as issued (decision log, 1 Nov).
+- **Results of the check:** after 30 Nov.
 - **Limits:** detections, not burnt area, and only fires burning at an overpass. 2026 counts are near-real-time data, while the archive the methods learn from is standard processing. Ten backtests give only a rough 80% range. Sangrur's weekly counts are small, so its forecast is noisier than Punjab's.
 
 ## 9. Limitations

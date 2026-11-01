@@ -22,3 +22,5 @@ Notebook 02 runs in steps, because its openEO jobs use Copernicus credits:
 4. Another season, for Notebook 02c: set `SEASON_YEAR = 2021` and repeat steps 1 and 2. There is no labelling step, because validation is for 2025 only. Then close the notebook without saving, so it stays set to 2025.
 
 Its downloads go to `data/raw/sentinel2/`, which git ignores (another season's to `data/raw/sentinel2/sangrur_2021/`). The whole-district run on 26 Oct 2026 downloaded about 1 GB and used 8 credits (the pilot had projected 1.8 GB and 135); it is best done on a computer rather than in Colab. A 2021 run should cost about the same, and its pilot projects the cost before the district job starts.
+
+If a download breaks off (a dropped connection), run the cell again. It resumes the same openEO job without starting a new one, keeps the files already complete and fetches the rest. A file that breaks off is tried again up to five times before the cell stops.

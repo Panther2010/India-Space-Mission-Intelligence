@@ -104,18 +104,29 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Decision:** the rule's map stays (decision log, 31 Oct). The forest adds no accuracy at the labelled points, needs labels to train, and is harder to explain or to carry to another season. Its area falls below the labels' interval, although the labels too come from block centres, so they say little about edges. The agreement map (`ml_burn_agreement_sangrur_2025.tif`) is kept as a cross-check of where the two methods agree and where they differ.
 - **Limits:** the labelled points are centres of uniform 3 × 3 blocks, so neither method has been checked at field edges or in small patches, which is where most of the disagreement lies. The forest learns from the same image-interpreted labels it is scored on. One season and one district.
 
-## 8. Fire-activity forecast (Notebook 04, *planned*)
-- **Target:** weekly Suomi NPP detections.
-- **Models:** a seasonal-naive baseline against SARIMA on log counts.
-- **Backtests:** the 2024 and 2025 seasons.
-- **2026 comparison:** the forecast is compared with NOAA-20 actuals after Suomi NPP stops on 2 Nov, using the ratio from Notebook 01.
-- **Caveat:** this forecasts detections, not burnt area.
+## 8. Fire-activity forecast (Notebook 04; built 1 Nov 2026)
+- **Question:** from the 2026 season so far, how many more Suomi NPP fire detections will Punjab and Sangrur (pre-2021 boundary) have by 30 Nov, and which week will be busiest? It forecasts detections, not burnt area.
+- **Data:** Suomi NPP detections counted by IST week, 11 whole weeks from 15 Sep to 30 Nov. Seasons 2012–2025 come from Notebook 01's standard-processing archive. The 2026 season is downloaded in near real time when the notebook runs, and cleaned by Notebook 01's rules.
+- **When:** the forecast starts after the last whole week of Suomi NPP data. Run on 1 or 2 Nov, that is week 6 (20–26 Oct); from 3 Nov, week 7 (27 Oct–2 Nov), the last week Suomi NPP covers.
+- **Methods:**
+  - *last season* (the seasonal-naive baseline): each remaining week as in the same week of the previous season (Hyndman and Athanasopoulos 2021).
+  - *SARIMA*: a seasonal ARIMA (1,0,0)(0,1,1) model with an 11-week period, fitted to log(1 + weekly count) with the seasons laid end to end; 1,000 simulated paths.
+  - *past seasons rescaled*: each season since 2012 keeps its own week-by-week shape, scaled to the 2026 detections so far relative to its own over the same weeks; the median of these 14 scenarios is the forecast.
+- **Backtests:** each method forecasts every season from 2016 to 2025 from the same week, using only earlier seasons. The score is a *typical error factor* for the rest-of-season total: the geometric mean of the ratio between forecast and outcome, taken as at least 1, so 1.5 means typically 1.5 times too high or too low. The headline method has the smallest typical error over 2021–2025, the years detections fell fastest. Its errors over all ten seasons give an 80% range for the 2026 total.
+- **What the backtests show** (forecasts from week 6, on Notebook 01's archive):
+  - In 2024 and 2025 SARIMA and last season forecast 2 to 6 times too many detections for Punjab; past seasons rescaled was within 0.7 to 1.1 times. Three other SARIMA orders tried while building the notebook overshot as well.
+  - Past seasons rescaled had a typical error factor of 1.5 for Punjab over 2016–2025. It found the busiest week in 7 of the 10 seasons, and was within a week in 9.
+- **Made once:** the first run saves the forecast with its date, and later runs load it rather than forecast again. It is committed straight away, so the commit date shows it came before the outcome.
+- **The check:** weeks to 2 Nov are checked against Suomi NPP. From 3 Nov, Suomi NPP has stopped, so the actual counts are NOAA-20's multiplied by the ratio of the two sensors over the 2026 weeks both covered. Early 2026 data already ran below the 2020–2025 seasons' range of 0.87–1.01 (0.83 over weeks 1–5 in Notebook 01's download), so the same-season ratio is used rather than the 2020–2025 average. The notebook flags any week in which Suomi NPP saw far fewer detections than NOAA-20, a sign of missing data. The score is final after 30 Nov.
+- **Results:** after the first run.
+- **Limits:** detections, not burnt area, and only fires burning at an overpass. 2026 counts are near-real-time data, while the archive the methods learn from is standard processing. Ten backtests give only a rough 80% range. Sangrur's weekly counts are small, so its forecast is noisier than Punjab's.
 
 ## 9. Limitations
 See the README's running list. Every output states its own limits.
 
 ## References
 - Breiman, L. (2001). Random forests. *Machine Learning* 45, 5–32. https://doi.org/10.1023/A:1010933404324
+- Hyndman, R. J. and Athanasopoulos, G. (2021). *Forecasting: principles and practice*, 3rd edition. OTexts. https://otexts.com/fpp3/
 - McNemar, Q. (1947). Note on the sampling error of the difference between correlated proportions or percentages. *Psychometrika* 12, 153–157. https://doi.org/10.1007/BF02295996
 - Olofsson, P., Foody, G. M., Herold, M., Stehman, S. V., Woodcock, C. E. and Wulder, M. A. (2014). Good practices for estimating area and assessing accuracy of land change. *Remote Sensing of Environment* 148, 42–57. https://doi.org/10.1016/j.rse.2014.02.015
 - Rajpurohit, S. (2022). Punjab's farmers are burning less stubble. Thanks to super seeders. *Newslaundry*, 14 November 2022. https://www.newslaundry.com/2022/11/14/punjabs-farmers-are-only-partially-burning-stubble-thanks-to-super-seeders

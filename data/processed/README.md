@@ -1,6 +1,6 @@
 # Processed data
 
-Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs, and Notebook 03's agreement map. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
+Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs, Notebook 03's agreement map and the 2021 burn map, which Notebook 02c needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
 
 | File | Written by | Contents |
 |---|---|---|
@@ -35,7 +35,11 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `fire_forecast_2026.csv` | Notebook 04 | The 2026 forecast week by week, as issued. Written once and never overwritten |
 | `fire_forecast_2026_summary.csv` | Notebook 04 | The 2026 forecast in brief, as issued: rest-of-season total and its 80% range, busiest week, the headline method and its typical backtest error |
 | `fire_forecast_check_2026.csv` | Notebook 04 | The forecast against the weeks that have ended: Suomi NPP to 2 Nov, then NOAA-20 converted. Refreshed at each run |
+| `season_comparison_sangrur.csv` | Notebook 02c | 2021 and 2025 side by side, with the change: harvested and burnt area, burn timing, clear views, detections, and the missed share as Notebook 02 reported it and on the same two satellites (Suomi NPP and NOAA-20) |
+| `season_comparison_by_window_sangrur.csv` | Notebook 02c | Harvested and burnt hectares, Suomi NPP detections inside the district and clear share, by 5-day window, for both seasons |
 | `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
 | `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 
 `<area>` is `pilot` (a 10 km box) or `sangrur` (the whole district, pre-2021 boundary).
+
+Notebook 02 run with `SEASON_YEAR = 2021` writes the same burn-map, detection and cloud-mask files with `2021` in place of `2025` (for example `s2_burn_summary_sangrur_2021.csv`). It writes no validation files, because the labels belong to 2025.

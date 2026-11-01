@@ -10,6 +10,8 @@ data/raw/*
 !data/processed/s2_burn_classes_sangrur_2025.tif
 # ... and Notebook 03's map of where the Random Forest and the rule agree (about 2 MB)
 !data/processed/ml_burn_agreement_sangrur_2025.tif
+# ... and the 2021 burn map, which Notebook 02c compares with 2025's
+!data/processed/s2_burn_classes_sangrur_2021.tif
 *.tiff
 *.nc
 *.zip

@@ -39,6 +39,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Unconfirmed late burns:** burns first seen in a window from 19 Nov are mapped as a class of their own and kept out of the headline figures (decision log, 30 Oct 2026). Damp soil under a young crop can pass all three burn tests: one field labelled `no` (P016) does so on 22 and 24 Nov. In 2025 these late burns cover about 8,200 ha, against 63,400 ha of confirmed burns.
 - **No land-cover mask:** the green-then-harvested sequence already restricts the analysis to fields harvested during the season. Trees, towns, water and crops still standing in December never meet it.
 - **Cost control:** a 10 km pilot runs first. The whole district runs only if the pilot's cost, scaled up by area, fits the credit budget and the projected download fits on disk. The pilot cost 4 credits for the composites and 4 for the cloud-mask check. It projected about 135 credits and a 1.8 GB download for the whole district; the district job then used 8 credits, took 11 minutes and downloaded about 1 GB.
+- **Other seasons:** setting `SEASON_YEAR` maps another season with the same rule, thresholds, district outline and 5-day windows, starting on the same calendar days. The pilot and cloud-mask check run again, because the scaling of the values can differ between years. That season's downloads, outputs and charts are kept apart from 2025's (`…_sangrur_2021…` files, `maps/notebook02/2021/`). Validation (section 5) is for 2025 only, so another season's map applies the rule without labels of its own. NOAA-21 is skipped before the 2023 season, because it launched in November 2022.
 
 ## 5. Validation (Notebook 02; 240 points labelled and the rule checked, 30 Oct 2026; 3 relabelled from Landsat, 31 Oct)
 - **Sample:** 240 points drawn at random by mapped class: 100 burnt, 100 harvested but not burnt, and 40 from the rest of the district, to catch burns the rule missed entirely. Each point is the centre of a 3 × 3 block of one class.
@@ -80,6 +81,15 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
   - VIIRS within 750 m (lenient)
   - VIIRS within 750 m or MODIS within 1 km (any satellite)
 - **Why "nearby" needs care:** a detection marks the centre of a 375 m pixel, and the real footprint grows away from the satellite track. The generous rules make the missed share conservative.
+- **2021 against 2025 (Notebook 02c; results after the 2021 run):**
+  - **Question:** Suomi NPP detections in Sangrur fell 95% from 2021 to 2025, from 9,076 to 482 (Notebook 01). Did the burnt area fall as much, or do fire counts now miss more of the burning?
+  - **The same satellites:** Notebook 02's missed share uses every VIIRS satellite flying that season: three in 2025, two in 2021. A higher share in 2021 would then partly reflect the missing satellite. So Notebook 02c recomputes the strict share (375 m) for both seasons from Suomi NPP and NOAA-20 only. It first reproduces Notebook 02's 2025 figure from the saved files. In 2025 the strict share is 90.6% with all three satellites and 93.7% with the two.
+  - **Also compared:** harvested and burnt area, the burnt share of the harvest, days from harvest to burn, clear views, detections per 1,000 ha burnt, burning by 5-day window, and a 1 km map of the change in burnt area.
+  - **How often Sentinel-2 looked:** more looks catch more burns before fields are ploughed. Sentinel-2C took over from Sentinel-2A on 21 January 2025 ([Copernicus](https://dataspace.copernicus.eu/node/2039)), and Sentinel-2A stayed on in an extended campaign from 13 March 2025 ([Copernicus](https://dataspace.copernicus.eu/news/2025-2-28-sentinel-2a-extended-campaign-starting-march-13-2025)), so 2025 may have had more looks than 2021. Notebook 02c counts the dates with Sentinel-2 data over the pilot box from 15 Oct to 24 Nov in each season, from Notebook 02's cloud-mask check downloads. More looks in 2025 would make its burnt area look larger against 2021's, so they would understate the fall in burning.
+  - **Limits:**
+    - The 2021 map has no labels of its own, so its accuracy is unknown. Smoke, cloud and soil moisture can differ between seasons and change how well the rule works.
+    - NOAA-20 shifted in its orbit in April 2024 ([CIRA, May 2024](https://rammb2.cira.colostate.edu/visit-blog/2024/05/03/noaa-21-designated-as-the-primary-satellite-of-the-jpss-constellation)), so the spacing between the two satellites' passes was not the same in both seasons.
+    - Fires that start and burn out between overpasses are missed in both seasons. A move to later burning would show here as a higher missed share, without saying why.
 
 ## 7. ML burn classifier (Notebook 03; run 31 Oct 2026)
 - **Question:** does a classifier trained on the validation labels map burnt fields better than the three-threshold rule? Walker et al. (2022) trained a Random Forest on PlanetScope and Sentinel-2 data against ground records of burning in Punjab and reached 82% overall accuracy. Here the question is narrower: does a forest add anything to a rule that already scores well against the same image-interpreted labels? Checkpoint 3 also left an NDVI ceiling on the burn test untried; the forest sees NDVI at and after the darkest view, so it can learn one if it helps.
@@ -139,6 +149,6 @@ See the README's running list. Every output states its own limits.
 - Walker, K., Moscona, B., Jack, K., Jayachandran, S., Kala, N., Pande, R., Xue, J. and Burke, M. (2022). Detecting crop burning in India using satellite data. arXiv:2209.10148 (preprint). https://arxiv.org/abs/2209.10148
 
 ## 10. Reproducibility
-- Run the notebooks in order: 01, 02, 03, 04.
+- Run the notebooks in order: 01, 02, 03, 04. For the 2021 comparison, run 02 again with `SEASON_YEAR = 2021`, then 02c.
 - Downloads are cached in `data/raw/`.
 - Pin package versions (`pip freeze`) before the final submission.

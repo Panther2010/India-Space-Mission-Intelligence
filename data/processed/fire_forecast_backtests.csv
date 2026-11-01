@@ -1,0 +1,61 @@
+area,issue_week,season,method,actual_rest,forecast_rest,actual_peak_week,forecast_peak_week,error_factor,peak_week_right,peak_week_within_1
+Punjab,6,2016,last season,65364.0,51059.0,8,8,1.2801605953779867,True,True
+Punjab,6,2016,SARIMA,65364.0,65518.8,8,8,1.00236823988373,True,True
+Punjab,6,2016,past seasons rescaled,65364.0,79509.3,8,8,1.2164048037940793,True,True
+Punjab,6,2017,last season,41655.0,65364.0,7,8,1.5691617053965816,False,True
+Punjab,6,2017,SARIMA,41655.0,61305.3,7,8,1.471727962358364,False,True
+Punjab,6,2017,past seasons rescaled,41655.0,57471.1,7,8,1.3796835990013443,False,True
+Punjab,6,2018,last season,50507.0,41655.0,8,7,1.2125024006145573,False,True
+Punjab,6,2018,SARIMA,50507.0,53930.6,8,8,1.067783321454027,True,True
+Punjab,6,2018,past seasons rescaled,50507.0,25845.0,8,8,1.9541902035131158,True,True
+Punjab,6,2019,last season,35784.0,50507.0,8,8,1.4114293698477016,True,True
+Punjab,6,2019,SARIMA,35784.0,60458.0,8,8,1.6895067765823668,True,True
+Punjab,6,2019,past seasons rescaled,35784.0,33563.5,8,8,1.0661562067064905,True,True
+Punjab,6,2020,last season,59689.0,35784.0,8,8,1.6680173256951238,True,True
+Punjab,6,2020,SARIMA,59689.0,58068.7,8,8,1.0279026755777971,True,True
+Punjab,6,2020,past seasons rescaled,59689.0,59421.3,8,8,1.0045050427196522,True,True
+Punjab,6,2021,last season,71614.0,59689.0,8,8,1.1997822080750544,True,True
+Punjab,6,2021,SARIMA,71614.0,49693.1,8,8,1.4411167522905135,True,True
+Punjab,6,2021,past seasons rescaled,71614.0,24919.8,8,8,2.8737038939359887,True,True
+Punjab,6,2022,last season,39553.0,71614.0,7,8,1.8105627749405875,False,True
+Punjab,6,2022,SARIMA,39553.0,56378.1,7,8,1.4253703797340345,False,True
+Punjab,6,2022,past seasons rescaled,39553.0,25747.5,7,8,1.5361671553682739,False,True
+Punjab,6,2023,last season,27912.0,39553.0,8,7,1.4170458209436463,False,True
+Punjab,6,2023,SARIMA,27912.0,46072.3,8,8,1.6506036613764197,True,True
+Punjab,6,2023,past seasons rescaled,27912.0,12129.2,8,8,2.3011162223211485,True,True
+Punjab,6,2024,last season,7663.0,27912.0,10,8,3.642092901878914,False,False
+Punjab,6,2024,SARIMA,7663.0,33557.4,10,8,4.378705636743216,False,False
+Punjab,6,2024,past seasons rescaled,7663.0,5441.0,10,8,1.408305769937523,False,False
+Punjab,6,2025,last season,3292.0,7663.0,8,10,2.3273610689341027,False,False
+Punjab,6,2025,SARIMA,3292.0,21147.0,8,8,6.422107500759187,True,True
+Punjab,6,2025,past seasons rescaled,3292.0,3635.0,8,8,1.1041603401153963,True,True
+Sangrur,6,2016,last season,9163.0,6839.0,8,8,1.3397660818713448,True,True
+Sangrur,6,2016,SARIMA,9163.0,10201.4,8,8,1.1133129637712789,True,True
+Sangrur,6,2016,past seasons rescaled,9163.0,14905.4,8,8,1.6266259275425579,True,True
+Sangrur,6,2017,last season,6662.0,9163.0,7,8,1.375356446045325,False,True
+Sangrur,6,2017,SARIMA,6662.0,9231.2,7,8,1.385592075641603,False,True
+Sangrur,6,2017,past seasons rescaled,6662.0,12291.5,7,8,1.844889689329131,False,True
+Sangrur,6,2018,last season,7101.0,6662.0,8,7,1.0658862374305869,False,True
+Sangrur,6,2018,SARIMA,7101.0,7848.0,8,8,1.1051816389749367,True,True
+Sangrur,6,2018,past seasons rescaled,7101.0,5417.1,8,8,1.310791605913512,True,True
+Sangrur,6,2019,last season,4842.0,7101.0,8,8,1.466446417509808,True,True
+Sangrur,6,2019,SARIMA,4842.0,8624.8,8,8,1.7810861036547594,True,True
+Sangrur,6,2019,past seasons rescaled,4842.0,9534.1,8,8,1.9688416270906464,True,True
+Sangrur,6,2020,last season,8913.0,4842.0,8,8,1.8405946727235185,True,True
+Sangrur,6,2020,SARIMA,8913.0,7839.5,8,8,1.1369172884382375,True,True
+Sangrur,6,2020,past seasons rescaled,8913.0,7816.2,8,8,1.1403059919152638,True,True
+Sangrur,6,2021,last season,8927.0,8913.0,8,8,1.0015705631590757,True,True
+Sangrur,6,2021,SARIMA,8927.0,5630.8,8,8,1.5852835683085336,True,True
+Sangrur,6,2021,past seasons rescaled,8927.0,2145.5,8,8,4.159329140461216,True,True
+Sangrur,6,2022,last season,5115.0,8927.0,7,8,1.745113369820172,False,True
+Sangrur,6,2022,SARIMA,5115.0,7439.5,7,8,1.4543588741204065,False,True
+Sangrur,6,2022,past seasons rescaled,5115.0,5216.1,7,8,1.0197615324472245,False,True
+Sangrur,6,2023,last season,4925.0,5115.0,8,7,1.0385708485586682,False,True
+Sangrur,6,2023,SARIMA,4925.0,6519.9,8,8,1.3237718229801054,True,True
+Sangrur,6,2023,past seasons rescaled,4925.0,3880.3,8,8,1.2691623940432328,True,True
+Sangrur,6,2024,last season,1415.0,4925.0,8,8,3.478813559322034,True,True
+Sangrur,6,2024,SARIMA,1415.0,4777.0,8,8,3.374293785310735,True,True
+Sangrur,6,2024,past seasons rescaled,1415.0,2134.5,8,8,1.5081214689265536,True,True
+Sangrur,6,2025,last season,431.0,1415.0,7,8,3.2777777777777777,False,True
+Sangrur,6,2025,SARIMA,431.0,3214.5,7,8,7.443287037037036,False,True
+Sangrur,6,2025,past seasons rescaled,431.0,734.9,7,8,1.7034722222222223,False,True

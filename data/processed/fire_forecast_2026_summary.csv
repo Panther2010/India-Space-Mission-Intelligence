@@ -1,0 +1,7 @@
+area,method,headline,issued_on,data_through,issue_week,seen_so_far,forecast_rest,rest_low,rest_high,interval,forecast_season,last_season,peak_week,peak_week_dates,peak_week_share,peak_height,typical_error_all,typical_error_recent
+Punjab,last season,False,2026-11-01,2026-10-26,6,749.0,3292,1352,4328,0.8,4041,4269.0,8,week 8 (3 Nov–9 Nov),1.0,1343,1.65,1.92
+Punjab,SARIMA,False,2026-11-01,2026-10-26,6,749.0,10228,2247,10874,0.8,10977,4269.0,8,week 8 (3 Nov–9 Nov),0.45,4629,1.74,2.49
+Punjab,past seasons rescaled,True,2026-11-01,2026-10-26,6,749.0,2717,2205,6394,0.8,3466,4269.0,8,week 8 (3 Nov–9 Nov),0.71,1200,1.49,1.74
+Sangrur,last season,False,2026-11-01,2026-10-26,6,3.0,431,130,596,0.8,434,481.0,7,week 7 (27 Oct–2 Nov),1.0,218,1.6,1.83
+Sangrur,SARIMA,False,2026-11-01,2026-10-26,6,3.0,397,108,466,0.8,400,481.0,8,week 8 (3 Nov–9 Nov),0.66,200,1.75,2.38
+Sangrur,past seasons rescaled,True,2026-11-01,2026-10-26,6,3.0,44,23,65,0.8,47,481.0,8,week 8 (3 Nov–9 Nov),0.71,20,1.62,1.69

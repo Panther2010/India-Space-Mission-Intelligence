@@ -1,0 +1,67 @@
+area,method,headline,issued_on,week,week_start,week_end,seen,forecast
+Punjab,last season,False,2026-11-01,1,2026-09-15,2026-09-21,33.0,
+Punjab,last season,False,2026-11-01,2,2026-09-22,2026-09-28,53.0,
+Punjab,last season,False,2026-11-01,3,2026-09-29,2026-10-05,71.0,
+Punjab,last season,False,2026-11-01,4,2026-10-06,2026-10-12,61.0,
+Punjab,last season,False,2026-11-01,5,2026-10-13,2026-10-19,241.0,
+Punjab,last season,False,2026-11-01,6,2026-10-20,2026-10-26,290.0,
+Punjab,last season,False,2026-11-01,7,2026-10-27,2026-11-02,,1067.0
+Punjab,last season,False,2026-11-01,8,2026-11-03,2026-11-09,,1343.0
+Punjab,last season,False,2026-11-01,9,2026-11-10,2026-11-16,,700.0
+Punjab,last season,False,2026-11-01,10,2026-11-17,2026-11-23,,132.0
+Punjab,last season,False,2026-11-01,11,2026-11-24,2026-11-30,,50.0
+Punjab,SARIMA,False,2026-11-01,1,2026-09-15,2026-09-21,33.0,
+Punjab,SARIMA,False,2026-11-01,2,2026-09-22,2026-09-28,53.0,
+Punjab,SARIMA,False,2026-11-01,3,2026-09-29,2026-10-05,71.0,
+Punjab,SARIMA,False,2026-11-01,4,2026-10-06,2026-10-12,61.0,
+Punjab,SARIMA,False,2026-11-01,5,2026-10-13,2026-10-19,241.0,
+Punjab,SARIMA,False,2026-11-01,6,2026-10-20,2026-10-26,290.0,
+Punjab,SARIMA,False,2026-11-01,7,2026-10-27,2026-11-02,,1572.9
+Punjab,SARIMA,False,2026-11-01,8,2026-11-03,2026-11-09,,3206.3
+Punjab,SARIMA,False,2026-11-01,9,2026-11-10,2026-11-16,,2466.3
+Punjab,SARIMA,False,2026-11-01,10,2026-11-17,2026-11-23,,1069.6
+Punjab,SARIMA,False,2026-11-01,11,2026-11-24,2026-11-30,,153.1
+Punjab,past seasons rescaled,True,2026-11-01,1,2026-09-15,2026-09-21,33.0,
+Punjab,past seasons rescaled,True,2026-11-01,2,2026-09-22,2026-09-28,53.0,
+Punjab,past seasons rescaled,True,2026-11-01,3,2026-09-29,2026-10-05,71.0,
+Punjab,past seasons rescaled,True,2026-11-01,4,2026-10-06,2026-10-12,61.0,
+Punjab,past seasons rescaled,True,2026-11-01,5,2026-10-13,2026-10-19,241.0,
+Punjab,past seasons rescaled,True,2026-11-01,6,2026-10-20,2026-10-26,290.0,
+Punjab,past seasons rescaled,True,2026-11-01,7,2026-10-27,2026-11-02,,956.2
+Punjab,past seasons rescaled,True,2026-11-01,8,2026-11-03,2026-11-09,,1147.9
+Punjab,past seasons rescaled,True,2026-11-01,9,2026-11-10,2026-11-16,,576.7
+Punjab,past seasons rescaled,True,2026-11-01,10,2026-11-17,2026-11-23,,197.8
+Punjab,past seasons rescaled,True,2026-11-01,11,2026-11-24,2026-11-30,,21.2
+Sangrur,last season,False,2026-11-01,1,2026-09-15,2026-09-21,0.0,
+Sangrur,last season,False,2026-11-01,2,2026-09-22,2026-09-28,0.0,
+Sangrur,last season,False,2026-11-01,3,2026-09-29,2026-10-05,0.0,
+Sangrur,last season,False,2026-11-01,4,2026-10-06,2026-10-12,2.0,
+Sangrur,last season,False,2026-11-01,5,2026-10-13,2026-10-19,0.0,
+Sangrur,last season,False,2026-11-01,6,2026-10-20,2026-10-26,1.0,
+Sangrur,last season,False,2026-11-01,7,2026-10-27,2026-11-02,,218.0
+Sangrur,last season,False,2026-11-01,8,2026-11-03,2026-11-09,,167.0
+Sangrur,last season,False,2026-11-01,9,2026-11-10,2026-11-16,,43.0
+Sangrur,last season,False,2026-11-01,10,2026-11-17,2026-11-23,,2.0
+Sangrur,last season,False,2026-11-01,11,2026-11-24,2026-11-30,,1.0
+Sangrur,SARIMA,False,2026-11-01,1,2026-09-15,2026-09-21,0.0,
+Sangrur,SARIMA,False,2026-11-01,2,2026-09-22,2026-09-28,0.0,
+Sangrur,SARIMA,False,2026-11-01,3,2026-09-29,2026-10-05,0.0,
+Sangrur,SARIMA,False,2026-11-01,4,2026-10-06,2026-10-12,2.0,
+Sangrur,SARIMA,False,2026-11-01,5,2026-10-13,2026-10-19,0.0,
+Sangrur,SARIMA,False,2026-11-01,6,2026-10-20,2026-10-26,1.0,
+Sangrur,SARIMA,False,2026-11-01,7,2026-10-27,2026-11-02,,48.3
+Sangrur,SARIMA,False,2026-11-01,8,2026-11-03,2026-11-09,,171.9
+Sangrur,SARIMA,False,2026-11-01,9,2026-11-10,2026-11-16,,112.3
+Sangrur,SARIMA,False,2026-11-01,10,2026-11-17,2026-11-23,,20.9
+Sangrur,SARIMA,False,2026-11-01,11,2026-11-24,2026-11-30,,1.9
+Sangrur,past seasons rescaled,True,2026-11-01,1,2026-09-15,2026-09-21,0.0,
+Sangrur,past seasons rescaled,True,2026-11-01,2,2026-09-22,2026-09-28,0.0,
+Sangrur,past seasons rescaled,True,2026-11-01,3,2026-09-29,2026-10-05,0.0,
+Sangrur,past seasons rescaled,True,2026-11-01,4,2026-10-06,2026-10-12,2.0,
+Sangrur,past seasons rescaled,True,2026-11-01,5,2026-10-13,2026-10-19,0.0,
+Sangrur,past seasons rescaled,True,2026-11-01,6,2026-10-20,2026-10-26,1.0,
+Sangrur,past seasons rescaled,True,2026-11-01,7,2026-10-27,2026-11-02,,13.7
+Sangrur,past seasons rescaled,True,2026-11-01,8,2026-11-03,2026-11-09,,18.7
+Sangrur,past seasons rescaled,True,2026-11-01,9,2026-11-10,2026-11-16,,5.7
+Sangrur,past seasons rescaled,True,2026-11-01,10,2026-11-17,2026-11-23,,0.5
+Sangrur,past seasons rescaled,True,2026-11-01,11,2026-11-24,2026-11-30,,0.1

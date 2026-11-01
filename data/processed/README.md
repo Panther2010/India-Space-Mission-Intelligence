@@ -35,8 +35,9 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `fire_forecast_2026.csv` | Notebook 04 | The 2026 forecast week by week, as issued. Written once and never overwritten |
 | `fire_forecast_2026_summary.csv` | Notebook 04 | The 2026 forecast in brief, as issued: rest-of-season total and its 80% range, busiest week, the headline method and its typical backtest error |
 | `fire_forecast_check_2026.csv` | Notebook 04 | The forecast against the weeks that have ended: Suomi NPP to 2 Nov, then NOAA-20 converted. Refreshed at each run |
-| `season_comparison_sangrur.csv` | Notebook 02c | 2021 and 2025 side by side, with the change: harvested and burnt area, burn timing, clear views, detections, and the missed share as Notebook 02 reported it and on the same two satellites (Suomi NPP and NOAA-20) |
+| `season_comparison_sangrur.csv` | Notebook 02c | 2021 and 2025 side by side, with the change: harvested and burnt area, the burnt share of the harvest (overall and on land harvested in both seasons), burn timing, clear views, Sentinel-2 dates, detections, and the missed share as Notebook 02 reported it and on the same two satellites (Suomi NPP and NOAA-20) |
 | `season_comparison_by_window_sangrur.csv` | Notebook 02c | Harvested and burnt hectares, Suomi NPP detections inside the district and clear share, by 5-day window, for both seasons |
+| `season_comparison_by_band_sangrur.csv` | Notebook 02c | Confirmed burnt area in each season, its change with and without the late burns, and the late burns' share, in four bands of the district from south to north |
 | `boundary_sangrur_pre2021.geojson` | `maps/build_qgis_project.py` | Sangrur district outline (pre-2021 boundary, includes Malerkotla), the polygon Notebook 02 analyses, from geoBoundaries IND ADM2. Under the Open Database License (ODbL 1.0), like its source. |
 | `boundary_punjab.geojson` | `maps/build_qgis_project.py` | Punjab outline from geoBoundaries IND ADM1 (DataMeet and the Election Commission of India), simplified, for the map inset. CC BY 2.5 IN. |
 

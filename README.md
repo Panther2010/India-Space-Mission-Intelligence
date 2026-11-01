@@ -39,8 +39,10 @@ flowchart LR
     firms -- "detections to match" --> nb2
     nb2 --> missed["Missed share<br/>burnt area with no VIIRS detection"]
     nb2 --> nb3["03 · ML burn classifier"]
+    nb2 -- "2021 and 2025 runs" --> nb2c["02c · 2021 against 2025"]
     firms --> nb4["04 · Fire-activity forecast"]
     missed --> dash["Streamlit dashboard"]
+    nb2c --> dash
     nb3 --> dash
     nb4 --> dash
     research["Datasets A and B<br/>ecosystem and missions"] --> dash
@@ -51,7 +53,7 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both drafted. B spot-checked (25 Oct) and corrected (26 Oct; see `sources/verification_log.md`); A's spot-check under way |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 run (1 Nov 2026): forecast saved for the rest of the 2026 season (Punjab: about 3,500 Suomi NPP detections for the season, against 4,269 in 2025; busiest week most likely 3–9 Nov), to be scored after 30 Nov |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 run (1 Nov 2026): forecast saved for the rest of the 2026 season (Punjab: about 3,500 Suomi NPP detections for the season, against 4,269 in 2025; busiest week most likely 3–9 Nov), to be scored after 30 Nov; 02 extended to other seasons, with 02c to compare 2021 with 2025 (1 Nov 2026; to run) |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
@@ -143,6 +145,7 @@ These come from the project brief:
 - Late in the season, damp soil under a young crop can look like a burn. Burns first seen from 19 Nov are therefore mapped as unconfirmed and kept out of the headline figures.
 - Validation points sit at the centres of uniform 3 × 3 blocks (60 m across), so accuracy at field edges and in small burnt patches hasn't been measured, for the burn rule or the Random Forest. That is where the two disagree most.
 - The 2026 forecast is of fire detections, not burnt area. Suomi NPP data stop on 2 Nov 2026, so from then the forecast is checked against NOAA-20 counts converted by a ratio. Sangrur's forecast rests on very few detections.
+- The 2021 map applies the burn rule as checked on 2025 labels. No 2021 points were labelled, so its accuracy is unknown.
 - Reference labels come from interpreting imagery, not from field visits. Every point was read twice, the second time by an AI assistant, and doubtful points are reported both ways.
 - Health impacts are context only; this project does not measure them.
 

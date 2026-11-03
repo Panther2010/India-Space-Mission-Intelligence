@@ -58,7 +58,7 @@ flowchart LR
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Planned |
 | 5 | GitHub repository | this repo | Set up |
-| 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); the rest planned |
+| 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); why a Random Forest, with six other classifiers compared, drafted (3 Nov 2026, `report/ml_classifier.md`); the rest planned |
 | 7 | Product one-pager | `report/` | Planned |
 | 8 | Three-minute demo | `report/` | Planned |
 

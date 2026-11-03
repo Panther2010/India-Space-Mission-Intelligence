@@ -23,4 +23,4 @@ Notebook 02 runs in steps, because its openEO jobs use Copernicus credits:
 
 Its downloads go to `data/raw/sentinel2/`, which git ignores (another season's to `data/raw/sentinel2/sangrur_2021/`). The whole-district run on 26 Oct 2026 downloaded about 1 GB and used 8 credits (the pilot had projected 1.8 GB and 135); it is best done on a computer rather than in Colab. The 2021 run on 1 Nov 2026 used 20 credits (pilot 4, cloud-mask check 9, district 7) and downloaded about 0.95 GB for the district.
 
-If a download breaks off (a dropped connection), run the cell again. It resumes the same openEO job without starting a new one, keeps the files already complete and fetches the rest. A file that breaks off is tried again up to five times before the cell stops.
+While a job's files download, the cell prints a line as each file arrives; on a slow connection a 60 MB composite can take several minutes. If a download breaks off, or gets no data for 2 minutes, it is tried again, up to five times before the cell stops. Running the cell again resumes the same openEO job without starting a new one, keeps the files already complete and fetches the rest.

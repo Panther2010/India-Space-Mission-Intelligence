@@ -47,7 +47,7 @@ left, mid, right = st.columns([2, 2, 1])
 query = left.text_input('Search any field', placeholder='e.g. SWIR, Sentinel, ISRO, daily')
 kinds = mid.multiselect('Kind of data', sorted(missions['kind of data'].unique()),
                         help='Our grouping of the sensor column.')
-indian = right.checkbox('Indian only', help='ISRO satellites, NISAR and the Indian commercial constellations.')
+indian = right.toggle('Indian only', help='ISRO satellites, NISAR and the Indian commercial constellations.')
 
 shown = missions
 if query:

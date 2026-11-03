@@ -7,6 +7,7 @@ heavy is computed while it runs.
 import json
 from pathlib import Path
 
+import altair as alt
 import pandas as pd
 import streamlit as st
 
@@ -27,6 +28,20 @@ CREDIT = ('Contains modified Copernicus Sentinel data 2021 and 2025. Fire detect
 # orange for burning and sky blue for satellite fire detections.
 NIGHT, DECK, RULE, STAR, HAZE, EMBER, SKY = '#0b1322', '#121d31', '#22324c', '#e8eef7', '#93a5bf', '#ff7b39', '#4dabf7'
 
+# Chart text in px, which doesn't follow the app's base size: set here to match the 18 px text.
+CHART_FONTS = {'config': {
+    'view': {'continuousWidth': 300, 'continuousHeight': 300},     # Altair's default size, kept
+    'axis': {'labelFontSize': 14, 'titleFontSize': 15},
+    'legend': {'labelFontSize': 14, 'titleFontSize': 15},
+    'title': {'fontSize': 17},
+    'text': {'fontSize': 14},
+}}
+try:
+    alt.theme.register('pbi', enable=True)(lambda: CHART_FONTS)
+except AttributeError:                         # Altair before 5.5
+    alt.themes.register('pbi', lambda: CHART_FONTS)
+    alt.themes.enable('pbi')
+
 CSS = f"""<style>
 [data-testid="stMetric"] {{ container-type: inline-size; }}
 div[data-testid="stMetricValue"] {{ font-family: Rajdhani, sans-serif; letter-spacing: 0.01em;
@@ -34,6 +49,7 @@ div[data-testid="stMetricValue"] {{ font-family: Rajdhani, sans-serif; letter-sp
 [data-testid="stMetricLabel"] [data-testid="stMarkdownContainer"], [data-testid="stMetricLabel"] p {{
   white-space: normal; overflow: visible; text-overflow: clip; line-height: 1.35; }}
 [data-testid="stImage"] img {{ border-radius: 8px; }}
+[data-testid="stTopNavLink"] {{ font-size: 14.5px; }}
 p.pbi-sub {{ color: {HAZE}; font-size: 1.06rem; line-height: 1.55; max-width: 46rem; margin: -0.6rem 0 1rem; }}
 .st-key-hero {{ background: #0f1a2c; border: 1px solid {RULE}; border-radius: 16px; padding: 1.9rem 2.1rem 1.2rem; }}
 .st-key-hero h1.pbi-headline {{ font-family: Rajdhani, sans-serif; font-weight: 700; color: {STAR};
@@ -56,6 +72,7 @@ MAP_CSS = f"""<style>
 .leaflet-control-attribution a {{ color: #8cc8ff; }}
 .leaflet-tooltip, .leaflet-popup-content-wrapper, .leaflet-popup-tip {{ background: {DECK} !important;
   color: {STAR} !important; border: 1px solid {RULE} !important; box-shadow: none !important; }}
+.leaflet-tooltip, .leaflet-popup-content {{ font-size: 14px; }}
 .leaflet-popup-content a {{ color: #8cc8ff; }}
 .leaflet-tooltip-top:before {{ border-top-color: {RULE}; }}
 .leaflet-tooltip-bottom:before {{ border-bottom-color: {RULE}; }}

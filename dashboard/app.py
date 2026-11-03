@@ -9,7 +9,7 @@ import common as c
 
 st.set_page_config(page_title='Paddy Burnt-Area Intelligence', page_icon=str(c.STATIC / 'mark.svg'), layout='wide')
 try:
-    st.logo(str(c.STATIC / 'logo.svg'), size='large')
+    st.logo(str(c.STATIC / 'logo.svg'), size='medium')
 except TypeError:              # older Streamlit, before the logo had sizes
     st.logo(str(c.STATIC / 'logo.svg'))
 c.style()

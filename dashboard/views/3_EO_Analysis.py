@@ -134,7 +134,8 @@ def fall_chart(comp):
         y=alt.Y('index:Q', title='2021 = 100', scale=alt.Scale(domain=[0, 110])),
         tooltip=['measure', 'season', alt.Tooltip('index:Q', format='.0f', title='2021 = 100')])
     lines = base.mark_line(strokeWidth=3, point=alt.OverlayMarkDef(filled=True, size=80)).encode(color=colour)
-    labels = base.transform_filter(alt.datum.season == '2025').mark_text(align='left', dx=10, color=c.STAR).encode(
+    labels = base.transform_filter(alt.datum.season == '2025').mark_text(align='left', dx=10, color=c.STAR,
+                                                                         fontSize=14).encode(
         text='label:N')
     return (lines + labels).properties(height=300, width='container', padding={'right': 120},
                                        title='Burning halved; fire detections all but vanished')

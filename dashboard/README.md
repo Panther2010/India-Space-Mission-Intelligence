@@ -29,7 +29,7 @@ Run it from the project folder, as above: Streamlit reads the look from `.stream
 
 - **Layout.** Navigation runs across the top, with short page names; each page's header gives its full name. Choices are rows of buttons and switches; older Streamlit versions show radio buttons and the sidebar instead.
 - **Colours.** Night navy, with ember orange for burning, sky blue for satellite fire detections and green for harvested land not seen burnt (the buyer's fresh straw), set in `.streamlit/config.toml` and repeated in `common.py` for the parts drawn in code. Text has at least 4.5:1 contrast on the navy, and the colours that tell chart series apart at least 3:1.
-- **Type.** Rajdhani for headings and numbers, Hind for text, both by Indian Type Foundry under the SIL Open Font License 1.1 (`static/OFL-Rajdhani.txt`, `static/OFL-Hind.txt`). The app serves them itself from `static/`, so it needs no font service.
+- **Type.** Text at 18 px (Streamlit's default is 16 px), with chart text to match; the top bar keeps its labels at 14.5 px so all six pages fit beside the logo. Rajdhani for headings and numbers, Hind for text, both by Indian Type Foundry under the SIL Open Font License 1.1 (`static/OFL-Rajdhani.txt`, `static/OFL-Hind.txt`). The app serves them itself from `static/`, so it needs no font service.
 - **Maps.** The OpenStreetMap tiles are turned dark in the browser, with a CSS filter. Colour ramps run from dark to bright, so the squares with the most stand out. VIIRS detections are drawn 750 m across: the 375 m around each one that the missed share counts as flagged.
 - **Logo.** `static/logo.svg` and `static/mark.svg`: a burnt 1 km square circled by a satellite's orbit, with the name in Rajdhani drawn as outlines.
 

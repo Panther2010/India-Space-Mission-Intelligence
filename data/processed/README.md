@@ -1,6 +1,6 @@
 # Processed data
 
-Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs, Notebook 03's agreement map and the 2021 burn map, which Notebook 02c needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
+Files here are written by the notebooks (the two boundary outlines by `maps/build_qgis_project.py`, and the classifier comparison by `report/compare_classifiers.py`) and can be recreated by re-running them. Small tables are committed; large point files (`*.parquet`) and rasters (`*.tif`) are not, except the final Sangrur burn map, which the QGIS project needs, Notebook 03's agreement map and the 2021 burn map, which Notebook 02c needs. The validation label sheet is the exception to "recreated": it holds hand-made labels, so it is committed and never overwritten.
 
 | File | Written by | Contents |
 |---|---|---|
@@ -30,6 +30,7 @@ Files here are written by the notebooks (the two boundary outlines by `maps/buil
 | `ml_feature_importance_sangrur_2025.csv` | Notebook 03 | Drop in the forest's F1 when each feature, or each group of related features, is shuffled |
 | `ml_map_comparison_sangrur_2025.csv` | Notebook 03 | The forest's and the rule's maps compared: hectares burnt in each, in both and in one only; the labels' estimate; shares of disagreeing pixels on patch edges and in patches under 1 ha |
 | `ml_burn_agreement_sangrur_2025.tif` | Notebook 03 | 20 m GeoTIFF on the class map's grid: 1 not a harvested crop, 2 harvested and burnt in neither map, 3 burnt in both, 4 burnt in the rule's map only, 5 burnt in the forest's map only (0 = outside the district). Committed. |
+| `ml_model_comparison_sangrur_2025.csv` | `report/compare_classifiers.py` | The burn rule, Notebook 03's Random Forest and six other classifiers under Notebook 03's cross-validation: F1 (mean and range over 10 runs), precision, recall, and an exact McNemar test against the rule |
 | `fire_weekly_counts.csv` | Notebook 04 | Suomi NPP and NOAA-20 detections per week (15 Sep to 30 Nov) in Punjab and Sangrur, 2012–2026, with whether each 2026 week is complete |
 | `fire_forecast_backtests.csv` | Notebook 04 | Each method's forecast of the rest of every season 2016–2025, from the same week as the 2026 forecast, against what happened |
 | `fire_forecast_2026.csv` | Notebook 04 | The 2026 forecast week by week, as issued. Written once and never overwritten |

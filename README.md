@@ -109,7 +109,7 @@ You need Git, VS Code with the Python and Jupyter extensions, and either conda o
 4. **Run.** Open `notebooks/01_fire_counts.ipynb`, choose the `eo` (or `.venv`) kernel at the top right and click **Run All**.
 5. **For Notebook 02,** create a free [Copernicus Data Space Ecosystem](https://dataspace.copernicus.eu/) account. The first run prints a login link for openEO; later runs reuse the saved login. Notebook 02 runs in steps (a small pilot first, then the whole district), explained at its top.
 6. **For Notebook 02b,** create a free [NASA Earthdata](https://urs.earthdata.nasa.gov/) account, generate a token there, and add the line `EARTHDATA_TOKEN=your_token` to `.env`.
-7. **The dashboard:** from the project folder, run `python -m streamlit run dashboard/app.py` in the same environment. It reads the outputs already in the repository, so it works without running the notebooks first. The same app is online at https://india-space-mission-intelligence-dashboard.streamlit.app and shows what is committed to `main`. See `dashboard/README.md`.
+7. **The dashboard:** from the project folder, run `python -m streamlit run dashboard/app.py` in the same environment. It reads the outputs already in the repository, so it works without running the notebooks first. The same app is online at https://india-space-mission-intelligence-dashboard.streamlit.app and shows what is committed to `main`; to share it as a file, send `dashboard/paddy-burnt-area-dashboard.html`, which opens the live app. See `dashboard/README.md`.
 
 ### In Google Colab
 

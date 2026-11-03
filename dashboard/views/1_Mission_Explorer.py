@@ -7,11 +7,10 @@ import streamlit as st
 
 import common as c
 
-st.title('Mission Explorer')
-
 PATH = c.RESEARCH / 'dataset_B_satellite_missions.csv'
 missions = c.csv(PATH)
 if missions is None:
+    c.page_header('satellite_alt', 'Mission Explorer')
     c.missing(PATH)
     st.stop()
 missions = missions.copy()
@@ -40,8 +39,9 @@ missions['kind of data'] = missions['sensor'].map(kind)
 missions['Indian'] = missions['operator'].str.contains('ISRO', na=False) | \
     missions['satellite'].str.contains('Pixxel|GalaxEye', na=False)
 
-st.markdown(f'{len(missions)} satellites and missions that could serve a burnt-area product, each with the page it '
-            'came from and the date that page was read. Fields no source stated are left blank. [Reported]')
+c.page_header('satellite_alt', 'Mission Explorer',
+              f'{len(missions)} satellites and missions that could serve a burnt-area product, each with the page it '
+              'came from and the date that page was read. Fields no source stated are left blank. [Reported]')
 
 left, mid, right = st.columns([2, 2, 1])
 query = left.text_input('Search any field', placeholder='e.g. SWIR, Sentinel, ISRO, daily')
@@ -80,7 +80,9 @@ fields = [('Operator', 'operator'), ('Mission', 'mission'), ('Sensor', 'sensor')
           ('How often', 'temporal_resolution_revisit'), ('Bands', 'spectral_information'), ('Coverage', 'coverage'),
           ('Notes', 'notes')]
 lines = [f'- **{label}:** {row[col]}' for label, col in fields if pd.notna(row[col]) and str(row[col]).strip()]
-lines.append(f'- **Source:** [{row["source_url"]}]({row["source_url"]}), read on {row["access_date"]}')
+# Some records cite more than one page, separated by semicolons: each gets its own link.
+urls = [u.strip() for u in str(row['source_url']).split(';') if u.strip()]
+lines.append('- **Source:** ' + '; '.join(f'[{u}]({u})' for u in urls) + f', read on {row["access_date"]}')
 st.markdown('\n'.join(lines))
 
 st.subheader('When they were launched')

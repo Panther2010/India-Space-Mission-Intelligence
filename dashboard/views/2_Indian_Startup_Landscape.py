@@ -6,11 +6,10 @@ import streamlit as st
 
 import common as c
 
-st.title('Indian Startup Landscape')
-
 PATH = c.RESEARCH / 'dataset_A_india_space_ecosystem.csv'
 companies = c.csv(PATH)
 if companies is None:
+    c.page_header('rocket_launch', 'Indian Startup Landscape')
     c.missing(PATH)
     st.stop()
 
@@ -26,9 +25,10 @@ CATEGORY_COLOURS = {
     'Components': '#b07aa1', 'Ground Systems': '#9c755f', 'Space Data/Analytics': '#76b7b2',
 }
 
-st.markdown(f'{len(companies)} Indian space companies across the seven value-chain categories of the brief, each with '
-            'the page it came from and the date that page was read. Company statements, such as press releases, are '
-            'flagged in the notes. [Reported]')
+c.page_header('rocket_launch', 'Indian Startup Landscape',
+              f'{len(companies)} Indian space companies across the seven value-chain categories of the brief, each '
+              'with the page it came from and the date that page was read. Company statements, such as press '
+              'releases, are flagged in the notes. [Reported]')
 st.info('Dataset A is being spot-checked, so some rows may still change.')
 
 left, right = st.columns(2)
@@ -43,7 +43,7 @@ st.caption(f'{len(shown)} of {len(companies)} shown.')
 
 map_col, chart_col = st.columns([3, 2])
 with map_col:
-    m = folium.Map(location=(21.5, 79.0), zoom_start=5, tiles='OpenStreetMap')
+    m = c.dark_map(folium.Map(location=(21.5, 79.0), zoom_start=5, tiles='OpenStreetMap'))
     cluster = MarkerCluster().add_to(m)
     for _, r in shown.iterrows():
         if r['city'] not in CITY:
@@ -62,7 +62,8 @@ with map_col:
 with chart_col:
     counts = shown['value_chain_category'].value_counts().rename_axis('category').reset_index(name='companies')
     st.altair_chart(alt.Chart(counts).mark_bar().encode(
-        x=alt.X('companies:Q', title='companies'), y=alt.Y('category:N', sort='-x', title=None),
+        x=alt.X('companies:Q', title='companies'),
+        y=alt.Y('category:N', sort='-x', title=None, axis=alt.Axis(labelLimit=220)),
         color=alt.Color('category:N', scale=alt.Scale(domain=list(CATEGORY_COLOURS),
                                                       range=list(CATEGORY_COLOURS.values())), legend=None),
         tooltip=['category', 'companies']).properties(title='By value-chain category', width='container'))

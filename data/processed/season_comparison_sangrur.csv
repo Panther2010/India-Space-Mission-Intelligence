@@ -1,0 +1,16 @@
+measure,2021,2025,relative change,difference
+harvested area (ha),315719.5,306487.7,-0.029240512543571077,
+"burnt area, confirmed (ha)",119781.6,63420.7,-0.47053053223533503,
+"burnt area, including unconfirmed late burns (ha)",139536.80000000002,71614.7,-0.48676836504778676,
+burnt share of harvested area,0.3794,0.2069,,-0.17250000000000001
+burnt share of land harvested in both seasons,0.3959581719197615,0.2107445955001416,,-0.1852135764196199
+median days from harvest to burn,10.0,10.0,,0.0
+mean clear share of the district per window,0.868,0.954,,0.08599999999999997
+"Sentinel-2 dates over the pilot box, 15 Oct to 24 Nov",15.0,17.0,0.13333333333333333,
+Suomi NPP detections inside,9078.0,483.0,-0.9467944481163252,
+Suomi NPP and NOAA-20 detections inside,18033.0,981.0,-0.9455997338213276,
+all VIIRS detections inside,18033.0,1500.0,-0.9168191648644153,
+MODIS detections inside,1823.0,490.0,-0.7312122874382886,
+"Suomi NPP detections per 1,000 ha burnt",75.7879340399527,7.615809980022296,-0.8995115769218949,
+"missed share as reported by Notebook 02 (VIIRS satellites flying that year, 375 m)",0.2678,0.906,,0.6382000000000001
+"missed share, Suomi NPP and NOAA-20 only (375 m)",0.26776891683900805,0.9366926140226727,,0.6689236971836646

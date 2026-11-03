@@ -24,6 +24,8 @@ dataframeHeaderBackgroundColor = "#121d31"
 showSidebarBorder = true
 baseRadius = "0.6rem"
 font = "Hind, sans-serif"
+# 18 px text, up from Streamlit's 16 px: everything sized in rem (text, labels, tables, headings) grows with it.
+baseFontSize = 18
 headingFont = "Rajdhani, sans-serif"
 headingFontWeights = [700, 700, 600, 600, 600, 600]
 metricValueFontSize = "2.3rem"

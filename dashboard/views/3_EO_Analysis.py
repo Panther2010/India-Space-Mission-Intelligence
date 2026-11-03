@@ -304,17 +304,17 @@ with tab_forecast:
         cols[3].metric('Busiest week, most likely', f"Week {int(head['peak_week'])}",
                        help=f"{dates}, in {head['peak_week_share']:.0%} of the scenarios")
         rows = fc[fc['area'] == area]
-        seen = rows[rows['headline'] & rows['seen'].notna()][['week', 'seen']].rename(columns={'seen': 'detections'})
-        seen['series'] = '2026, Suomi NPP (before the forecast)'
+        happened = rows[rows['headline'] & rows['seen'].notna()][['week', 'seen']].rename(
+            columns={'seen': 'detections'})
+        done = pd.DataFrame()
+        if check is not None:
+            done = check[(check['area'] == area) & check['actual'].notna()]
+            happened = pd.concat([happened, done[['week']].assign(detections=done['actual'])], ignore_index=True)
+        happened['series'] = '2026, what happened'
         lines = rows[rows['forecast'].notna()][['week', 'method', 'forecast', 'headline']].rename(
             columns={'forecast': 'detections'})
         lines['series'] = 'forecast: ' + lines['method'] + np.where(lines['headline'], ' (headline)', '')
-        parts = [seen, lines[['week', 'detections', 'series']]]
-        if check is not None:
-            done = check[(check['area'] == area) & check['actual'].notna()]
-            parts.append(done.assign(series='2026, what happened', detections=done['actual'])[
-                ['week', 'detections', 'series']])
-        data = pd.concat(parts, ignore_index=True)
+        data = pd.concat([happened, lines[['week', 'detections', 'series']]], ignore_index=True)
         series = list(dict.fromkeys(data['series']))
         others = iter(['#9ecae1', '#bdbdbd', '#c7e9c0'])
         colours = ['#e6550d' if '(headline)' in s else '#252525' if s.startswith('2026') else next(others, '#bdbdbd')
@@ -327,13 +327,30 @@ with tab_forecast:
             tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')],
         ).properties(height=380, width='container')
         st.altair_chart(chart)
-        latest = None if check is None else check[check['actual'].notna()]
         st.caption(f"Forecast issued on {pd.Timestamp(head['issued_on']):%d %b %Y} from the weeks to "
-                   f"{pd.Timestamp(head['data_through']):%d %b}, with the method that did best in backtests over "
-                   f"2021–2025 ({head['method']}); it is never changed afterwards. The last-season forecast repeats "
-                   "2025's weeks. After 2 Nov, Suomi NPP data "
-                   'stopped, so what happened is NOAA-20 counts converted to Suomi NPP terms. '
-                   + ('No week after the forecast has been checked in the committed data yet.' if latest is None
-                      or latest.empty else f"Checked to week {int(latest['week'].max())} in the committed data."))
+                   f"{pd.Timestamp(head['data_through']):%d %b} (week {int(head['issue_week'])}), with the method "
+                   f"that did best in backtests over 2021–2025 ({head['method']}). It is never changed afterwards. "
+                   "The last-season forecast repeats 2025's weeks.")
+        if done.empty:
+            st.info('No week after the forecast has been checked in the committed data yet.')
+        else:
+            name = head['method']
+            ratio = np.where(done['actual'] > 0, done[name] / done['actual'].where(done['actual'] > 0), np.nan)
+            st.markdown(f"**Weeks checked so far** (to week {int(done['week'].max())}, from the last committed run of "
+                        'Notebook 04; the check is committed after each weekly run)')
+            st.dataframe(pd.DataFrame({
+                'week': done['week'],
+                'dates': [f'{pd.Timestamp(a):%d %b}–{pd.Timestamp(b):%d %b}'
+                          for a, b in zip(done['week_start'], done['week_end'])],
+                'what happened': done['actual'], 'counted from': done['actual_source'],
+                'headline forecast': done[name], 'forecast ÷ what happened': ratio,
+            }), hide_index=True, column_config={
+                'what happened': st.column_config.NumberColumn(format='%.0f'),
+                'headline forecast': st.column_config.NumberColumn(format='%.0f'),
+                'forecast ÷ what happened': st.column_config.NumberColumn(format='%.2f'),
+            })
+            st.caption('After 2 Nov, Suomi NPP data stopped, so later weeks are counted from NOAA-20 and converted to '
+                       'Suomi NPP terms with the two sensors\' 2026 ratio. A ratio above 1 means the forecast was too '
+                       'high.')
 
 c.footer()

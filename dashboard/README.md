@@ -34,7 +34,9 @@ Steps 3 and 4 follow Streamlit's documentation, read on 3 Nov 2026: [app depende
 
 ## What the app shows, and when it changes
 
-The app shows whatever is committed. New notebook outputs reach it once they are committed and pushed to `main`. If the online app doesn't pick them up, reboot it from its menu on Community Cloud. The 2026 forecast tab shows the forecast as issued on 1 Nov 2026 and the weeks checked in the last committed run of Notebook 04.
+The app shows whatever is committed to `main`, so it keeps itself up to date: run a notebook in VS Code, commit and push its outputs, and the app shows them. Community Cloud watches the repository and copies committed changes into the running app ([Streamlit: edit your app](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app/edit-your-app), read on 3 Nov 2026), and the app re-reads any file that has changed. If it ever shows old numbers, reboot it from its menu on Community Cloud.
+
+The 2026 forecast tab shows the forecast as issued on 1 Nov 2026 and the weeks checked in the last committed run of Notebook 04. The check is committed after each weekly run (from 3 Nov), so the tab moves on week by week: what happened, the headline forecast for that week, and their ratio.
 
 ## Files
 

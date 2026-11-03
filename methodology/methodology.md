@@ -148,7 +148,7 @@ All datasets, access dates, licences and preprocessing are in `sources/source_re
 - **Limits:** detections, not burnt area, and only fires burning at an overpass. 2026 counts are near-real-time data, while the archive the methods learn from is standard processing. Ten backtests give only a rough 80% range. Sangrur's weekly counts are small, so its forecast is noisier than Punjab's.
 
 ## 9. Limitations
-See the README's running list. Every output states its own limits.
+Each section above states its own limits. The README keeps a short list, and `report/limitations.md` brings them together for the report, with the way each one moves the findings.
 
 ## References
 - Breiman, L. (2001). Random forests. *Machine Learning* 45, 5–32. https://doi.org/10.1023/A:1010933404324

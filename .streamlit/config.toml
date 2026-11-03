@@ -1,6 +1,10 @@
 # The dashboard's look: night navy, ember orange for burning, satellite blue for data.
 # Community Cloud reads this file from the repository root, even though the app is in dashboard/.
 
+[client]
+# Viewers see a plain toolbar, without the developer options.
+toolbarMode = "viewer"
+
 [server]
 # Serves dashboard/static/ (the fonts and the logo) at app/static/.
 enableStaticServing = true

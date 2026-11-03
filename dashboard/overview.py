@@ -117,37 +117,25 @@ if comp is not None:
              help='Suomi NPP VIIRS detections inside the district, the one satellite counted the same way in both '
                   'seasons. Notebook 02c. [Ours]')
 
-st.subheader('What fire counts miss')
-points = []
-if comp is not None:
-    points.append(f'From 2021 to 2025, Suomi NPP fire detections in the district fell '
-                  f'{-comp.loc["Suomi NPP detections inside", "relative change"]:.0%}, while the burnt area '
-                  f'Sentinel-2 maps fell {-comp.loc["burnt area, confirmed (ha)", "relative change"]:.0%}. [Ours]')
-points.append(f'In 2025, {float(s25["missed_share_viirs_375m"]):.0%} of the confirmed burnt area had no VIIRS '
-              'detection within 375 m between its last clear view and the burn. [Ours]')
-points.append('A December 2025 iFOREST report, as reported by The Tribune, says most large Punjab farm fires in 2024 '
-              'and 2025 occurred after 3 pm; the VIIRS satellites pass in the early afternoon and at night. '
-              '[Reported]')
-st.markdown('\n'.join(f'- {p}' for p in points))
-
-st.subheader('Explore the pages')
-pages = [
-    ('views/3_EO_Analysis.py', 'EO Analysis', 'local_fire_department',
-     'The burnt-area map, what fire counts missed, 2021 against 2025, the ML classifier and the 2026 forecast.'),
-    ('views/4_Mission_Trade-offs.py', 'Mission Trade-offs', 'balance',
-     'Which satellite data fits the straw buyer, compared on the brief\'s six factors.'),
-    ('views/5_Commercial_Opportunity.py', 'Commercial Opportunity', 'agriculture',
-     'The user, the decision, the pain point and how the product would be tested.'),
-    ('views/1_Mission_Explorer.py', 'Mission Explorer', 'satellite_alt',
-     'Satellites and missions relevant to burnt-area monitoring, with their sources (dataset B).'),
-    ('views/2_Indian_Startup_Landscape.py', 'Indian Startup Landscape', 'rocket_launch',
-     'Indian space companies across the value chain (dataset A).'),
+st.subheader('The story in three steps')
+steps = [
+    ('Map what burned', 'views/3_EO_Analysis.py', 'EO Analysis', 'local_fire_department',
+     f"{c.ha(s25['burnt_ha'])} burnt in 2025, {c.pct(s25['burnt_share_of_harvested'])} of the harvest, mapped from "
+     'Sentinel-2 at 20 m and checked against 187 labelled points [Ours].'),
+    ('Measure what fire counts miss', 'views/3_EO_Analysis.py', 'EO Analysis', 'local_fire_department',
+     f"No VIIRS detection fell near {c.pct(s25['missed_share_viirs_375m'])} of it. The satellites pass in the early "
+     'afternoon and at night [Ours]; most large Punjab farm fires in 2024 and 2025 occurred after 3 pm, iFOREST '
+     'reports [Reported].'),
+    ('Put it to work', 'views/5_Commercial_Opportunity.py', 'Commercial Opportunity', 'agriculture',
+     'Every 5 days, a straw buyer sees where fresh straw lies before it burns, and the agriculture department sees '
+     'the burning that fire counts miss [Recommendation].'),
 ]
-left, right = st.columns(2, gap='large')
-for i, (path, label, icon, what) in enumerate(pages):
-    with left if i % 2 == 0 else right:
-        st.page_link(path, label=label, icon=f':material/{icon}:')
-        st.caption(what)
+for col, (n, (title, path, page, icon, words)) in zip(st.columns(3, gap='medium'), enumerate(steps, start=1)):
+    with col:
+        with st.container(border=True):
+            st.markdown(f'#### {n}. {title}')
+            st.markdown(words)
+            st.page_link(path, label=page, icon=f':material/{icon}:')
 
 c.labels_note()
 c.footer('Every number on these pages is read from files the project\'s notebooks and scripts wrote.')

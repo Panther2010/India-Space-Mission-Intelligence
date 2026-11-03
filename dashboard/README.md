@@ -1,15 +1,15 @@
 # Dashboard (Streamlit)
 
-Version 1, built 3 Nov 2026. The app reads the files the notebooks and scripts have written to `data/processed/`, the research datasets in `data/raw/research/`, the figures in `maps/` and the drafts in `report/` and `methodology/`. Nothing heavy is computed while it runs, and every number it shows comes from those files.
+Version 2, 3–4 Nov 2026. The app reads the files the notebooks and scripts have written to `data/processed/`, the research datasets in `data/raw/research/`, the figures in `maps/` and the drafts in `report/` and `methodology/`. Nothing heavy is computed while it runs, and every number it shows comes from those files.
 
 | Page | What it shows |
 |---|---|
-| Overview | The headline finding, a map of 2025's burnt area per 1 km square with the VIIRS detections over it, the headline numbers and what each page shows |
+| Overview | The headline finding, a map of 2025's burnt area per 1 km square with the VIIRS detections over it, the headline numbers, and the story in three steps with links to the pages behind them |
 | Mission Explorer | The 22 satellites and missions of dataset B: search, a filter by kind of data (our grouping of the sensor column), each record in full with its source, and launch dates |
 | Indian Startup Landscape | The 32 companies of dataset A: a map at approximate city centres, counts by value-chain category and by state, and the table with sources |
-| EO Analysis | Five tabs. **Burnt-area map:** 1 km squares for 2025 or 2021, coloured by burnt area, burnt area with no VIIRS detection, harvested area not seen burnt, or when harvest and burning were first seen, with the VIIRS detections and the 20 m map. **What fire counts missed:** the missed share under three rules, and burnt area and detections by 5-day window. **2021 against 2025:** Notebook 02c's results. **ML classifier:** the rule against the Random Forest and six other models. **2026 forecast:** the forecast as issued on 1 Nov and the weeks checked so far |
-| Mission Trade-offs | `report/mission_tradeoff.md` |
-| Commercial Opportunity | What the map gives the straw buyer and the agriculture department, the problem statement, and the next validation step |
+| EO Analysis | Five tabs. **Burnt-area map:** 1 km squares for 2025 or 2021, coloured by burnt area, burnt area with no VIIRS detection, harvested area not seen burnt, or when harvest and burning were first seen, with the VIIRS detections and the 20 m map. **What fire counts missed:** the missed share under three rules, and burnt area and detections by 5-day window. **2021 against 2025:** Notebook 02c's results, a chart of how far burning and detections fell, a chart of how the two seasons moved, and the two seasons' maps side by side (moving together) or as the change per 1 km square. **ML classifier:** the rule against the Random Forest and six other models, the forest's learning curve and what it relies on. **2026 forecast:** the forecast as issued on 1 Nov and the weeks checked so far |
+| Mission Trade-offs | `report/mission_tradeoff.md`: its recommendation as six option cards, what the 2025 season showed, and the rest of the draft in expanders. The page reads the draft, so it changes when the draft does |
+| Commercial Opportunity | **The buyer's map:** pick a 5-day window of 2025 and see the fresh straw in each 1 km square (harvested in the last 10 days and not yet seen burnt), that window's burning, and the squares to send balers to first. Then what the map gives each user, the problem statement, and the next validation step |
 
 Statements are labelled as in the report: [Reported] from a cited source, [Ours] measured in this project, [Recommendation] our judgement.
 
@@ -27,7 +27,8 @@ Run it from the project folder, as above: Streamlit reads the look from `.stream
 
 ## The look
 
-- **Colours.** Night navy, with ember orange for burning and sky blue for satellite fire detections, set in `.streamlit/config.toml` and repeated in `common.py` for the parts drawn in code. Text has at least 4.5:1 contrast on the navy, and the colours that tell chart series apart at least 3:1.
+- **Layout.** Navigation runs across the top, with short page names; each page's header gives its full name. Choices are rows of buttons and switches; older Streamlit versions show radio buttons and the sidebar instead.
+- **Colours.** Night navy, with ember orange for burning, sky blue for satellite fire detections and green for harvested land not seen burnt (the buyer's fresh straw), set in `.streamlit/config.toml` and repeated in `common.py` for the parts drawn in code. Text has at least 4.5:1 contrast on the navy, and the colours that tell chart series apart at least 3:1.
 - **Type.** Rajdhani for headings and numbers, Hind for text, both by Indian Type Foundry under the SIL Open Font License 1.1 (`static/OFL-Rajdhani.txt`, `static/OFL-Hind.txt`). The app serves them itself from `static/`, so it needs no font service.
 - **Maps.** The OpenStreetMap tiles are turned dark in the browser, with a CSS filter. Colour ramps run from dark to bright, so the squares with the most stand out. VIIRS detections are drawn 750 m across: the 375 m around each one that the missed share counts as flagged.
 - **Logo.** `static/logo.svg` and `static/mark.svg`: a burnt 1 km square circled by a satellite's orbit, with the name in Rajdhani drawn as outlines.
@@ -62,7 +63,8 @@ The 2026 forecast tab shows the forecast as issued on 1 Nov 2026 and the weeks c
 - `app.py`: page navigation
 - `overview.py`: the front page
 - `views/`: one file per page
-- `common.py`: paths, cached file readers (re-read when a file changes), the page header, number cards, the dark map style and small helpers
+- `common.py`: paths, cached file readers (re-read when a file changes), the page header, number cards, button-row choices, the dark map style and small helpers
+- `make_straw_table.py`: writes `data/processed/straw_by_window_sangrur_2025.csv`, the buyer's map, from Notebook 02's 20 m map. Run it again if that map changes (it needs rasterio, in the `eo` environment)
 - `static/`: the fonts, their licences and the logo, served by the app at `app/static/`
 - `paddy-burnt-area-dashboard.html`: the file to share, which opens the live app
 - `requirements.txt`: the packages for Community Cloud

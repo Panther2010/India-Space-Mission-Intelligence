@@ -2,7 +2,7 @@
 import altair as alt
 import branca.colormap as bcm
 import folium
-from folium.plugins import HeatMap
+from folium.plugins import DualMap, HeatMap
 import numpy as np
 import pandas as pd
 import streamlit as st
@@ -30,6 +30,10 @@ UNCONFIRMED = 'first seen from 19 Nov (unconfirmed)'
 # Line colours with at least 3:1 contrast on both the light and the dark theme (backgrounds #ffffff and #0e1117),
 # so a line never disappears into the page, whichever theme the viewer uses.
 BLUE, ORANGE, GREY = '#2a78d6', '#e6550d', '#898781'
+GRID_FIELDS = ('cell', 'burnt_ha', 'burnt_missed_ha', 'harvested_not_burnt_ha', 'burnt_unconfirmed_ha',
+               'mean_harvest_window_start', 'mean_burn_window_start')
+EMBERS = LAYERS['Burnt area, confirmed'][2]
+CHANGE = ['#3987e5', '#1b2740', '#ff7b39']          # less burning, no change (close to the page), more burning
 
 
 def grid_map(grid, layer, boundary, fires):
@@ -87,15 +91,6 @@ def grid_map(grid, layer, boundary, fires):
     return m, (colours, ends, caption)
 
 
-def legend(colours, ends, caption):
-    # Drawn by the page, not inside the map, so it needs no extra scripts from the web.
-    st.markdown(
-        f'<div style="display:flex;align-items:center;gap:8px;font-size:0.85rem">'
-        f'<span>{ends[0]}</span><div style="flex:0 0 220px;height:12px;border-radius:2px;'
-        f'background:linear-gradient(to right,{",".join(colours)})"></div><span>{ends[1]}</span>'
-        f'<span style="opacity:0.75">{caption}</span></div>', unsafe_allow_html=True)
-
-
 def by_window_chart(bw):
     rows = []
     for _, r in bw.iterrows():
@@ -122,14 +117,129 @@ def by_window_chart(bw):
     return alt.layer(bars, line).resolve_scale(y='independent').properties(height=360, width='container')
 
 
+def fall_chart(comp):
+    """2021 = 100: harvested area, burnt area and Suomi NPP detections in 2025."""
+    series = [('harvested area (ha)', 'Harvested area', c.HAZE), ('burnt area, confirmed (ha)', 'Burnt area', c.EMBER),
+              ('Suomi NPP detections inside', 'Fire detections', c.SKY)]
+    rows = []
+    for measure, label, _ in series:
+        before, after = comp.loc[measure, '2021'], comp.loc[measure, '2025']
+        index = 100 * after / before
+        rows += [(label, '2021', 100.0, ''), (label, '2025', index, f'{label} {index:.0f}')]
+    data = pd.DataFrame(rows, columns=['measure', 'season', 'index', 'label'])
+    colour = alt.Color('measure:N', title=None, legend=alt.Legend(orient='bottom'),
+                       scale=alt.Scale(domain=[s[1] for s in series], range=[s[2] for s in series]))
+    base = alt.Chart(data).encode(
+        x=alt.X('season:O', title=None, axis=alt.Axis(labelAngle=0), scale=alt.Scale(paddingOuter=0.15)),
+        y=alt.Y('index:Q', title='2021 = 100', scale=alt.Scale(domain=[0, 110])),
+        tooltip=['measure', 'season', alt.Tooltip('index:Q', format='.0f', title='2021 = 100')])
+    lines = base.mark_line(strokeWidth=3, point=alt.OverlayMarkDef(filled=True, size=80)).encode(color=colour)
+    labels = base.transform_filter(alt.datum.season == '2025').mark_text(align='left', dx=10, color=c.STAR).encode(
+        text='label:N')
+    return (lines + labels).properties(height=300, width='container', padding={'right': 120},
+                                       title='Burning halved; fire detections all but vanished')
+
+
+def timing_chart(by_window):
+    """Share of each season's harvest and confirmed burning seen so far, window by window."""
+    rows = []
+    for season, d in by_window.sort_values('window').groupby('season'):
+        harvest = d['harvested_ha'].cumsum() / d['harvested_ha'].sum()
+        confirmed = d['burnt_ha'].where(d['burns_confirmed'], 0)
+        burning = confirmed.cumsum() / confirmed.sum()
+        for day, h, b in zip(d['day'], harvest, burning):
+            rows += [(str(season), day, 'Harvest', h), (str(season), day, 'Burning (confirmed)', b)]
+    data = pd.DataFrame(rows, columns=['season', 'day', 'measure', 'share'])
+    days = list(dict.fromkeys(by_window.sort_values('window')['day']))
+    return alt.Chart(data).mark_line(strokeWidth=2.5).encode(
+        x=alt.X('day:O', sort=days, title='5-day window starting', axis=alt.Axis(labelAngle=0, labelOverlap=True)),
+        y=alt.Y('share:Q', title='share of the season so far', axis=alt.Axis(format='%', tickCount=5)),
+        color=alt.Color('measure:N', title=None, legend=alt.Legend(orient='top'),
+                        scale=alt.Scale(domain=['Harvest', 'Burning (confirmed)'], range=['#c6d2e2', c.EMBER])),
+        strokeDash=alt.StrokeDash('season:N', title=None, legend=alt.Legend(orient='top'),
+                                  scale=alt.Scale(domain=['2021', '2025'], range=[[5, 4], [1, 0]])),
+        tooltip=['season', 'day', 'measure', alt.Tooltip('share:Q', format='.0%')],
+    ).properties(height=330, width='container', title='2021 ran about one window later')
+
+
+def season_pair(boundary):
+    """2021 and 2025 side by side, on one colour scale, moving together."""
+    grids = {year: c.slim_grid(year, ('cell', 'burnt_ha')) for year in (2021, 2025)}
+    values = np.array([f['properties']['burnt_ha'] or 0 for g in grids.values() for f in g['features']], float)
+    top = max(float(np.quantile(values[values > 0], 0.98)), 1.0)
+    cmap = bcm.LinearColormap(EMBERS, vmin=0, vmax=top)
+    (south, west), (north, east) = c.district_bounds(boundary)
+    # A fixed view: the two maps keep each other in step, which undoes a fit to the district's bounds.
+    m = c.dark_map(DualMap(location=((south + north) / 2, (west + east) / 2), zoom_start=9.0,
+                           tiles='OpenStreetMap', zoom_snap=0.25))
+    for year, side in ((2021, m.m1), (2025, m.m2)):
+        for f in grids[year]['features']:
+            f['properties']['_label'] = f"{year}: {f['properties']['burnt_ha'] or 0:,.0f} ha burnt (confirmed)"
+        folium.GeoJson(
+            grids[year], name=str(year),
+            style_function=lambda f: {'fillColor': cmap(min(f['properties']['burnt_ha'] or 0, top)),
+                                      'fillOpacity': 0.85 if f['properties']['burnt_ha'] else 0, 'weight': 0},
+            tooltip=folium.GeoJsonTooltip(fields=['_label'], labels=False)).add_to(side)
+        folium.GeoJson(boundary, style_function=lambda f: {'color': '#c5d3e6', 'weight': 1.4,
+                                                           'fillOpacity': 0}).add_to(side)
+    return m, top
+
+
+def change_map(boundary, late):
+    """The change in burnt area per 1 km square from 2021 to 2025, blue where it fell and ember where it rose."""
+    fields = ('cell', 'burnt_ha', 'burnt_unconfirmed_ha')
+
+    def burnt(p):
+        return (p['burnt_ha'] or 0) + ((p['burnt_unconfirmed_ha'] or 0) if late else 0)
+    before = {f['properties']['cell']: burnt(f['properties']) for f in c.slim_grid(2021, fields)['features']}
+    grid = c.slim_grid(2025, fields)
+    for f in grid['features']:
+        p = f['properties']
+        p['_change'] = burnt(p) - before.get(p['cell'], 0.0)
+        p['_label'] = (f"2021: {before.get(p['cell'], 0):,.0f} ha, 2025: {burnt(p):,.0f} ha, "
+                       f"change {p['_change']:+,.0f} ha")
+    limit = max(float(np.quantile(np.abs([f['properties']['_change'] for f in grid['features']]), 0.98)), 1.0)
+    cmap = bcm.LinearColormap(CHANGE, vmin=-limit, vmax=limit)
+    m = c.dark_map(folium.Map(tiles='OpenStreetMap', zoom_snap=0.25))
+    folium.GeoJson(
+        grid, style_function=lambda f: {'fillColor': cmap(max(-limit, min(limit, f['properties']['_change']))),
+                                        'fillOpacity': 0.85 if f['properties']['_change'] else 0, 'weight': 0},
+        tooltip=folium.GeoJsonTooltip(fields=['_label'], labels=False)).add_to(m)
+    folium.GeoJson(boundary, style_function=lambda f: {'color': '#c5d3e6', 'weight': 1.4, 'fillOpacity': 0}).add_to(m)
+    m.fit_bounds(c.district_bounds(boundary))
+    return m, limit
+
+
+def learning_chart(curve):
+    """The forest's F1 as it learns from more points, against the rule on the same held-out points."""
+    lines = pd.concat([
+        curve.assign(series='Random Forest', f1=curve['f1_mean']),
+        curve.assign(series='Burn rule', f1=curve['rule_f1_mean_same_folds'])])[['training_points', 'series', 'f1']]
+    colour = alt.Color('series:N', title=None, legend=alt.Legend(orient='bottom'),
+                       scale=alt.Scale(domain=['Random Forest', 'Burn rule'], range=['#3987e5', c.EMBER]))
+    band = alt.Chart(curve).transform_calculate(
+        low='datum.f1_mean - datum.f1_sd', high='datum.f1_mean + datum.f1_sd').mark_area(
+        opacity=0.22, color='#3987e5').encode(
+        x='training_points:Q', y=alt.Y('low:Q', scale=alt.Scale(domain=[0.7, 1.0], zero=False)), y2='high:Q')
+    line = alt.Chart(lines).mark_line(strokeWidth=2.5, point=alt.OverlayMarkDef(filled=True, size=50)).encode(
+        x=alt.X('training_points:Q', title='labelled points the forest learned from'),
+        y=alt.Y('f1:Q', title='F1 on held-out points', scale=alt.Scale(domain=[0.7, 1.0], zero=False)),
+        color=colour, strokeDash=alt.StrokeDash('series:N', legend=None,
+                                               scale=alt.Scale(domain=['Random Forest', 'Burn rule'],
+                                                               range=[[1, 0], [6, 4]])),
+        tooltip=['series', 'training_points', alt.Tooltip('f1:Q', format='.3f')])
+    return (band + line).properties(height=300, width='container',
+                                    title='More labels of the same kind would not lift the forest above the rule')
+
+
 tab_map, tab_missed, tab_change, tab_ml, tab_forecast = st.tabs(
     ['Burnt-area map', 'What fire counts missed', '2021 against 2025', 'ML classifier', '2026 forecast'])
 
 # --- The map -----------------------------------------------------------------------------------------------------
 with tab_map:
-    season = st.radio('Season', c.SEASONS, horizontal=True, key='map_season')
+    season = c.choice('Season', c.SEASONS, key='map_season')
     s = c.summary(season)
-    grid = c.geojson(P / f's2_burn_grid_1km_sangrur_{season}.geojson')
+    grid = c.slim_grid(season, GRID_FIELDS)
     boundary = c.geojson(P / 'boundary_sangrur_pre2021.geojson')
     if s is None or grid is None or boundary is None:
         c.missing(P / f's2_burn_grid_1km_sangrur_{season}.geojson')
@@ -144,7 +254,7 @@ with tab_map:
         c.metric(cols[4], 'Harvest to burn, median', f"{float(s['median_days_harvest_to_burn']):.0f} days")
         left, right = st.columns([2, 1])
         layer = left.selectbox('Colour the 1 km squares by', list(LAYERS))
-        show_fires = right.checkbox('Show VIIRS fire detections', value=season == 2025,
+        show_fires = right.toggle('Show VIIRS fire detections', value=season == 2025,
                                     help='Detections inside the district from every VIIRS satellite flying that '
                                          'season, each drawn with the 375 m radius the missed share uses. Shown as '
                                          'a heat map when there are more than 3,000.')
@@ -154,7 +264,7 @@ with tab_map:
             if det is not None:
                 fires = det[det['inside'] & det['sensor'].str.startswith('VIIRS')]
         m, key_info = grid_map(grid, layer, boundary, fires)
-        legend(*key_info)
+        c.legend(*key_info)
         c.show_map(m, key=f'map_{season}_{layer}_{show_fires}')
         st.caption('For the straw buyer, the green layer is the harvested area not seen burnt, and the timing layers '
                    'show when harvest and burning moved through the district. For the department, the red layers '
@@ -166,7 +276,7 @@ with tab_map:
 
 # --- What fire counts missed ---------------------------------------------------------------------------------------
 with tab_missed:
-    season = st.radio('Season', c.SEASONS, horizontal=True, key='missed_season')
+    season = c.choice('Season', c.SEASONS, key='missed_season')
     s = c.summary(season)
     bw = c.csv(P / f's2_burn_by_window_sangrur_{season}.csv')
     if s is None or bw is None:
@@ -217,18 +327,39 @@ with tab_change:
                     f'{1 - fires25 / fires21:.0%}, so fire counts overstate the fall in burning. In 2025 they missed '
                     f'most of it. The 2021 map has no labels of its own, and the cause of the gap (later burning, '
                     'smaller or shorter fires, partial burns) cannot be told from these data.')
-        left, right = st.columns(2)
+        left, right = st.columns(2, gap='large')
         with left:
-            c.image(c.MAPS / 'notebook02c' / '01_change_2021_2025.png')
-            c.image(c.MAPS / 'notebook02c' / '02_timing.png')
+            st.altair_chart(fall_chart(comp))
         with right:
-            c.image(c.MAPS / 'notebook02c' / '03_change_map.png')
-            bands = c.csv(P / 'season_comparison_by_band_sangrur.csv')
-            if bands is not None:
-                st.markdown('**South to north** (four bands with equal numbers of 1 km squares)')
-                st.dataframe(bands, hide_index=True, column_config={
-                    col: st.column_config.NumberColumn(format='%.0f' if '(ha)' in col else '%.2f')
-                    for col in bands.columns if col != 'band'})
+            by_window = c.csv(P / 'season_comparison_by_window_sangrur.csv')
+            if by_window is not None:
+                st.altair_chart(timing_chart(by_window))
+        boundary = c.geojson(P / 'boundary_sangrur_pre2021.geojson')
+        view = c.choice('Map', ['Side by side', 'Change per square'], key='change_view')
+        if boundary is None or c.slim_grid(2021) is None or c.slim_grid(2025) is None:
+            c.missing(P / 's2_burn_grid_1km_sangrur_2021.geojson')
+        elif view == 'Side by side':
+            m, top = season_pair(boundary)
+            a, b = st.columns(2)
+            a.markdown('**2021**')
+            b.markdown('**2025**')
+            c.show_map(m, height=520, key='season_pair')
+            c.legend(EMBERS, ('0 ha', f'{top:,.0f} ha or more'),
+                     'confirmed burnt area in each 1 km square, on one scale for both years. Pan or zoom either map '
+                     'and the other follows.')
+        else:
+            late = st.toggle('Count the late burns too', key='change_late',
+                             help='Burns first seen from 19 Nov, kept out of the headline figures as unconfirmed.')
+            m, limit = change_map(boundary, late)
+            c.show_map(m, height=560, key=f'change_{late}')
+            c.legend(CHANGE, (f'\u2212{limit:,.0f} ha', f'+{limit:,.0f} ha'),
+                     'change in burnt area per 1 km square, 2021 to 2025: blue where it fell, ember where it rose')
+        bands = c.csv(P / 'season_comparison_by_band_sangrur.csv')
+        if bands is not None:
+            st.markdown('**South to north** (four bands with equal numbers of 1 km squares)')
+            st.dataframe(bands, hide_index=True, column_config={
+                col: st.column_config.NumberColumn(format='%.0f' if '(ha)' in col else '%.2f')
+                for col in bands.columns if col != 'band'})
         with st.expander('Every measure, both seasons'):
             st.dataframe(comp.reset_index())
 
@@ -265,8 +396,12 @@ with tab_ml:
                 'recall_mean': st.column_config.NumberColumn('Recall', format='%.2f'),
                 'mcnemar_p_min': st.column_config.NumberColumn('McNemar p, lowest', format='%.2f'),
                 'mcnemar_p_max': st.column_config.NumberColumn('McNemar p, highest', format='%.2f')})
-        left, right = st.columns(2)
+        left, right = st.columns(2, gap='large')
         with left:
+            curve = c.csv(P / 'ml_learning_curve_sangrur_2025.csv')
+            if curve is not None:
+                st.altair_chart(learning_chart(curve))
+        with right:
             importance = c.csv(P / 'ml_feature_importance_sangrur_2025.csv')
             if importance is not None:
                 groups = importance[importance['kind'] == 'group']
@@ -275,12 +410,11 @@ with tab_ml:
                     y=alt.Y('name:N', sort='-x', title=None, axis=alt.Axis(labelLimit=320)),
                     tooltip=['name', alt.Tooltip('f1_drop_mean:Q', format='.3f'), 'features']).properties(
                     title='What the forest relies on', width='container'))
-            st.markdown('**Decision:** the rule\'s map stays. No model beats it at the labelled points, and the rule '
-                        'needs no labels to train, is easier to explain and carries to another season unchanged '
-                        '(decision log, 31 Oct 2026). [Recommendation]')
-        with right:
-            c.image(c.MAPS / 'notebook03' / '04_agreement_map.png', caption='Where the forest\'s map and the rule\'s '
-                    'agree')
+        st.markdown('**Decision:** the rule\'s map stays. No model beats it at the labelled points, and the rule '
+                    'needs no labels to train, is easier to explain and carries to another season unchanged '
+                    '(decision log, 31 Oct 2026). [Recommendation]')
+        with st.expander('Where the forest\'s map and the rule\'s agree (20 m map)'):
+            c.image(c.MAPS / 'notebook03' / '04_agreement_map.png')
 
 # --- 2026 forecast -------------------------------------------------------------------------------------------------
 with tab_forecast:
@@ -289,7 +423,7 @@ with tab_forecast:
     if fc is None or summ is None:
         c.missing(P / 'fire_forecast_2026.csv')
     else:
-        area = st.radio('Area', ['Punjab', 'Sangrur'], horizontal=True, key='forecast_area')
+        area = c.choice('Area', ['Punjab', 'Sangrur'], key='forecast_area')
         head = summ[(summ['area'] == area) & summ['headline']].iloc[0]
         cols = st.columns(4)
         c.metric(cols[0], f"Suomi NPP detections to {pd.Timestamp(head['data_through']):%d %b}",

@@ -93,6 +93,63 @@ def text(path):
     return path.read_text(encoding='utf-8') if path.exists() else None
 
 
+@st.cache_data(show_spinner=False)
+def _slim_grid(path, mtime, fields):
+    grid = json.loads(Path(path).read_text(encoding='utf-8'))
+    features = []
+    for f in grid['features']:
+        geometry = f['geometry']
+        if geometry['type'] == 'Polygon':      # 1 km squares: coordinates rounded to about 1 m, to send less
+            geometry = {'type': 'Polygon',
+                        'coordinates': [[[round(x, 5), round(y, 5)] for x, y, *_ in ring]
+                                        for ring in geometry['coordinates']]}
+        features.append({'type': 'Feature', 'geometry': geometry,
+                         'properties': {k: f['properties'].get(k) for k in fields}})
+    return {'type': 'FeatureCollection', 'features': features}
+
+
+def slim_grid(year, fields=('cell',)):
+    """Notebook 02's 1 km grid for a season with only the fields a map needs, or None while it doesn't exist."""
+    path = PROCESSED / f's2_burn_grid_1km_sangrur_{year}.geojson'
+    return _slim_grid(str(path), path.stat().st_mtime, tuple(fields)) if path.exists() else None
+
+
+def grid_centres(year=2025):
+    """Centre of each 1 km square, as cell id -> (latitude, longitude)."""
+    grid = slim_grid(year)
+    if grid is None:
+        return {}
+    centres = {}
+    for f in grid['features']:
+        ring = f['geometry']['coordinates'][0][:-1]
+        centres[f['properties']['cell']] = (sum(p[1] for p in ring) / len(ring), sum(p[0] for p in ring) / len(ring))
+    return centres
+
+
+def choice(label, options, key, default=None, format_func=str, help=None):
+    """Pick one of a few options from a row of buttons (a row of radio buttons on older Streamlit)."""
+    options = list(options)
+    default = options[0] if default is None else default
+    if hasattr(st, 'segmented_control'):
+        try:
+            return st.segmented_control(label, options, default=default, required=True, key=key,
+                                        format_func=format_func, help=help)
+        except TypeError:                      # before `required` existed: deselecting returns None
+            value = st.segmented_control(label, options, default=default, key=key, format_func=format_func,
+                                         help=help)
+            return default if value is None else value
+    return st.radio(label, options, index=options.index(default), horizontal=True, key=key,
+                    format_func=format_func, help=help)
+
+
+def legend(colours, ends, caption):
+    """A colour ramp key, drawn by the page rather than inside a map, so it needs no extra scripts from the web."""
+    st.markdown(
+        f'<div class="pbi-key"><span>{ends[0]}<i style="display:inline-block;width:150px;height:10px;'
+        f'border-radius:2px;background:linear-gradient(to right,{",".join(colours)})"></i>{ends[1]}</span>'
+        f'<span>{caption}</span></div>', unsafe_allow_html=True)
+
+
 def summary(year):
     """Notebook 02's headline numbers for the whole district in one season, as metric -> value."""
     table = csv(PROCESSED / f's2_burn_summary_sangrur_{year}.csv')

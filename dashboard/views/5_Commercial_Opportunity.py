@@ -4,7 +4,8 @@ import streamlit as st
 
 import common as c
 
-st.title('Commercial Opportunity')
+c.page_header('agriculture', 'Commercial Opportunity',
+              'The user, the decision, the pain point and how the product would be tested.')
 
 s25 = c.summary(2025)
 by_window = c.csv(c.PROCESSED / 's2_burn_by_window_sangrur_2025.csv')

@@ -22,6 +22,9 @@ LAYERS = {
     'When harvest was first seen (average)': ('mean_harvest_window_start', 'date', ['#ffffcc', '#41b6c4', '#253494']),
 }
 UNCONFIRMED = 'first seen from 19 Nov (unconfirmed)'
+# Line colours with at least 3:1 contrast on both the light and the dark theme (backgrounds #ffffff and #0e1117),
+# so a line never disappears into the page, whichever theme the viewer uses.
+BLUE, ORANGE, GREY = '#2a78d6', '#e6550d', '#898781'
 
 
 def district_bounds(boundary):
@@ -121,7 +124,8 @@ def by_window_chart(bw):
                                                 UNCONFIRMED], range=['#fdae6b', '#cb181d', '#9e9ac8'])),
         tooltip=['window', 'burns', alt.Tooltip('hectares:Q', format=',.0f')])
     fires = bw.assign(window=order)
-    line = alt.Chart(fires).mark_line(point=True, color='#222222').encode(
+    line = alt.Chart(fires).mark_line(color=BLUE, strokeWidth=2,
+                                      point=alt.OverlayMarkDef(color=BLUE, filled=True, size=40)).encode(
         x=alt.X('window:O', sort=order), y=alt.Y('viirs_detections_inside:Q', title='VIIRS detections (line)'),
         tooltip=['window', alt.Tooltip('viirs_detections_inside:Q', title='VIIRS detections')])
     return alt.layer(bars, line).resolve_scale(y='independent').properties(height=360, width='container')
@@ -316,14 +320,19 @@ with tab_forecast:
         lines['series'] = 'forecast: ' + lines['method'] + np.where(lines['headline'], ' (headline)', '')
         data = pd.concat([happened, lines[['week', 'detections', 'series']]], ignore_index=True)
         series = list(dict.fromkeys(data['series']))
-        others = iter(['#9ecae1', '#bdbdbd', '#c7e9c0'])
-        colours = ['#e6550d' if '(headline)' in s else '#252525' if s.startswith('2026') else next(others, '#bdbdbd')
-                   for s in series]
-        chart = alt.Chart(data).mark_line(point=True).encode(
+        # What happened in blue and the headline forecast in orange; the other forecasts in grey, told apart by dashes.
+        dashes = iter([[6, 4], [2, 3]])
+        looks = [(BLUE, [1, 0], 3) if s.startswith('2026') else (ORANGE, [1, 0], 2) if '(headline)' in s
+                 else (GREY, next(dashes, [6, 4]), 1.5) for s in series]
+        colours, strokes, widths = (list(v) for v in zip(*looks))
+        legend = alt.Legend(orient='bottom', labelLimit=400, columns=2, symbolType='stroke', symbolStrokeWidth=2.5)
+        chart = alt.Chart(data).mark_line(point=alt.OverlayMarkDef(filled=True, size=30)).encode(
             x=alt.X('week:O', title='week of the season (week 1 starts 15 Sep)', axis=alt.Axis(labelAngle=0)),
             y=alt.Y('detections:Q', title='Suomi NPP detections per week'),
-            color=alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours),
-                            legend=alt.Legend(orient='bottom', labelLimit=400, columns=2)),
+            color=alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours), legend=legend),
+            strokeDash=alt.StrokeDash('series:N', title=None, scale=alt.Scale(domain=series, range=strokes),
+                                      legend=legend),
+            strokeWidth=alt.StrokeWidth('series:N', scale=alt.Scale(domain=series, range=widths), legend=None),
             tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')],
         ).properties(height=380, width='container')
         st.altair_chart(chart)

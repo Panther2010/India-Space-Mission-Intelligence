@@ -40,7 +40,7 @@ This is Section 5 of the brief: data options compared on detail, how often the a
 - **Landsat helped, but little.** It imaged the district on 11 dates between 10 Oct and 25 Nov. Its 27 Oct pass was nearly cloud-free and gave a view inside the gap at all 26 points, but at 30 m and often under smoke flags. It settled 3 of them: one burnt, two not. At 16 of the other 23, the straw was still there on 27 Oct and gone by 2 Nov: a 6-day hole that neither optical mission could see into. The rest were damp, at a field edge, beside a canal or only just harvested.
 - **Fire counts missed most of the burning.** No VIIRS detection fell within 375 m of 90.6% of the confirmed burnt area. Allowing 750 m still left 73.8% unseen, and adding MODIS detections within 1 km left 60.4%.
 
-## 4. Recommendation [Recommendation]
+## 4. Which data to use [Recommendation]
 
 For the buyer's decision, which harvested fields still hold straw, refreshed every few days:
 

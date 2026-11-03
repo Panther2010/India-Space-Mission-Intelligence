@@ -25,6 +25,8 @@ It opens in the browser at http://localhost:8501. The maps need an internet conn
 
 ## Put it online (Streamlit Community Cloud)
 
+The app has been online since 3 Nov 2026 at https://india-space-mission-intelligence-dashboard.streamlit.app. To deploy it again, or a copy of it:
+
 1. Sign in at https://share.streamlit.io with GitHub, and allow it to read this repository.
 2. Create an app from the repository `Panther2010/India-Space-Mission-Intelligence`, branch `main`, main file `dashboard/app.py`.
 3. Community Cloud installs `dashboard/requirements.txt`, because it looks in the app's folder before the repository root. That file holds only what the dashboard needs, not the notebooks' heavier packages.

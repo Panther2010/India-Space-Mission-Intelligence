@@ -1,0 +1,8 @@
+# Streamlit Community Cloud installs this file, in the app's folder, instead of the project's requirements.txt,
+# which also holds the heavier packages the notebooks need.
+streamlit
+pandas
+numpy
+altair
+folium
+streamlit-folium

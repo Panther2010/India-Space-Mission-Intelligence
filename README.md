@@ -58,7 +58,7 @@ flowchart LR
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Version 1 built (3 Nov 2026): overview, mission explorer, startup landscape, EO analysis (burnt-area map, missed share, 2021 against 2025, classifier, forecast), mission trade-offs and commercial opportunity; online on Streamlit Community Cloud since 3 Nov 2026: https://india-space-mission-intelligence-dashboard.streamlit.app |
 | 5 | GitHub repository | this repo | Set up |
-| 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); why a Random Forest, with six other classifiers compared, drafted (3 Nov 2026, `report/ml_classifier.md`); the rest planned |
+| 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); why a Random Forest, with six other classifiers compared, drafted (3 Nov 2026, `report/ml_classifier.md`); findings and limitations drafted (3 Nov 2026, `report/findings.md`, `report/limitations.md`); the rest planned |
 | 7 | Product one-pager | `report/` | Planned |
 | 8 | Three-minute demo | `report/` | Planned |
 
@@ -140,6 +140,8 @@ These come from the project brief:
 - Coordinate systems, units, dates, nulls and duplicates are checked.
 
 ## Known limitations
+
+The short list. `report/limitations.md` gives the full one, with the way each limit moves the findings.
 
 - A fire detection is a 375 m pixel that contained fire at the moment the satellite passed. It is not a field, and counts are not burnt area.
 - Optical imagery misses burns under cloud or smoke, and burn scars can vanish once fields are tilled, sometimes within two to three days.

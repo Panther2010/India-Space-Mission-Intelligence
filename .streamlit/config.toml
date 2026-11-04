@@ -1,4 +1,4 @@
-# The dashboard's look: night navy, ember orange for burning, satellite blue for data.
+# The dashboard's look: near-black panels on a black gradient, ember orange for burning, satellite blue for data.
 # Community Cloud reads this file from the repository root, even though the app is in dashboard/.
 
 [client]
@@ -12,33 +12,35 @@ enableStaticServing = true
 [theme]
 base = "dark"
 primaryColor = "#ff7b39"
-backgroundColor = "#0b1322"
-secondaryBackgroundColor = "#121d31"
-textColor = "#e8eef7"
+backgroundColor = "#090b0f"
+secondaryBackgroundColor = "#151a22"
+textColor = "#e9edf3"
 linkColor = "#8cc8ff"
 codeTextColor = "#c6d2e2"
-codeBackgroundColor = "#16233a"
-borderColor = "#22324c"
-dataframeBorderColor = "#22324c"
-dataframeHeaderBackgroundColor = "#121d31"
+codeBackgroundColor = "#151a22"
+borderColor = "#242b36"
+dataframeBorderColor = "#242b36"
+dataframeHeaderBackgroundColor = "#151a22"
 showSidebarBorder = true
-baseRadius = "0.6rem"
+baseRadius = "0.7rem"
 font = "Hind, sans-serif"
+# Small capital labels and readouts.
+codeFont = "JetBrains Mono, monospace"
 # 18 px text, up from Streamlit's 16 px: everything sized in rem (text, labels, tables, headings) grows with it.
 baseFontSize = 18
 headingFont = "Rajdhani, sans-serif"
 headingFontWeights = [700, 700, 600, 600, 600, 600]
 metricValueFontSize = "2.3rem"
 metricValueFontWeight = 600
-# Checked for colour-blind safety and 3:1 contrast on the navy background.
+# Checked for colour-blind safety and 3:1 contrast on the page, the panels and the tiles (#090b0f, #0f1217, #151a22).
 chartCategoricalColors = ["#3987e5", "#d95926", "#199e70", "#c98500", "#d55181", "#008300", "#9085e9", "#e66767"]
 
 [theme.sidebar]
-backgroundColor = "#0e182a"
-secondaryBackgroundColor = "#16233a"
+backgroundColor = "#0c0f14"
+secondaryBackgroundColor = "#151a22"
 
-# Rajdhani (headings and numbers) and Hind (text), both by Indian Type Foundry, SIL Open Font License 1.1
-# (dashboard/static/OFL-*.txt).
+# Rajdhani (headings and numbers) and Hind (text), both by Indian Type Foundry, and JetBrains Mono (labels), by
+# JetBrains; all under the SIL Open Font License 1.1 (dashboard/static/OFL-*.txt).
 [[theme.fontFaces]]
 family = "Rajdhani"
 url = "app/static/rajdhani-500.woff2"
@@ -67,4 +69,14 @@ weight = 500
 [[theme.fontFaces]]
 family = "Hind"
 url = "app/static/hind-600.woff2"
+weight = 600
+
+[[theme.fontFaces]]
+family = "JetBrains Mono"
+url = "app/static/jetbrains-mono-500.woff2"
+weight = 500
+
+[[theme.fontFaces]]
+family = "JetBrains Mono"
+url = "app/static/jetbrains-mono-600.woff2"
 weight = 600

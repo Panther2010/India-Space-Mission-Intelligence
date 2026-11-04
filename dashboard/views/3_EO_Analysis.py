@@ -9,9 +9,10 @@ import streamlit as st
 
 import common as c
 
-c.page_header('local_fire_department', 'EO Analysis',
+c.page_header('EO Analysis',
               f'{c.AREA_LABEL}: burnt area mapped from Sentinel-2 five-day composites, set against VIIRS fire '
-              'detections. Every number is [Ours] unless marked otherwise.')
+              'detections. Every number is [Ours] unless marked otherwise.',
+              eyebrow='Earth observation · Sentinel-2 and VIIRS')
 
 P = c.PROCESSED
 # Each ramp runs from dark to bright, so on the dark map the squares with the most stand out and the ones with
@@ -220,275 +221,300 @@ def learning_chart(curve):
                        scale=alt.Scale(domain=['Random Forest', 'Burn rule'], range=['#3987e5', c.EMBER]))
     band = alt.Chart(curve).transform_calculate(
         low='datum.f1_mean - datum.f1_sd', high='datum.f1_mean + datum.f1_sd').mark_area(
-        opacity=0.22, color='#3987e5').encode(
+        opacity=0.22, color='#3987e5', clip=True).encode(
         x='training_points:Q', y=alt.Y('low:Q', scale=alt.Scale(domain=[0.7, 1.0], zero=False)), y2='high:Q')
-    line = alt.Chart(lines).mark_line(strokeWidth=2.5, point=alt.OverlayMarkDef(filled=True, size=50)).encode(
+    line = alt.Chart(lines).mark_line(strokeWidth=2.5, clip=True,
+                                      point=alt.OverlayMarkDef(filled=True, size=50)).encode(
         x=alt.X('training_points:Q', title='labelled points the forest learned from'),
         y=alt.Y('f1:Q', title='F1 on held-out points', scale=alt.Scale(domain=[0.7, 1.0], zero=False)),
         color=colour, strokeDash=alt.StrokeDash('series:N', legend=None,
                                                scale=alt.Scale(domain=['Random Forest', 'Burn rule'],
                                                                range=[[1, 0], [6, 4]])),
         tooltip=['series', 'training_points', alt.Tooltip('f1:Q', format='.3f')])
-    return (band + line).properties(height=300, width='container',
+    return (band + line).properties(height=300, width='container', padding={'top': 8},
                                     title='More labels of the same kind would not lift the forest above the rule')
 
 
-tab_map, tab_missed, tab_change, tab_ml, tab_forecast = st.tabs(
-    ['Burnt-area map', 'What fire counts missed', '2021 against 2025', 'ML classifier', '2026 forecast'])
+# ---- The key numbers up front ------------------------------------------------------------------------------------
+s25, overall, validation = c.summary(2025), c.comparison(), c.csv(P / 'validation_accuracy_sangrur_2025.csv')
+if s25 is not None and overall is not None:
+    fell = overall.loc['burnt area, confirmed (ha)', 'relative change']
+    npp = overall.loc['Suomi NPP detections inside', 'relative change']
+    key = [c.tile('flame', f"{float(s25['burnt_ha']):,.0f}", 'ha', 'Burnt in 2025, confirmed', glow='ember',
+                  help='Burns first seen before 19 Nov. Notebook 02.'),
+           c.tile('eye-off', f"{float(s25['missed_share_viirs_375m']) * 100:.1f}", '%', 'No VIIRS detection within 375 m',
+                  glow='red', help='Share of the confirmed burnt area with no VIIRS detection near it in time and space.'),
+           c.tile('trending-down', f'{fell * 100:.0f}'.replace('-', '\u2212'), '%', 'Burnt area, 2021 to 2025',
+                  f'detections {npp * 100:.0f}%'.replace('-', '\u2212'), 'up',
+                  help='Confirmed burnt area against Suomi NPP detections, the satellite counted the same way in both '
+                       'seasons. Notebook 02c.')]
+    if validation is not None:
+        mapped = validation[validation['rule'].str.startswith('map as reported')
+                            & (validation['scored_on'] == 'all labelled points')]
+        if len(mapped):
+            key.append(c.tile('circle-check', f"{mapped['f1'].iloc[0]:.2f}", '', 'F1 of the map at labelled points',
+                              f"{int(mapped['points'].iloc[0])} points",
+                              help='Precision and recall at the points labelled burnt or not burnt from single-date '
+                                   'images. Notebook 02.'))
+    c.tiles(key, columns=len(key), note='[Ours]')
 
-# --- The map -----------------------------------------------------------------------------------------------------
-with tab_map:
-    season = c.choice('Season', c.SEASONS, key='map_season')
-    s = c.summary(season)
-    grid = c.slim_grid(season, GRID_FIELDS)
-    boundary = c.geojson(P / 'boundary_sangrur_pre2021.geojson')
-    if s is None or grid is None or boundary is None:
-        c.missing(P / f's2_burn_grid_1km_sangrur_{season}.geojson')
-    else:
-        cols = st.columns(5)
-        c.metric(cols[0], 'Harvested in the season', c.ha(s['harvested_ha']))
-        c.metric(cols[1], 'Burnt, confirmed', c.ha(s['burnt_ha']))
-        c.metric(cols[2], 'Share of the harvest burnt', c.pct(s['burnt_share_of_harvested']))
-        c.metric(cols[3], 'Late burns, from 19 Nov', c.ha(s['burnt_unconfirmed_ha']),
-                 help='Mapped but unconfirmed: late in the season, damp soil under a young crop can look '
-                 'like a burn (decision log, 30 Oct 2026).')
-        c.metric(cols[4], 'Harvest to burn, median', f"{float(s['median_days_harvest_to_burn']):.0f} days")
-        left, right = st.columns([2, 1])
-        layer = left.selectbox('Colour the 1 km squares by', list(LAYERS))
-        show_fires = right.toggle('Show VIIRS fire detections', value=season == 2025,
-                                    help='Detections inside the district from every VIIRS satellite flying that '
-                                         'season, each drawn with the 375 m radius the missed share uses. Shown as '
-                                         'a heat map when there are more than 3,000.')
-        fires = None
-        if show_fires:
-            det = c.csv(P / f'firms_detections_sangrur_{season}.csv')
-            if det is not None:
-                fires = det[det['inside'] & det['sensor'].str.startswith('VIIRS')]
-        m, key_info = grid_map(grid, layer, boundary, fires)
-        c.legend(*key_info)
-        c.show_map(m, key=f'map_{season}_{layer}_{show_fires}')
-        st.caption('For the straw buyer, the green layer is the harvested area not seen burnt, and the timing layers '
-                   'show when harvest and burning moved through the district. For the department, the red layers '
-                   'show where burning was, and where fire counts missed it. Hover over a square for its numbers.')
-        with st.expander('The 20 m map'):
-            figure = (c.MAPS / 'qgis' / '01_burnt_area_2025.png' if season == 2025
-                      else c.MAPS / 'notebook02' / '2021' / '04_burnt_area_map.png')
-            c.image(figure, caption=f'{c.AREA_LABEL}, {season}: every 20 m pixel')
+with c.panel('eo'):
+    tab_map, tab_missed, tab_change, tab_ml, tab_forecast = st.tabs(
+        ['Burnt-area map', 'What fire counts missed', '2021 against 2025', 'ML classifier', '2026 forecast'])
 
-# --- What fire counts missed ---------------------------------------------------------------------------------------
-with tab_missed:
-    season = c.choice('Season', c.SEASONS, key='missed_season')
-    s = c.summary(season)
-    bw = c.csv(P / f's2_burn_by_window_sangrur_{season}.csv')
-    if s is None or bw is None:
-        c.missing(P / f's2_burn_by_window_sangrur_{season}.csv')
-    else:
-        st.markdown('A burnt pixel counts as **flagged** when a fire detection lies near it at the right time: between '
-                    'its last clear view before the burn and the 5-day window in which the burn shows. The share of '
-                    'confirmed burnt area left unflagged is the **missed share**, under three rules for "near":')
-        cols = st.columns(4)
-        c.metric(cols[0], 'VIIRS within 375 m (strict)', c.pct(s['missed_share_viirs_375m']))
-        c.metric(cols[1], 'VIIRS within 750 m', c.pct(s['missed_share_viirs_750m']))
-        c.metric(cols[2], 'VIIRS within 750 m or MODIS within 1 km', c.pct(s['missed_share_viirs_750m_or_modis_1000m']))
-        c.metric(cols[3], 'Strict, with the late burns', c.pct(s['missed_share_viirs_375m_including_unconfirmed']))
-        st.altair_chart(by_window_chart(bw))
-        satellites = 'Suomi NPP, NOAA-20 and NOAA-21' if 'NOAA21' in str(s['firms_products']) else \
-            'Suomi NPP and NOAA-20 (NOAA-21 was launched in November 2022)'
-        st.caption(f'VIIRS satellites in {season}: {satellites}. Burnt area is counted in the window in which a '
-                   'burn is first seen; fire detections in the window in which they were made. The two seasons are '
-                   'compared on the same two satellites in the next tab.')
-
-# --- 2021 against 2025 ---------------------------------------------------------------------------------------------
-with tab_change:
-    comp = c.comparison()
-    if comp is None:
-        c.missing(P / 'season_comparison_sangrur.csv')
-    else:
-        def pair(measure):
-            return comp.loc[measure, '2021'], comp.loc[measure, '2025']
-
-        burnt21, burnt25 = pair('burnt area, confirmed (ha)')
-        fires21, fires25 = pair('Suomi NPP detections inside')
-        miss21, miss25 = pair('missed share, Suomi NPP and NOAA-20 only (375 m)')
-        cols = st.columns(4)
-        c.metric(cols[0], 'Burnt area, confirmed, 2025', c.ha(burnt25), c.change(burnt25 / burnt21 - 1) + ' since 2021',
-                 delta_color='off')
-        c.metric(cols[1], 'Suomi NPP detections, 2025', f'{fires25:,.0f}',
-                 c.change(fires25 / fires21 - 1) + ' since 2021',
-                 delta_color='off')
-        c.metric(cols[2], 'No fire seen nearby, 2025', c.pct(miss25),
-                 f'{(miss25 - miss21) * 100:+.0f} points since 2021', delta_color='off',
-                 help='Suomi NPP and NOAA-20 only, the two VIIRS satellites flying in both seasons; 375 m.')
-        if 'burnt share of land harvested in both seasons' in comp.index:
-            same21, same25 = pair('burnt share of land harvested in both seasons')
-            c.metric(cols[3], 'Burnt share, same fields, 2025', c.pct(same25),
-                     f'{(same25 - same21) * 100:+.0f} points since 2021', delta_color='off',
-                     help='Burnt share of the land harvested in both seasons, so the same fields are compared.')
-        st.markdown(f'Burning fell by about {1 - burnt25 / burnt21:.0%} while fire detections fell '
-                    f'{1 - fires25 / fires21:.0%}, so fire counts overstate the fall in burning. In 2025 they missed '
-                    f'most of it. The 2021 map has no labels of its own, and the cause of the gap (later burning, '
-                    'smaller or shorter fires, partial burns) cannot be told from these data.')
-        left, right = st.columns(2, gap='large')
-        with left:
-            st.altair_chart(fall_chart(comp))
-        with right:
-            by_window = c.csv(P / 'season_comparison_by_window_sangrur.csv')
-            if by_window is not None:
-                st.altair_chart(timing_chart(by_window))
+    # --- The map -----------------------------------------------------------------------------------------------------
+    with tab_map:
+        season = c.choice('Season', c.SEASONS, key='map_season')
+        s = c.summary(season)
+        grid = c.slim_grid(season, GRID_FIELDS)
         boundary = c.geojson(P / 'boundary_sangrur_pre2021.geojson')
-        view = c.choice('Map', ['Side by side', 'Change per square'], key='change_view')
-        if boundary is None or c.slim_grid(2021) is None or c.slim_grid(2025) is None:
-            c.missing(P / 's2_burn_grid_1km_sangrur_2021.geojson')
-        elif view == 'Side by side':
-            m, top = season_pair(boundary)
-            a, b = st.columns(2)
-            a.markdown('**2021**')
-            b.markdown('**2025**')
-            c.show_map(m, height=520, key='season_pair')
-            c.legend(EMBERS, ('0 ha', f'{top:,.0f} ha or more'),
-                     'confirmed burnt area in each 1 km square, on one scale for both years. Pan or zoom either map '
-                     'and the other follows.')
+        if s is None or grid is None or boundary is None:
+            c.missing(P / f's2_burn_grid_1km_sangrur_{season}.geojson')
         else:
-            late = st.toggle('Count the late burns too', key='change_late',
-                             help='Burns first seen from 19 Nov, kept out of the headline figures as unconfirmed.')
-            m, limit = change_map(boundary, late)
-            c.show_map(m, height=560, key=f'change_{late}')
-            c.legend(CHANGE, (f'\u2212{limit:,.0f} ha', f'+{limit:,.0f} ha'),
-                     'change in burnt area per 1 km square, 2021 to 2025: blue where it fell, ember where it rose')
-        bands = c.csv(P / 'season_comparison_by_band_sangrur.csv')
-        if bands is not None:
-            st.markdown('**South to north** (four bands with equal numbers of 1 km squares)')
-            st.dataframe(bands, hide_index=True, column_config={
-                col: st.column_config.NumberColumn(format='%.0f' if '(ha)' in col else '%.2f')
-                for col in bands.columns if col != 'band'})
-        with st.expander('Every measure, both seasons'):
-            st.dataframe(comp.reset_index())
+            cols = st.columns(5)
+            c.metric(cols[0], 'Harvested in the season', c.ha(s['harvested_ha']))
+            c.metric(cols[1], 'Burnt, confirmed', c.ha(s['burnt_ha']))
+            c.metric(cols[2], 'Share of the harvest burnt', c.pct(s['burnt_share_of_harvested']))
+            c.metric(cols[3], 'Late burns, from 19 Nov', c.ha(s['burnt_unconfirmed_ha']),
+                     help='Mapped but unconfirmed: late in the season, damp soil under a young crop can look '
+                     'like a burn (decision log, 30 Oct 2026).')
+            c.metric(cols[4], 'Harvest to burn, median', f"{float(s['median_days_harvest_to_burn']):.0f} days")
+            left, right = st.columns([2, 1])
+            layer = left.selectbox('Colour the 1 km squares by', list(LAYERS))
+            show_fires = right.toggle('Show VIIRS fire detections', value=season == 2025,
+                                        help='Detections inside the district from every VIIRS satellite flying that '
+                                             'season, each drawn with the 375 m radius the missed share uses. Shown as '
+                                             'a heat map when there are more than 3,000.')
+            fires = None
+            if show_fires:
+                det = c.csv(P / f'firms_detections_sangrur_{season}.csv')
+                if det is not None:
+                    fires = det[det['inside'] & det['sensor'].str.startswith('VIIRS')]
+            m, key_info = grid_map(grid, layer, boundary, fires)
+            c.legend(*key_info)
+            c.show_map(m, key=f'map_{season}_{layer}_{show_fires}')
+            st.caption('For the straw buyer, the green layer is the harvested area not seen burnt, and the timing layers '
+                       'show when harvest and burning moved through the district. For the department, the red layers '
+                       'show where burning was, and where fire counts missed it. Hover over a square for its numbers.')
+            with st.expander('The 20 m map'):
+                figure = (c.MAPS / 'qgis' / '01_burnt_area_2025.png' if season == 2025
+                          else c.MAPS / 'notebook02' / '2021' / '04_burnt_area_map.png')
+                c.image(figure, caption=f'{c.AREA_LABEL}, {season}: every 20 m pixel')
 
-# --- ML classifier -------------------------------------------------------------------------------------------------
-with tab_ml:
-    acc = c.csv(P / 'ml_accuracy_sangrur_2025.csv')
-    if acc is None:
-        c.missing(P / 'ml_accuracy_sangrur_2025.csv')
-    else:
-        st.markdown('Does a classifier trained on the 2025 validation labels map burnt fields better than the '
-                    'three-threshold rule? A Random Forest learned from 147 labelled points on harvested fields '
-                    '(Notebook 03).')
-        cols = st.columns(3)
-        rule = acc[(acc['method'] == 'rule: map as reported') & (acc['scored_on'] == 'all labelled points')]
-        forest = acc[acc['scored_on'].str.contains('mean of')]
-        if len(rule):
-            c.metric(cols[0], 'Burn rule, F1 on all labelled points', f"{rule['f1'].iloc[0]:.2f}")
-        if len(forest):
-            c.metric(cols[1], 'Random Forest, F1 (cross-validated)', f"{forest['f1'].iloc[0]:.2f}")
-        mapcomp = c.csv(P / 'ml_map_comparison_sangrur_2025.csv')
-        if mapcomp is not None:
-            area = mapcomp.set_index('measure')['value']
-            c.metric(cols[2], 'Burnt area: forest map / rule map', f"{area['burnt in the forest map (ha)']:,.0f} / "
-                     f"{area['burnt in the rule map, as reported (ha)']:,.0f} ha")
-        models = c.csv(P / 'ml_model_comparison_sangrur_2025.csv')
-        if models is not None:
-            st.markdown('**Other classifiers under the same cross-validation** (default settings, nothing tuned):')
-            st.dataframe(models[['method', 'f1_mean', 'f1_min', 'f1_max', 'precision_mean', 'recall_mean',
-                                 'mcnemar_p_min', 'mcnemar_p_max']], hide_index=True, column_config={
-                'method': 'Method', 'f1_mean': st.column_config.NumberColumn('F1, mean', format='%.2f'),
-                'f1_min': st.column_config.NumberColumn('F1, lowest run', format='%.2f'),
-                'f1_max': st.column_config.NumberColumn('F1, highest run', format='%.2f'),
-                'precision_mean': st.column_config.NumberColumn('Precision', format='%.2f'),
-                'recall_mean': st.column_config.NumberColumn('Recall', format='%.2f'),
-                'mcnemar_p_min': st.column_config.NumberColumn('McNemar p, lowest', format='%.2f'),
-                'mcnemar_p_max': st.column_config.NumberColumn('McNemar p, highest', format='%.2f')})
-        left, right = st.columns(2, gap='large')
-        with left:
-            curve = c.csv(P / 'ml_learning_curve_sangrur_2025.csv')
-            if curve is not None:
-                st.altair_chart(learning_chart(curve))
-        with right:
-            importance = c.csv(P / 'ml_feature_importance_sangrur_2025.csv')
-            if importance is not None:
-                groups = importance[importance['kind'] == 'group']
-                st.altair_chart(alt.Chart(groups).mark_bar(color='#e15759').encode(
-                    x=alt.X('f1_drop_mean:Q', title='drop in F1 when the group is shuffled'),
-                    y=alt.Y('name:N', sort='-x', title=None, axis=alt.Axis(labelLimit=320)),
-                    tooltip=['name', alt.Tooltip('f1_drop_mean:Q', format='.3f'), 'features']).properties(
-                    title='What the forest relies on', width='container'))
-        st.markdown('**Decision:** the rule\'s map stays. No model beats it at the labelled points, and the rule '
-                    'needs no labels to train, is easier to explain and carries to another season unchanged '
-                    '(decision log, 31 Oct 2026). [Recommendation]')
-        with st.expander('Where the forest\'s map and the rule\'s agree (20 m map)'):
-            c.image(c.MAPS / 'notebook03' / '04_agreement_map.png')
-
-# --- 2026 forecast -------------------------------------------------------------------------------------------------
-with tab_forecast:
-    fc, summ = c.csv(P / 'fire_forecast_2026.csv'), c.csv(P / 'fire_forecast_2026_summary.csv')
-    check = c.csv(P / 'fire_forecast_check_2026.csv')
-    if fc is None or summ is None:
-        c.missing(P / 'fire_forecast_2026.csv')
-    else:
-        area = c.choice('Area', ['Punjab', 'Sangrur'], key='forecast_area')
-        head = summ[(summ['area'] == area) & summ['headline']].iloc[0]
-        cols = st.columns(4)
-        c.metric(cols[0], f"Suomi NPP detections to {pd.Timestamp(head['data_through']):%d %b}",
-                 f"{head['seen_so_far']:,.0f}")
-        c.metric(cols[1], 'Forecast for the rest of the season', f"{head['forecast_rest']:,.0f}",
-                 help=f"80% range {head['rest_low']:,.0f}–{head['rest_high']:,.0f}")
-        c.metric(cols[2], 'Season forecast / last season',
-                 f"{head['forecast_season']:,.0f} / {head['last_season']:,.0f}")
-        dates = str(head['peak_week_dates'])
-        c.metric(cols[3], 'Busiest week, most likely', f"Week {int(head['peak_week'])}",
-                 help=f"{dates}, in {head['peak_week_share']:.0%} of the scenarios")
-        rows = fc[fc['area'] == area]
-        happened = rows[rows['headline'] & rows['seen'].notna()][['week', 'seen']].rename(
-            columns={'seen': 'detections'})
-        done = pd.DataFrame()
-        if check is not None:
-            done = check[(check['area'] == area) & check['actual'].notna()]
-            happened = pd.concat([happened, done[['week']].assign(detections=done['actual'])], ignore_index=True)
-        happened['series'] = '2026, what happened'
-        lines = rows[rows['forecast'].notna()][['week', 'method', 'forecast', 'headline']].rename(
-            columns={'forecast': 'detections'})
-        lines['series'] = 'forecast: ' + lines['method'] + np.where(lines['headline'], ' (headline)', '')
-        data = pd.concat([happened, lines[['week', 'detections', 'series']]], ignore_index=True)
-        series = list(dict.fromkeys(data['series']))
-        # What happened in blue and the headline forecast in orange; the other forecasts in grey, told apart by dashes.
-        dashes = iter([[6, 4], [2, 3]])
-        looks = [(BLUE, [1, 0], 3) if s.startswith('2026') else (ORANGE, [1, 0], 2) if '(headline)' in s
-                 else (GREY, next(dashes, [6, 4]), 1.5) for s in series]
-        colours, strokes, widths = (list(v) for v in zip(*looks))
-        legend = alt.Legend(orient='bottom', labelLimit=400, columns=2, symbolType='stroke', symbolStrokeWidth=2.5)
-        chart = alt.Chart(data).mark_line(point=alt.OverlayMarkDef(filled=True, size=30)).encode(
-            x=alt.X('week:O', title='week of the season (week 1 starts 15 Sep)', axis=alt.Axis(labelAngle=0)),
-            y=alt.Y('detections:Q', title='Suomi NPP detections per week'),
-            color=alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours), legend=legend),
-            strokeDash=alt.StrokeDash('series:N', title=None, scale=alt.Scale(domain=series, range=strokes),
-                                      legend=legend),
-            strokeWidth=alt.StrokeWidth('series:N', scale=alt.Scale(domain=series, range=widths), legend=None),
-            tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')],
-        ).properties(height=380, width='container')
-        st.altair_chart(chart)
-        st.caption(f"Forecast issued on {pd.Timestamp(head['issued_on']):%d %b %Y} from the weeks to "
-                   f"{pd.Timestamp(head['data_through']):%d %b} (week {int(head['issue_week'])}), with the method "
-                   f"that did best in backtests over 2021–2025 ({head['method']}). It is never changed afterwards. "
-                   "The last-season forecast repeats 2025's weeks.")
-        if done.empty:
-            st.info('No week after the forecast has been checked in the committed data yet.')
+    # --- What fire counts missed ---------------------------------------------------------------------------------------
+    with tab_missed:
+        season = c.choice('Season', c.SEASONS, key='missed_season')
+        s = c.summary(season)
+        bw = c.csv(P / f's2_burn_by_window_sangrur_{season}.csv')
+        if s is None or bw is None:
+            c.missing(P / f's2_burn_by_window_sangrur_{season}.csv')
         else:
-            name = head['method']
-            ratio = np.where(done['actual'] > 0, done[name] / done['actual'].where(done['actual'] > 0), np.nan)
-            st.markdown(f"**Weeks checked so far** (to week {int(done['week'].max())}, from the last committed run of "
-                        'Notebook 04; the check is committed after each weekly run)')
-            st.dataframe(pd.DataFrame({
-                'week': done['week'],
-                'dates': [f'{pd.Timestamp(a):%d %b}–{pd.Timestamp(b):%d %b}'
-                          for a, b in zip(done['week_start'], done['week_end'])],
-                'what happened': done['actual'], 'counted from': done['actual_source'],
-                'headline forecast': done[name], 'forecast ÷ what happened': ratio,
-            }), hide_index=True, column_config={
-                'what happened': st.column_config.NumberColumn(format='%.0f'),
-                'headline forecast': st.column_config.NumberColumn(format='%.0f'),
-                'forecast ÷ what happened': st.column_config.NumberColumn(format='%.2f'),
-            })
-            st.caption('After 2 Nov, Suomi NPP data stopped, so later weeks are counted from NOAA-20 and converted to '
-                       'Suomi NPP terms with the two sensors\' 2026 ratio. A ratio above 1 means the forecast was too '
-                       'high.')
+            st.markdown('A burnt pixel counts as **flagged** when a fire detection lies near it at the right time: between '
+                        'its last clear view before the burn and the 5-day window in which the burn shows. The share of '
+                        'confirmed burnt area left unflagged is the **missed share**, under three rules for "near":')
+            cols = st.columns(4)
+            c.metric(cols[0], 'VIIRS within 375 m (strict)', c.pct(s['missed_share_viirs_375m']))
+            c.metric(cols[1], 'VIIRS within 750 m', c.pct(s['missed_share_viirs_750m']))
+            c.metric(cols[2], 'VIIRS within 750 m or MODIS within 1 km', c.pct(s['missed_share_viirs_750m_or_modis_1000m']))
+            c.metric(cols[3], 'Strict, with the late burns', c.pct(s['missed_share_viirs_375m_including_unconfirmed']))
+            st.altair_chart(by_window_chart(bw))
+            satellites = 'Suomi NPP, NOAA-20 and NOAA-21' if 'NOAA21' in str(s['firms_products']) else \
+                'Suomi NPP and NOAA-20 (NOAA-21 was launched in November 2022)'
+            st.caption(f'VIIRS satellites in {season}: {satellites}. Burnt area is counted in the window in which a '
+                       'burn is first seen; fire detections in the window in which they were made. The two seasons are '
+                       'compared on the same two satellites in the next tab.')
+
+    # --- 2021 against 2025 ---------------------------------------------------------------------------------------------
+    with tab_change:
+        comp = c.comparison()
+        if comp is None:
+            c.missing(P / 'season_comparison_sangrur.csv')
+        else:
+            def pair(measure):
+                return comp.loc[measure, '2021'], comp.loc[measure, '2025']
+
+            burnt21, burnt25 = pair('burnt area, confirmed (ha)')
+            fires21, fires25 = pair('Suomi NPP detections inside')
+            miss21, miss25 = pair('missed share, Suomi NPP and NOAA-20 only (375 m)')
+            cols = st.columns(4)
+            c.metric(cols[0], 'Burnt area, confirmed, 2025', c.ha(burnt25), c.change(burnt25 / burnt21 - 1) + ' since 2021',
+                     delta_color='off')
+            c.metric(cols[1], 'Suomi NPP detections, 2025', f'{fires25:,.0f}',
+                     c.change(fires25 / fires21 - 1) + ' since 2021',
+                     delta_color='off')
+            c.metric(cols[2], 'No fire seen nearby, 2025', c.pct(miss25),
+                     f'{(miss25 - miss21) * 100:+.0f} points since 2021', delta_color='off',
+                     help='Suomi NPP and NOAA-20 only, the two VIIRS satellites flying in both seasons; 375 m.')
+            if 'burnt share of land harvested in both seasons' in comp.index:
+                same21, same25 = pair('burnt share of land harvested in both seasons')
+                c.metric(cols[3], 'Burnt share, same fields, 2025', c.pct(same25),
+                         f'{(same25 - same21) * 100:+.0f} points since 2021', delta_color='off',
+                         help='Burnt share of the land harvested in both seasons, so the same fields are compared.')
+            st.markdown(f'Burning fell by about {1 - burnt25 / burnt21:.0%} while fire detections fell '
+                        f'{1 - fires25 / fires21:.0%}, so fire counts overstate the fall in burning. In 2025 they missed '
+                        f'most of it. The 2021 map has no labels of its own, and the cause of the gap (later burning, '
+                        'smaller or shorter fires, partial burns) cannot be told from these data.')
+            left, right = st.columns(2, gap='large')
+            with left:
+                st.altair_chart(fall_chart(comp))
+            with right:
+                by_window = c.csv(P / 'season_comparison_by_window_sangrur.csv')
+                if by_window is not None:
+                    st.altair_chart(timing_chart(by_window))
+            boundary = c.geojson(P / 'boundary_sangrur_pre2021.geojson')
+            view = c.choice('Map', ['Side by side', 'Change per square'], key='change_view')
+            if boundary is None or c.slim_grid(2021) is None or c.slim_grid(2025) is None:
+                c.missing(P / 's2_burn_grid_1km_sangrur_2021.geojson')
+            elif view == 'Side by side':
+                m, top = season_pair(boundary)
+                a, b = st.columns(2)
+                a.markdown('**2021**')
+                b.markdown('**2025**')
+                c.show_map(m, height=520, key='season_pair')
+                c.legend(EMBERS, ('0 ha', f'{top:,.0f} ha or more'),
+                         'confirmed burnt area in each 1 km square, on one scale for both years. Pan or zoom either map '
+                         'and the other follows.')
+            else:
+                late = st.toggle('Count the late burns too', key='change_late',
+                                 help='Burns first seen from 19 Nov, kept out of the headline figures as unconfirmed.')
+                m, limit = change_map(boundary, late)
+                c.show_map(m, height=560, key=f'change_{late}')
+                c.legend(CHANGE, (f'\u2212{limit:,.0f} ha', f'+{limit:,.0f} ha'),
+                         'change in burnt area per 1 km square, 2021 to 2025: blue where it fell, ember where it rose')
+            bands = c.csv(P / 'season_comparison_by_band_sangrur.csv')
+            if bands is not None:
+                st.markdown('**South to north** (four bands with equal numbers of 1 km squares)')
+                st.dataframe(bands, hide_index=True, column_config={
+                    col: st.column_config.NumberColumn(format='%.0f' if '(ha)' in col else '%.2f')
+                    for col in bands.columns if col != 'band'})
+            with st.expander('Every measure, both seasons'):
+                st.dataframe(comp.reset_index())
+
+    # --- ML classifier -------------------------------------------------------------------------------------------------
+    with tab_ml:
+        acc = c.csv(P / 'ml_accuracy_sangrur_2025.csv')
+        if acc is None:
+            c.missing(P / 'ml_accuracy_sangrur_2025.csv')
+        else:
+            st.markdown('Does a classifier trained on the 2025 validation labels map burnt fields better than the '
+                        'three-threshold rule? A Random Forest learned from 147 labelled points on harvested fields '
+                        '(Notebook 03).')
+            cols = st.columns(3)
+            rule = acc[(acc['method'] == 'rule: map as reported') & (acc['scored_on'] == 'all labelled points')]
+            forest = acc[acc['scored_on'].str.contains('mean of')]
+            if len(rule):
+                c.metric(cols[0], 'Burn rule, F1 on all labelled points', f"{rule['f1'].iloc[0]:.2f}")
+            if len(forest):
+                c.metric(cols[1], 'Random Forest, F1 (cross-validated)', f"{forest['f1'].iloc[0]:.2f}")
+            mapcomp = c.csv(P / 'ml_map_comparison_sangrur_2025.csv')
+            if mapcomp is not None:
+                area = mapcomp.set_index('measure')['value']
+                c.metric(cols[2], 'Burnt area: forest map / rule map', f"{area['burnt in the forest map (ha)']:,.0f} / "
+                         f"{area['burnt in the rule map, as reported (ha)']:,.0f} ha")
+            models = c.csv(P / 'ml_model_comparison_sangrur_2025.csv')
+            if models is not None:
+                st.markdown('**Other classifiers under the same cross-validation** (default settings, nothing tuned):')
+                st.dataframe(models[['method', 'f1_mean', 'f1_min', 'f1_max', 'precision_mean', 'recall_mean',
+                                     'mcnemar_p_min', 'mcnemar_p_max']], hide_index=True, column_config={
+                    'method': 'Method', 'f1_mean': st.column_config.NumberColumn('F1, mean', format='%.2f'),
+                    'f1_min': st.column_config.NumberColumn('F1, lowest run', format='%.2f'),
+                    'f1_max': st.column_config.NumberColumn('F1, highest run', format='%.2f'),
+                    'precision_mean': st.column_config.NumberColumn('Precision', format='%.2f'),
+                    'recall_mean': st.column_config.NumberColumn('Recall', format='%.2f'),
+                    'mcnemar_p_min': st.column_config.NumberColumn('McNemar p, lowest', format='%.2f'),
+                    'mcnemar_p_max': st.column_config.NumberColumn('McNemar p, highest', format='%.2f')})
+            left, right = st.columns(2, gap='large')
+            with left:
+                curve = c.csv(P / 'ml_learning_curve_sangrur_2025.csv')
+                if curve is not None:
+                    st.altair_chart(learning_chart(curve))
+            with right:
+                importance = c.csv(P / 'ml_feature_importance_sangrur_2025.csv')
+                if importance is not None:
+                    groups = importance[importance['kind'] == 'group']
+                    st.altair_chart(alt.Chart(groups).mark_bar(color='#e15759').encode(
+                        x=alt.X('f1_drop_mean:Q', title='drop in F1 when the group is shuffled'),
+                        y=alt.Y('name:N', sort='-x', title=None, axis=alt.Axis(labelLimit=320)),
+                        tooltip=['name', alt.Tooltip('f1_drop_mean:Q', format='.3f'), 'features']).properties(
+                        title='What the forest relies on', width='container'))
+            st.markdown('**Decision:** the rule\'s map stays. No model beats it at the labelled points, and the rule '
+                        'needs no labels to train, is easier to explain and carries to another season unchanged '
+                        '(decision log, 31 Oct 2026). [Recommendation]')
+            with st.expander('Where the forest\'s map and the rule\'s agree (20 m map)'):
+                c.image(c.MAPS / 'notebook03' / '04_agreement_map.png')
+
+    # --- 2026 forecast -------------------------------------------------------------------------------------------------
+    with tab_forecast:
+        fc, summ = c.csv(P / 'fire_forecast_2026.csv'), c.csv(P / 'fire_forecast_2026_summary.csv')
+        check = c.csv(P / 'fire_forecast_check_2026.csv')
+        if fc is None or summ is None:
+            c.missing(P / 'fire_forecast_2026.csv')
+        else:
+            area = c.choice('Area', ['Punjab', 'Sangrur'], key='forecast_area')
+            head = summ[(summ['area'] == area) & summ['headline']].iloc[0]
+            cols = st.columns(4)
+            c.metric(cols[0], f"Suomi NPP detections to {pd.Timestamp(head['data_through']):%d %b}",
+                     f"{head['seen_so_far']:,.0f}")
+            c.metric(cols[1], 'Forecast for the rest of the season', f"{head['forecast_rest']:,.0f}",
+                     help=f"80% range {head['rest_low']:,.0f}–{head['rest_high']:,.0f}")
+            c.metric(cols[2], 'Season forecast / last season',
+                     f"{head['forecast_season']:,.0f} / {head['last_season']:,.0f}")
+            dates = str(head['peak_week_dates'])
+            c.metric(cols[3], 'Busiest week, most likely', f"Week {int(head['peak_week'])}",
+                     help=f"{dates}, in {head['peak_week_share']:.0%} of the scenarios")
+            rows = fc[fc['area'] == area]
+            happened = rows[rows['headline'] & rows['seen'].notna()][['week', 'seen']].rename(
+                columns={'seen': 'detections'})
+            done = pd.DataFrame()
+            if check is not None:
+                done = check[(check['area'] == area) & check['actual'].notna()]
+                happened = pd.concat([happened, done[['week']].assign(detections=done['actual'])], ignore_index=True)
+            happened['series'] = '2026, what happened'
+            lines = rows[rows['forecast'].notna()][['week', 'method', 'forecast', 'headline']].rename(
+                columns={'forecast': 'detections'})
+            lines['series'] = 'forecast: ' + lines['method'] + np.where(lines['headline'], ' (headline)', '')
+            data = pd.concat([happened, lines[['week', 'detections', 'series']]], ignore_index=True)
+            series = list(dict.fromkeys(data['series']))
+            # What happened in blue and the headline forecast in orange; the other forecasts in grey, told apart by dashes.
+            dashes = iter([[6, 4], [2, 3]])
+            looks = [(BLUE, [1, 0], 3) if s.startswith('2026') else (ORANGE, [1, 0], 2) if '(headline)' in s
+                     else (GREY, next(dashes, [6, 4]), 1.5) for s in series]
+            colours, strokes, widths = (list(v) for v in zip(*looks))
+            legend = alt.Legend(orient='bottom', labelLimit=400, columns=2, symbolType='stroke', symbolStrokeWidth=2.5)
+            chart = alt.Chart(data).mark_line(point=alt.OverlayMarkDef(filled=True, size=30)).encode(
+                x=alt.X('week:O', title='week of the season (week 1 starts 15 Sep)', axis=alt.Axis(labelAngle=0)),
+                y=alt.Y('detections:Q', title='Suomi NPP detections per week'),
+                color=alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours), legend=legend),
+                strokeDash=alt.StrokeDash('series:N', title=None, scale=alt.Scale(domain=series, range=strokes),
+                                          legend=legend),
+                strokeWidth=alt.StrokeWidth('series:N', scale=alt.Scale(domain=series, range=widths), legend=None),
+                tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')],
+            ).properties(height=380, width='container')
+            st.altair_chart(chart)
+            st.caption(f"Forecast issued on {pd.Timestamp(head['issued_on']):%d %b %Y} from the weeks to "
+                       f"{pd.Timestamp(head['data_through']):%d %b} (week {int(head['issue_week'])}), with the method "
+                       f"that did best in backtests over 2021–2025 ({head['method']}). It is never changed afterwards. "
+                       "The last-season forecast repeats 2025's weeks.")
+            if done.empty:
+                st.info('No week after the forecast has been checked in the committed data yet.')
+            else:
+                name = head['method']
+                ratio = np.where(done['actual'] > 0, done[name] / done['actual'].where(done['actual'] > 0), np.nan)
+                st.markdown(f"**Weeks checked so far** (to week {int(done['week'].max())}, from the last committed run of "
+                            'Notebook 04; the check is committed after each weekly run)')
+                st.dataframe(pd.DataFrame({
+                    'week': done['week'],
+                    'dates': [f'{pd.Timestamp(a):%d %b}–{pd.Timestamp(b):%d %b}'
+                              for a, b in zip(done['week_start'], done['week_end'])],
+                    'what happened': done['actual'], 'counted from': done['actual_source'],
+                    'headline forecast': done[name], 'forecast ÷ what happened': ratio,
+                }), hide_index=True, column_config={
+                    'what happened': st.column_config.NumberColumn(format='%.0f'),
+                    'headline forecast': st.column_config.NumberColumn(format='%.0f'),
+                    'forecast ÷ what happened': st.column_config.NumberColumn(format='%.2f'),
+                })
+                st.caption('After 2 Nov, Suomi NPP data stopped, so later weeks are counted from NOAA-20 and converted to '
+                           'Suomi NPP terms with the two sensors\' 2026 ratio. A ratio above 1 means the forecast was too '
+                           'high.')
 
 c.footer()

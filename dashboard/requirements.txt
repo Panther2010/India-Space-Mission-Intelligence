@@ -1,6 +1,8 @@
 # Streamlit Community Cloud installs this file, in the app's folder, instead of the project's requirements.txt,
 # which also holds the heavier packages the notebooks need.
-streamlit
+# Pinned: the page styles find Streamlit's parts by names that can change between versions. Check the
+# look before raising it.
+streamlit==1.66.1
 pandas
 numpy
 altair

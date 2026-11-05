@@ -48,11 +48,11 @@ Steps 3 and 4 follow Streamlit's documentation, read on 3 Nov 2026: [app depende
 
 ## Share it as a file
 
-`paddy-burnt-area-dashboard.html` is one file to send instead of a link. It opens the live app inside a page with the project's name and an "Open in a new tab" button, so it always shows the current app; it holds no data itself.
+`paddy-burnt-area-dashboard.html` is one small file to send instead of a link. Double-clicked, it opens in the default browser on Windows, macOS or Linux and goes straight to the live app, so it always shows the current app; it needs nothing installed and holds no data itself. It goes there with JavaScript on or off, and shows a link to click if the browser blocks both.
 
-- **The app must be public.** Streamlit doesn't support embedding private apps ([embed your app](https://docs.streamlit.io/deploy/streamlit-community-cloud/share-your-app/embed-your-app), read on 3 Nov 2026).
-- **Sleeping apps.** Community Cloud puts apps to sleep after 12 hours without traffic, and anyone who opens one can wake it with "Yes, get this app back up!" ([manage your app](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app), read on 3 Nov 2026). The file says so.
-- **If the app's address changes,** replace the address in the file: it appears twice, in the button and in the frame.
+- **The app must be public** (step 4 above). A private app shows anyone else a Streamlit sign-in page instead of the dashboard.
+- **Sleeping apps.** Community Cloud puts apps to sleep after 12 hours without traffic, and anyone who opens one can wake it with "Yes, get this app back up!" ([manage your app](https://docs.streamlit.io/deploy/streamlit-community-cloud/manage-your-app), read on 3 Nov 2026).
+- **If the app's address changes,** replace the address in the file: it appears three times, in the `refresh` line, the script and the link.
 
 ## What the app shows, and when it changes
 
@@ -68,6 +68,6 @@ The 2026 forecast tab shows the forecast as issued on 1 Nov 2026 and the weeks c
 - `common.py`: paths, cached file readers (re-read when a file changes), the styles, and the parts every page uses: the header panel, tiles, ring gauges, panels, cards, links to other pages, button-row choices and the dark map style
 - `make_straw_table.py`: writes `data/processed/straw_by_window_sangrur_2025.csv`, the buyer's map, from Notebook 02's 20 m map. Run it again if that map changes (it needs rasterio, in the `eo` environment)
 - `static/`: the fonts and their licences, the icons (`static/icons/`) and the logo, served by the app at `app/static/`
-- `paddy-burnt-area-dashboard.html`: the file to share, which opens the live app
+- `paddy-burnt-area-dashboard.html`: the file to share, a small redirect that opens the live app in the default browser
 - `requirements.txt`: the packages for Community Cloud
 - `../.streamlit/config.toml`: the theme and static file serving

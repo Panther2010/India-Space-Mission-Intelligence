@@ -29,8 +29,9 @@ LAYERS = {
 }
 UNCONFIRMED = 'first seen from 19 Nov (unconfirmed)'
 # Line colours with at least 3:1 contrast on both the light and the dark theme (backgrounds #ffffff and #0e1117),
-# so a line never disappears into the page, whichever theme the viewer uses.
-BLUE, ORANGE, GREY = '#2a78d6', '#e6550d', '#898781'
+# so a line never disappears into the page, whichever theme the viewer uses. GREEN (the updated forecast) sits
+# close to GREY for deuteranopes, so the two are also told apart by width and dashes (thick solid, thin dashed).
+BLUE, ORANGE, GREY, GREEN = '#2a78d6', '#e6550d', '#898781', '#2f9e44'
 GRID_FIELDS = ('cell', 'burnt_ha', 'burnt_missed_ha', 'harvested_not_burnt_ha', 'burnt_unconfirmed_ha',
                'mean_harvest_window_start', 'mean_burn_window_start')
 EMBERS = LAYERS['Burnt area, confirmed'][2]
@@ -447,21 +448,72 @@ with c.panel('eo'):
     with tab_forecast:
         fc, summ = c.csv(P / 'fire_forecast_2026.csv'), c.csv(P / 'fire_forecast_2026_summary.csv')
         check = c.csv(P / 'fire_forecast_check_2026.csv')
+        upd_weeks = c.csv(P / 'fire_forecast_2026_updates.csv')
+        upd = c.csv(P / 'fire_forecast_2026_updates_summary.csv')
+
+        def day(value):
+            value = pd.Timestamp(value)
+            return f'{value.day} {value:%b}'
+
+        def span(start, end):
+            start, end = pd.Timestamp(start), pd.Timestamp(end)
+            return f'{start.day} {start:%b}–{end.day} {end:%b}'
+
+        def outside(value, low, high):
+            # Late in the season past forecasts were mostly too low, so a range can sit above its forecast.
+            return (' Its range sits above the forecast: from this point in the season, past forecasts were mostly '
+                    'too low.' if value < low else ' Its range sits below the forecast: from this point in the season, '
+                    'past forecasts were mostly too high.' if value > high else '')
+
         if fc is None or summ is None:
             c.missing(P / 'fire_forecast_2026.csv')
         else:
             area = c.choice('Area', ['Punjab', 'Sangrur'], key='forecast_area')
             head = summ[(summ['area'] == area) & summ['headline']].iloc[0]
-            cols = st.columns(4)
-            c.metric(cols[0], f"Suomi NPP detections to {pd.Timestamp(head['data_through']):%d %b}",
-                     f"{head['seen_so_far']:,.0f}")
-            c.metric(cols[1], 'Forecast for the rest of the season', f"{head['forecast_rest']:,.0f}",
-                     help=f"80% range {head['rest_low']:,.0f}–{head['rest_high']:,.0f}")
-            c.metric(cols[2], 'Season forecast / last season',
-                     f"{head['forecast_season']:,.0f} / {head['last_season']:,.0f}")
-            dates = str(head['peak_week_dates'])
-            c.metric(cols[3], 'Busiest week, most likely', f"Week {int(head['peak_week'])}",
-                     help=f"{dates}, in {head['peak_week_share']:.0%} of the scenarios")
+            issued = pd.Timestamp(head['issued_on'])
+            first_name = day(issued)
+
+            # The latest updated forecast (Notebook 04, section 7), when a run that makes one has been committed.
+            latest = ahead = None
+            if upd is not None and upd_weeks is not None and (upd['area'] == area).any():
+                mine = upd[upd['area'] == area]
+                latest = mine[mine['issue_week'] == mine['issue_week'].max()].iloc[0]
+                ahead = upd_weeks[(upd_weeks['area'] == area) & (upd_weeks['issue_week'] == latest['issue_week'])
+                                  & upd_weeks['forecast'].notna()]
+                when = pd.Timestamp(latest['issued_on'])
+                c.eyebrow(f"Updated forecast · issued {day(when)} from the weeks to "
+                          f"{day(latest['data_through'])}", 'radar', c.GREEN)
+                cols = st.columns(4)
+                c.metric(cols[0], f"Seen to {day(latest['data_through'])}",
+                         f"{latest['seen_so_far']:,.0f}",
+                         help="Detections in Suomi NPP terms: its own counts to 2 Nov, then NOAA-20's, converted. [Ours]")
+                c.metric(cols[1], f"Week {int(latest['next_week'])}, "
+                                  f"{span(latest['next_week_start'], latest['next_week_end'])}",
+                         f"{latest['next_week_forecast']:,.0f}",
+                         help=f"80% range {latest['next_week_low']:,.0f}–{latest['next_week_high']:,.0f}. In backtests "
+                              f"from the same week the forecast was typically {latest['typical_error_next_week']:.2f} "
+                              'times too high or too low. [Ours]')
+                c.metric(cols[2], 'Rest of the season', f"{latest['forecast_rest']:,.0f}",
+                         help=f"80% range {latest['rest_low']:,.0f}–{latest['rest_high']:,.0f}; typically "
+                              f"{latest['typical_error_rest']:.2f} times off in backtests. [Ours]")
+                c.metric(cols[3], 'Season / last season',
+                         f"{latest['forecast_season']:,.0f} / {head['last_season']:,.0f}")
+
+            def first_forecast_metrics():
+                cols = st.columns(4)
+                c.metric(cols[0], f"Suomi NPP detections to {pd.Timestamp(head['data_through']):%d %b}",
+                         f"{head['seen_so_far']:,.0f}")
+                c.metric(cols[1], 'Forecast for the rest of the season', f"{head['forecast_rest']:,.0f}",
+                         help=f"80% range {head['rest_low']:,.0f}–{head['rest_high']:,.0f}")
+                c.metric(cols[2], 'Season forecast / last season',
+                         f"{head['forecast_season']:,.0f} / {head['last_season']:,.0f}")
+                dates = str(head['peak_week_dates'])
+                c.metric(cols[3], 'Busiest week, most likely', f"Week {int(head['peak_week'])}",
+                         help=f"{dates}, in {head['peak_week_share']:.0%} of the scenarios")
+
+            if latest is None:
+                first_forecast_metrics()
+
             rows = fc[fc['area'] == area]
             happened = rows[rows['headline'] & rows['seen'].notna()][['week', 'seen']].rename(
                 columns={'seen': 'detections'})
@@ -472,29 +524,88 @@ with c.panel('eo'):
             happened['series'] = '2026, what happened'
             lines = rows[rows['forecast'].notna()][['week', 'method', 'forecast', 'headline']].rename(
                 columns={'forecast': 'detections'})
-            lines['series'] = 'forecast: ' + lines['method'] + np.where(lines['headline'], ' (headline)', '')
-            data = pd.concat([happened, lines[['week', 'detections', 'series']]], ignore_index=True)
+            lines['series'] = (f'forecast of {first_name}: ' + lines['method']
+                               + np.where(lines['headline'], ' (headline)', ''))
+            parts, band = [happened, lines[['week', 'detections', 'series']]], None
+            if latest is not None:
+                issue = int(latest['issue_week'])
+                mine_weeks = upd_weeks[(upd_weeks['area'] == area) & (upd_weeks['issue_week'] == issue)]
+                last_seen = mine_weeks.loc[mine_weeks['week'] == issue, 'seen'].iloc[0]
+                parts.append(pd.DataFrame({'week': [issue, *ahead['week']],
+                                           'detections': [last_seen, *ahead['forecast']],
+                                           'series': f'updated forecast, {day(when)}'}))
+                band = ahead[['week', 'low', 'high']]
+            data = pd.concat(parts, ignore_index=True)
             series = list(dict.fromkeys(data['series']))
-            # What happened in blue and the headline forecast in orange; the other forecasts in grey, told apart by dashes.
+            # What happened in blue, the update in green, the 1 Nov headline in orange; the other 1 Nov forecasts in
+            # grey, told apart by dashes. Every series is drawn thin, then the main ones again on top, thicker: a
+            # strokeWidth scale on a nominal field spreads its widths evenly instead of using the list given.
             dashes = iter([[6, 4], [2, 3]])
-            looks = [(BLUE, [1, 0], 3) if s.startswith('2026') else (ORANGE, [1, 0], 2) if '(headline)' in s
-                     else (GREY, next(dashes, [6, 4]), 1.5) for s in series]
-            colours, strokes, widths = (list(v) for v in zip(*looks))
+            looks = [(BLUE, [1, 0]) if s.startswith('2026') else (GREEN, [1, 0]) if s.startswith('updated')
+                     else (ORANGE, [1, 0]) if '(headline)' in s else (GREY, next(dashes, [6, 4])) for s in series]
+            colours, strokes = (list(v) for v in zip(*looks))
+            x = alt.X('week:O', title='week of the season (week 1 starts 15 Sep)', axis=alt.Axis(labelAngle=0))
+            y_title = 'Suomi NPP detections per week'
             legend = alt.Legend(orient='bottom', labelLimit=400, columns=2, symbolType='stroke', symbolStrokeWidth=2.5)
-            chart = alt.Chart(data).mark_line(point=alt.OverlayMarkDef(filled=True, size=30)).encode(
-                x=alt.X('week:O', title='week of the season (week 1 starts 15 Sep)', axis=alt.Axis(labelAngle=0)),
-                y=alt.Y('detections:Q', title='Suomi NPP detections per week'),
-                color=alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours), legend=legend),
+            colour = alt.Color('series:N', title=None, scale=alt.Scale(domain=series, range=colours), legend=legend)
+            base = alt.Chart(data).encode(x=x, y=alt.Y('detections:Q', title=y_title), color=colour)
+            layers = [base.mark_line(strokeWidth=1.5, point=alt.OverlayMarkDef(filled=True, size=30)).encode(
                 strokeDash=alt.StrokeDash('series:N', title=None, scale=alt.Scale(domain=series, range=strokes),
                                           legend=legend),
-                strokeWidth=alt.StrokeWidth('series:N', scale=alt.Scale(domain=series, range=widths), legend=None),
-                tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')],
-            ).properties(height=380, width='container')
-            st.altair_chart(chart)
-            st.caption(f"Forecast issued on {pd.Timestamp(head['issued_on']):%d %b %Y} from the weeks to "
-                       f"{pd.Timestamp(head['data_through']):%d %b} (week {int(head['issue_week'])}), with the method "
-                       f"that did best in backtests over 2021–2025 ({head['method']}). It is never changed afterwards. "
-                       "The last-season forecast repeats 2025's weeks.")
+                tooltip=['series', 'week', alt.Tooltip('detections:Q', format=',.0f')])]
+            for width, chosen in ((2.2, [s for s in series if '(headline)' in s]),
+                                  (3.2, [s for s in series if s.startswith(('2026', 'updated'))])):
+                layers.append(base.transform_filter(alt.FieldOneOfPredicate(field='series', oneOf=chosen))
+                              .mark_line(strokeWidth=width))
+            if band is not None:
+                layers.insert(0, alt.Chart(band).mark_area(opacity=0.18, color=GREEN).encode(
+                    x=x, y=alt.Y('low:Q', title=y_title), y2='high:Q',
+                    tooltip=['week', alt.Tooltip('low:Q', format=',.0f', title='80% range from'),
+                             alt.Tooltip('high:Q', format=',.0f', title='to')]))
+            chart = alt.layer(*layers)
+            st.altair_chart(chart.properties(height=380, width='container'))
+
+            if latest is None:
+                st.caption(f"Forecast issued on {issued:%d %b %Y} from the weeks to "
+                           f"{pd.Timestamp(head['data_through']):%d %b} (week {int(head['issue_week'])}), with the method "
+                           f"that did best in backtests over 2021–2025 ({head['method']}). It is never changed "
+                           "afterwards. The last-season forecast repeats 2025's weeks.")
+                st.info('An updated forecast, remade at each weekly run of Notebook 04, appears here once a run that '
+                        'makes one has been committed.')
+            else:
+                st.caption(f"Green: the updated forecast ({latest['method']}), remade at each weekly run from every week "
+                           f"seen so far, with its 80% range from backtests from the same week. Orange and grey: the "
+                           f"forecast of {first_name}, kept fixed so it can be scored honestly. Weeks after 2 Nov are "
+                           "NOAA-20's counts, converted to Suomi NPP terms. [Ours]"
+                           + outside(latest['forecast_rest'], latest['rest_low'], latest['rest_high']))
+                st.markdown('**The updated forecast, week by week**')
+                st.dataframe(pd.DataFrame({
+                    'week': ahead['week'], 'dates': [span(a, b) for a, b in zip(ahead['week_start'], ahead['week_end'])],
+                    'forecast': ahead['forecast'],
+                    '80% range': [f'{lo:,.0f}–{hi:,.0f}' for lo, hi in zip(ahead['low'], ahead['high'])],
+                }), hide_index=True, column_config={'forecast': st.column_config.NumberColumn(format='%.0f')})
+
+                earlier = upd[(upd['area'] == area) & (upd['issue_week'] < latest['issue_week'])]
+                if len(earlier):
+                    seen_now = mine_weeks.set_index('week')['seen']
+                    seen = [seen_now.get(int(w), np.nan) for w in earlier['next_week']]
+                    st.markdown("**How the earlier updates did** (each one's first week ahead)")
+                    st.dataframe(pd.DataFrame({
+                        'issued': [day(d) for d in earlier['issued_on']],
+                        'week': earlier['next_week'],
+                        'forecast': earlier['next_week_forecast'],
+                        '80% range': [f'{lo:,.0f}–{hi:,.0f}'
+                                      for lo, hi in zip(earlier['next_week_low'], earlier['next_week_high'])],
+                        'what happened': seen,
+                        'inside the range': [bool(lo <= s <= hi) for s, lo, hi in
+                                             zip(seen, earlier['next_week_low'], earlier['next_week_high'])],
+                    }), hide_index=True, column_config={
+                        'forecast': st.column_config.NumberColumn(format='%.0f'),
+                        'what happened': st.column_config.NumberColumn(format='%.0f')})
+
+                c.eyebrow(f'The forecast of {first_name} · kept fixed as the test', 'scale')
+                first_forecast_metrics()
+
             if done.empty:
                 st.info('No week after the forecast has been checked in the committed data yet.')
             else:
@@ -504,8 +615,7 @@ with c.panel('eo'):
                             'Notebook 04; the check is committed after each weekly run)')
                 st.dataframe(pd.DataFrame({
                     'week': done['week'],
-                    'dates': [f'{pd.Timestamp(a):%d %b}–{pd.Timestamp(b):%d %b}'
-                              for a, b in zip(done['week_start'], done['week_end'])],
+                    'dates': [span(a, b) for a, b in zip(done['week_start'], done['week_end'])],
                     'what happened': done['actual'], 'counted from': done['actual_source'],
                     'headline forecast': done[name], 'forecast ÷ what happened': ratio,
                 }), hide_index=True, column_config={

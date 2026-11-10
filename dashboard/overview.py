@@ -96,8 +96,16 @@ def window_chart(win):
         background='transparent')
 
 
-def forecast_row(area, head, checked, last_week):
-    """One area's 2026 forecast check: the latest week, and the season so far against the season forecast."""
+def forecast_row(area, head, checked, last_week, update=None):
+    """One area's 2026 forecast check: the latest week, and the season so far against the season forecast.
+    With `update` (a row of the updated forecasts' summary), also the updated forecast for the week ahead."""
+    ahead = ''
+    if update is not None:
+        start, end, issued = (pd.Timestamp(update[k]) for k in ('next_week_start', 'next_week_end', 'issued_on'))
+        ahead = (f'<div class="mc-small">Week {int(update["next_week"])} ({start.day} {start:%b}–{end.day} {end:%b}): '
+                 f'about <b>{update["next_week_forecast"]:,.0f}</b> forecast, 80% range '
+                 f'{update["next_week_low"]:,.0f}–{update["next_week_high"]:,.0f} '
+                 f'(updated forecast, {issued.day} {issued:%b})</div>')
     h = head.loc[area]
     method = h['method']
     weeks = checked[checked['area'] == area]
@@ -115,7 +123,7 @@ def forecast_row(area, head, checked, last_week):
             f'<div class="mc-prog"><span><span>of the season forecast</span><span style="color:{colour}">'
             f'{share * 100:.0f}%</span></span><i><u style="width:{min(share, 1) * 100:.0f}%;background:{colour};'
             f'box-shadow:0 0 8px {colour}"></u></i></div>'
-            f'<div><b>{season:,.0f}</b><span>season forecast</span></div></div></div>')
+            f'<div><b>{season:,.0f}</b><span>season forecast</span></div></div>{ahead}</div>')
 
 
 P = c.PROCESSED
@@ -145,6 +153,9 @@ fsum, check = c.csv(P / 'fire_forecast_2026_summary.csv'), c.csv(P / 'fire_forec
 checked = check.dropna(subset=['actual']) if check is not None else None
 last_week = int(checked['week'].max()) if checked is not None and len(checked) else None
 head = fsum[fsum['headline']].set_index('area') if fsum is not None else None
+upd = c.csv(P / 'fire_forecast_2026_updates_summary.csv')        # Notebook 04, section 7: one update per week
+latest_update = (upd[upd['issue_week'] == upd['issue_week'].max()].set_index('area')
+                 if upd is not None and len(upd) else None)
 
 # ---- The finding and the map --------------------------------------------------------------------------------------
 with c.keyed('hero_overview'):
@@ -247,12 +258,15 @@ with c.panel('overview'):
             c.eyebrow(f'Suomi NPP fire detections against the forecast issued {issued.day} {issued:%b %Y}',
                       'triangle-alert', c.AMBER)
             a, b = st.columns(2, gap='large')
-            with a:
-                c.html(forecast_row('Punjab', head, checked, last_week))
-            with b:
-                c.html(forecast_row('Sangrur', head, checked, last_week))
+            for col, area in ((a, 'Punjab'), (b, 'Sangrur')):
+                with col:
+                    update = (latest_update.loc[area] if latest_update is not None and area in latest_update.index
+                              else None)
+                    c.html(forecast_row(area, head, checked, last_week, update))
             c.html(f'<div class="mc-small">Headline method: {head.loc["Punjab", "method"]}. "Seen" counts the season '
-                   'to date; weeks are checked as each weekly run of Notebook 04 is committed. [Ours]</div>')
+                   'to date; weeks are checked as each weekly run of Notebook 04 is committed.'
+                   + (' The week ahead comes from the updated forecast, remade at each weekly run; the forecast of '
+                      '1 Nov stays fixed as the test.' if latest_update is not None else '') + ' [Ours]</div>')
             c.cta(EO, 'Open the forecast', 'forecast')
 
     with t_2021:

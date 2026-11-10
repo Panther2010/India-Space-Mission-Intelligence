@@ -62,6 +62,7 @@ This draft is for Section 8 (Limitations) of the report. It brings together the 
 - **The data differ in kind.** The 2026 counts are near-real-time data, while the archive the methods learn from is standard processing [Ours].
 - **The ranges are rough.** Ten backtest seasons give only a rough 80% range. Sangrur's weekly counts are small, and its forecast rests on 3 detections, so its range is probably too narrow, as week 7 showed [Ours].
 - **Later weeks are converted.** Suomi NPP data stopped on 2 Nov 2026 [Reported]. From week 8, the actual counts are NOAA-20's converted by a ratio estimated from the 2026 weeks both sensors covered, which adds uncertainty to the check [Ours].
+- **Sangrur's updated forecast leans on Punjab.** From 10 Nov, Sangrur's updated forecast is Punjab's times Sangrur's usual share of Punjab in each week, so a season in which that share runs high or low is missed until the next update. In weeks 7–8 of 2026 it ran at about 10%, against a usual 16–17% [Ours].
 
 ## 6. Scope
 

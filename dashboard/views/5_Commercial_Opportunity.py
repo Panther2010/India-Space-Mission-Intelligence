@@ -63,7 +63,8 @@ if s25 is not None and by_window is not None and straw is not None:
         c.tile('wheat', f"{float(s25['harvested_not_burnt_ha']):,.0f}", 'ha', 'Harvested in 2025, not seen burnt',
                glow='green', help='Where straw could still have been baled, though some will have been ploughed in '
                                   'or removed.'),
-        c.tile('tractor', f'{totals.max():,.0f}', 'ha', f'Fresh straw at the peak, from {pd.Timestamp(peak):%-d %b}',
+        c.tile('tractor', f'{totals.max():,.0f}', 'ha',
+               f'Fresh straw at the peak, from {pd.Timestamp(peak).day} {pd.Timestamp(peak):%b}',
                "buyer's map", help='The 5-day window with the most fresh straw on the ground: harvested in the last '
                                    '10 days and not yet seen burnt.'),
         c.tile('timer', f"{float(s25['median_days_harvest_to_burn']):.0f}", 'days', 'From harvest to burning, median',

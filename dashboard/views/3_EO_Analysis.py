@@ -415,15 +415,18 @@ with c.panel('eo'):
             models = c.csv(P / 'ml_model_comparison_sangrur_2025.csv')
             if models is not None:
                 st.markdown('**Other classifiers under the same cross-validation** (default settings, nothing tuned):')
-                st.dataframe(models[['method', 'f1_mean', 'f1_min', 'f1_max', 'precision_mean', 'recall_mean',
-                                     'mcnemar_p_min', 'mcnemar_p_max']], hide_index=True, column_config={
+                shown = models.copy()      # as text, so a row with no McNemar test shows a dash instead of "None"
+                for column in ('mcnemar_p_min', 'mcnemar_p_max'):
+                    shown[column] = shown[column].map(lambda p: '—' if pd.isna(p) else f'{p:.2f}')
+                st.dataframe(shown[['method', 'f1_mean', 'f1_min', 'f1_max', 'precision_mean', 'recall_mean',
+                                    'mcnemar_p_min', 'mcnemar_p_max']], hide_index=True, column_config={
                     'method': 'Method', 'f1_mean': st.column_config.NumberColumn('F1, mean', format='%.2f'),
                     'f1_min': st.column_config.NumberColumn('F1, lowest run', format='%.2f'),
                     'f1_max': st.column_config.NumberColumn('F1, highest run', format='%.2f'),
                     'precision_mean': st.column_config.NumberColumn('Precision', format='%.2f'),
                     'recall_mean': st.column_config.NumberColumn('Recall', format='%.2f'),
-                    'mcnemar_p_min': st.column_config.NumberColumn('McNemar p, lowest', format='%.2f'),
-                    'mcnemar_p_max': st.column_config.NumberColumn('McNemar p, highest', format='%.2f')})
+                    'mcnemar_p_min': st.column_config.TextColumn('McNemar p, lowest', alignment='right'),
+                    'mcnemar_p_max': st.column_config.TextColumn('McNemar p, highest', alignment='right')})
             left, right = st.columns(2, gap='large')
             with left:
                 curve = c.csv(P / 'ml_learning_curve_sangrur_2025.csv')

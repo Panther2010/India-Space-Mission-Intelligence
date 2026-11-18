@@ -1,3 +1,5 @@
 area,method,issued_on,data_through,issue_week,seen_so_far,next_week,next_week_start,next_week_end,next_week_forecast,next_week_low,next_week_high,forecast_rest,rest_low,rest_high,interval,forecast_season,busiest_week,typical_error_next_week,typical_error_rest
 Punjab,past seasons rescaled,2026-11-10,2026-11-09,8,3167.5,9,2026-11-10,2026-11-16,675.6,306,1284,853,710,2346,0.8,4021,8,1.68,1.63
 Sangrur,share of Punjab,2026-11-10,2026-11-09,8,246.9,9,2026-11-10,2026-11-16,96.6,36,244,107,41,343,0.8,354,8,2.04,2.1
+Punjab,past seasons rescaled,2026-11-18,2026-11-16,9,4070.7,10,2026-11-17,2026-11-23,145.0,128,1298,166,175,1572,0.8,4236,8,2.67,2.72
+Sangrur,share of Punjab,2026-11-18,2026-11-16,9,336.4,10,2026-11-17,2026-11-23,9.0,4,137,10,4,146,0.8,346,8,4.17,4.1

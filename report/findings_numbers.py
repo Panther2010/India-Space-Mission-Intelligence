@@ -1,6 +1,6 @@
-"""Print every number used in report/findings.md, from the files the notebooks committed.
+"""Print every number used in report/findings.md and in sections 3 and 6 of report/report.md, from committed files.
 
-Reads data/processed/ only and downloads nothing. The recurrence of burning on the same land needs the two 20 m burn
+Reads data/processed/ and dataset A only, and downloads nothing. The recurrence of burning on the same land needs the two 20 m burn
 maps and rasterio (in the project's environment); without rasterio that part is skipped.
 
 Run from the project folder:  python report/findings_numbers.py
@@ -69,6 +69,7 @@ def missed(s):
     show('VIIRS detections inside', len(viirs))
     show('VIIRS daytime detections, earliest and latest IST', f"{day['ist'].min()}, {day['ist'].max()} ({len(day)})")
     show('VIIRS night detections', f'{len(viirs) - len(day)} ({(len(viirs) - len(day)) / len(viirs):.3f})')
+    show('VIIRS detections in the three busiest windows together', int(peak['viirs_detections_inside'].sum()))
     modis = inside[inside['sensor'] == 'MODIS']
     show('MODIS detections inside, earliest and latest IST', f"{modis['ist'].min()}, {modis['ist'].max()}")
 
@@ -89,9 +90,22 @@ def timing():
     show('share of confirmed burnt area first seen 30 Oct-13 Nov', f"{three / confirmed['burnt_ha'].sum():.3f}")
     busiest = bw.nlargest(1, 'viirs_detections_inside').iloc[0]
     show('busiest window for VIIRS detections', f"{busiest['window_start']} ({busiest['viirs_detections_inside']})")
+    straw = pd.read_csv(P / 'straw_by_window_sangrur_2025.csv').groupby('window_start')['fresh_straw_ha'].sum()
+    show('fresh straw at the peak (harvested in the 10 days to the window\'s end, not seen burnt)',
+         f"{straw.max():,.0f} ha, window starting {straw.idxmax()}")
     season = bw[bw['window_start'] >= '2025-10-15']
     show('clear share below 0.999 from 15 Oct', season.loc[season['clear_share_of_area'] < 0.999,
                                                            ['window_start', 'clear_share_of_area']].values.tolist())
+
+
+def classifiers():
+    print('4b. Machine learning (Notebook 03 and report/compare_classifiers.py)')
+    comp = pd.read_csv(P / 'ml_model_comparison_sangrur_2025.csv')
+    for _, r in comp.iterrows():
+        p_min = '' if pd.isna(r['mcnemar_p_min']) else f", lowest McNemar p {r['mcnemar_p_min']:.3f}"
+        show(r['method'], f"F1 {r['f1_mean']:.3f} ({r['f1_min']:.3f}-{r['f1_max']:.3f}){p_min}")
+    curve = pd.read_csv(P / 'ml_learning_curve_sangrur_2025.csv')
+    show('Random Forest F1 by training points', dict(zip(curve['training_points'], curve['f1_mean'].round(3))))
 
 
 def comparison():
@@ -152,10 +166,11 @@ def forecast():
     print('6. The 2026 forecast and its check (Notebook 04)')
     summ = pd.read_csv(P / 'fire_forecast_2026_summary.csv')
     for _, r in summ[summ['headline']].iterrows():
-        show(f"{r['area']}: seen to {r['data_through']}, forecast rest (80% range), season, last season, peak",
+        show(f"{r['area']}: seen to {r['data_through']}, forecast rest (80% range), season (80% range), last season, "
+             'peak',
              f"{r['seen_so_far']:,.0f}; {r['forecast_rest']:,} ({r['rest_low']:,}-{r['rest_high']:,}); "
-             f"{r['forecast_season']:,}; {r['last_season']:,.0f}; {r['peak_week_dates']} "
-             f"in {r['peak_week_share']:.2f} of scenarios")
+             f"{r['forecast_season']:,} ({r['seen_so_far'] + r['rest_low']:,.0f}-{r['seen_so_far'] + r['rest_high']:,.0f}); "
+             f"{r['last_season']:,.0f}; {r['peak_week_dates']} in {r['peak_week_share']:.2f} of scenarios")
     check = pd.read_csv(P / 'fire_forecast_check_2026.csv')
     done = check[check['actual'].notna()]
     for _, r in done.iterrows():
@@ -163,6 +178,27 @@ def forecast():
              f"actual {r['actual']:,.0f}; headline {r['past seasons rescaled']:,.1f} "
              f"(x{r['past seasons rescaled'] / r['actual']:.2f}); last season {r['last season']:,.0f}; "
              f"SARIMA {r['SARIMA']:,.0f}")
+    methods = ['past seasons rescaled', 'last season', 'SARIMA']
+    for area, g in done.groupby('area'):
+        actual = g['actual'].sum()
+        show(f"{area}, weeks {g['week'].min()}-{g['week'].max()} together",
+             f"actual {actual:,.0f}; " + '; '.join(f"{m} {g[m].sum():,.0f} (x{g[m].sum() / actual:.2f})"
+                                                   for m in methods))
+    updates = pd.read_csv(P / 'fire_forecast_2026_updates_summary.csv')
+    for _, r in updates[updates['issue_week'] == updates['issue_week'].max()].iterrows():
+        show(f"{r['area']}: updated forecast issued {r['issued_on']}, data to {r['data_through']}",
+             f"seen so far {r['seen_so_far']:,.0f}; season {r['forecast_season']:,}; busiest week {r['busiest_week']}")
+
+
+def ecosystem():
+    print('7. Dataset A, the Indian space ecosystem (report section 3)')
+    a = pd.read_csv(P.parent / 'raw' / 'research' / 'dataset_A_india_space_ecosystem.csv')
+    show('companies', len(a))
+    show('by category', a['value_chain_category'].value_counts().to_dict())
+    show('by state', a['state'].fillna('not stated').value_counts().to_dict())
+    show('in Bengaluru', int((a['city'] == 'Bengaluru').sum()))
+    near = a[a['value_chain_category'].isin(['Earth Observation', 'Space Data/Analytics'])]
+    show('in Earth observation or space data', f"{len(near)}: {', '.join(near['company'])}")
 
 
 if __name__ == '__main__':
@@ -171,5 +207,7 @@ if __name__ == '__main__':
     validation()
     missed(s25)
     timing()
+    classifiers()
     comparison()
     forecast()
+    ecosystem()

@@ -50,7 +50,7 @@ This draft is for Section 5 (Method) and Section 6 (Findings) of the report.
 
 **Reading the table** [Ours]:
 - **All models score about the same:** F1 from 0.89 to 0.94, around the rule's 0.92.
-- **None beats the rule beyond chance:** the McNemar p is at least 0.15 in every run of every model.
+- **None beats the rule beyond chance:** the McNemar p is never below 0.14, in any run of any model (lowest 0.146, Extra Trees).
 - **Extra Trees scores highest (0.94), but only just:** its edge over the rule is about 3 of 187 points per run (7.1 against 3.9). Picking the best of seven models on the same splits also flatters the winner.
 - **Different trade-offs:** the rule finds almost every labelled burn (recall 0.97) at the cost of more false alarms (precision 0.87). The models give up some recall for precision. This fits the rule mapping more burnt area than the forest (71,600 ha for every burn against 55,700 ha; Notebook 03).
 - **The simplest models do a little worse.** A single tree is unstable from sample to sample, and logistic regression can only draw a straight boundary through the features (F1 0.89 and 0.90).

@@ -49,6 +49,14 @@ These pages give context, not analysis data; datasets go in `source_register.csv
 |---|---|---|---|
 | Verbio press release, 26 Oct 2022 | Company statement | A paddy-straw compressed-biogas plant at Lehragaga, Punjab, using 100,000 t of agricultural residue a year | [link](https://verbio.de/en/press/news/press-releases/detail/verbio-betreibt-indiens-erste-und-groesste-bioraffinerie-zur-herstellung-von-biomethan-aus-stroh) |
 | Indian Chemical News, "Puri inaugurates Asia's largest compressed biogas plant in Sangrur", 19 Oct 2022 (accessed 2026-10-25) | Trade news report | Places the Verbio plant at Lehragaga in Sangrur district; 100,000 t of paddy straw a year. Its current output hasn't been checked. | [link](https://www.indianchemicalnews.com/gas/lite/puri-inaugurates-asias-largest-compressed-biogas-plant-in-sangrur-15129) |
+| State of Punjab, status report in OA No. 632 of 2023 before the National Green Tribunal, dated 26 Nov 2024 (accessed 2026-11-19) | Government filing | About 19.7 million tonnes of paddy straw generated in the state, and more than 6.2 million tonnes managed ex situ "during the current year" (the filing doesn't name the year; from its date, probably 2024). Report, section 2. | [link](https://www.greentribunal.gov.in/sites/default/files/news_updates/Status%20Report%20of%20State%20of%20Punjab%20in%20OA%20NO%20632%20of%202023%20In%20re%20News%20item%20appearing%20in%20Hindu%20dated%2006.10.2023%20titled%20Pollution%20takes%20a%20front%20seat%20as%20stubble%20fires%20spike%20in%20Punjab.pdf) |
+
+## Regulation
+
+| Source | Type | Used for | Link |
+|---|---|---|---|
+| Department of Science and Technology, *Guidelines for acquiring and producing geospatial data and geospatial data services including maps*, 15 Feb 2021 (accessed 2026-11-19) | Government guidelines | Clause 8(ii)(1): no prior approval, security clearance or licence for collecting geospatial data, outside a negative list of sensitive attributes; stricter rules apply only finer than 1 m horizontal accuracy. Report, section 9. | [link](https://dst.gov.in/sites/default/files/Final%20Approved%20Guidelines%20on%20Geospatial%20Data.pdf) |
+| *The Digital Personal Data Protection Act, 2023* (No. 22 of 2023), India Code (accessed 2026-11-19) | Act of Parliament | Named in the report's section 9 as the law that linking fields to named farmers would likely bring in; that reading is ours, not a legal opinion | [link](https://www.indiacode.nic.in/bitstream/123456789/22037/2/a2023-22.pdf) |
 
 ## Methods
 

@@ -173,8 +173,8 @@ with c.panel('opportunity'):
     with t_next:
         c.eyebrow('Next steps')
         st.markdown(
-            '- **Product concept, risks and the business case:** being written for the report in Week 4 '
-            '(12–18 Nov 2026).\n'
+            '- **Product concept, risks and the business case:** in the report, section 9 (`report/report.pdf`): '
+            'the MVP, its dependencies, the validation plan, a business model hypothesis and the key risks.\n'
             '- **Next validation step:** a pilot with a straw buyer, measuring the tonnes of straw collected from areas '
             'the map flagged before they burned (the success metric in the problem statement). [Recommendation]\n'
             '- **Untested:** whether buyers would pay for the map. [Recommendation]')

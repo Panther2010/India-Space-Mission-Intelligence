@@ -11,6 +11,8 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 
 > **Core question:** in a high-burning Punjab district, what share of the burnt area visible in Sentinel-2 imagery during the 2025 season was never flagged by a VIIRS fire detection?
 
+**Read the results:** the [report](report/report.pdf) (10 pages; interim until the 2026 forecast is scored after 30 Nov 2026), the [one-pager](report/one_pager.pdf), and the [live dashboard](https://india-space-mission-intelligence-dashboard.streamlit.app).
+
 ## At a glance
 
 | | |
@@ -20,6 +22,17 @@ A decision-support prototype that maps paddy-residue burnt area in Punjab from S
 | **Satellite data** | Sentinel-2 L2A (Copernicus), VIIRS and MODIS active fires (NASA FIRMS), and Landsat 8/9 surface reflectance (NASA HLS, through Earthdata) to settle doubtful validation points. Sentinel-1, HLS and Resourcesat are compared in the mission trade-off. |
 | **Methods** | Multi-date burn indices (NBR, MIRBI, NDVI), accuracy assessment against reference points, a Random Forest classifier, and a fire-activity forecast (SARIMA, a seasonal baseline and rescaled past seasons, backtested on ten seasons; from 10 Nov also remade at each weekly run) |
 | **Outputs** | Burnt-area maps, the share of burning the fire counts missed, a Streamlit dashboard, an 8–12 page report and a product one-pager |
+
+## Screenshots
+
+| | |
+|---|---|
+| ![The dashboard's overview page](dashboard/screenshots/01_overview.webp) | ![The 2025 burnt-area map](dashboard/screenshots/04_eo_burnt_area_map.webp) |
+| **Overview:** nine in ten burnt hectares had no fire detection nearby | **EO Analysis:** the 2025 burnt-area map, every 20 m pixel |
+| ![What the fire counts missed](dashboard/screenshots/05_eo_missed.webp) | ![The buyer's map](dashboard/screenshots/11_opportunity.webp) |
+| **EO Analysis:** what the fire counts missed | **Opportunity:** the buyer's map of straw not yet burnt |
+
+All eleven screenshots are in `dashboard/screenshots/`, taken by `dashboard/take_screenshots.py`.
 
 ## Why this matters
 
@@ -54,13 +67,13 @@ flowchart LR
 | # | Deliverable | Where | Status |
 |---|---|---|---|
 | 1 | Research datasets: Indian space ecosystem (A, 32 companies) and satellite missions (B, 22 satellites) | `data/raw/research/` | Both spot-checked and corrected: B on 25–26 Oct, A on 18–19 Nov (see `sources/verification_log.md`) |
-| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 run (1 Nov 2026): forecast saved for the rest of the 2026 season (Punjab: about 3,500 Suomi NPP detections for the season, against 4,269 in 2025; busiest week most likely 3–9 Nov), to be scored after 30 Nov; from 10 Nov an updated forecast is also remade at each weekly run, beside the fixed one; 02 mapped for 2021 and 02c run (1 Nov 2026): from 2021 to 2025 the burnt area fell 47% while Suomi NPP detections fell 95%, and the share of burnt area with no VIIRS detection rose from 27% to 94% |
+| 2 | Python notebooks | `notebooks/` | 01 complete (22 Oct 2026; study district chosen, see `decision_log.md`); 02 run for the whole district (26 Oct 2026; burn rule tightened after the pilot), 240 validation points labelled and the burn rule checked against them (30 Oct 2026: thresholds kept, burns first seen from 19 Nov marked unconfirmed); 02b run (31 Oct 2026): Landsat views settled 3 of the 26 `gap` points; 03 run (31 Oct 2026): a Random Forest ties the burn rule at the labelled points but maps less burnt area, so the rule stays; 04 run (1 Nov 2026): forecast saved for the rest of the 2026 season (Punjab: about 3,500 Suomi NPP detections for the season, against 4,269 in 2025; busiest week most likely 3–9 Nov), to be scored after 30 Nov; from 10 Nov an updated forecast is also remade at each weekly run, beside the fixed one, and the latest run (18 Nov 2026) checks it to week 9; 02 mapped for 2021 and 02c run (1 Nov 2026): from 2021 to 2025 the burnt area fell 47% while Suomi NPP detections fell 95%, and the share of burnt area with no VIIRS detection rose from 27% to 94% |
 | 3 | Geospatial analysis: QGIS project and export-ready maps | `maps/` | QGIS project and four export-ready maps (30 Oct 2026; rebuilt 31 Oct after the Landsat relabels): burnt area, burning missed by VIIRS, burn timing, validation points; rebuilt by `maps/build_qgis_project.py` |
 | 4 | Interactive dashboard (Streamlit) | `dashboard/` | Version 1 built (3 Nov 2026): overview, mission explorer, startup landscape, EO analysis (burnt-area map, missed share, 2021 against 2025, classifier, forecast), mission trade-offs and commercial opportunity; online on Streamlit Community Cloud since 3 Nov 2026: https://india-space-mission-intelligence-dashboard.streamlit.app |
-| 5 | GitHub repository | this repo | Set up |
-| 6 | Technical and product report, 8–12 pages | `report/` | Mission trade-off drafted (31 Oct 2026, `report/mission_tradeoff.md`); why a Random Forest, with six other classifiers compared, drafted (3 Nov 2026, `report/ml_classifier.md`); findings and limitations drafted (3 Nov 2026, `report/findings.md`, `report/limitations.md`); the rest planned |
-| 7 | Product one-pager | `report/` | Planned |
-| 8 | Three-minute demo | `report/` | Planned |
+| 5 | GitHub repository | this repo | README, code, processed data, methodology, screenshots (`dashboard/screenshots/`) and source register (`sources/`); code under the MIT licence |
+| 6 | Technical and product report, 8–12 pages | `report/report.pdf` | Drafted (19 Nov 2026): 10 pages, built from `report/report.md` by `report/build_report.py`. Final once the 2026 forecast is scored after 30 Nov 2026. Its working drafts: `findings.md`, `mission_tradeoff.md`, `ml_classifier.md` and `limitations.md` |
+| 7 | Product one-pager | `report/one_pager.pdf` | Done (19 Nov 2026); also as `report/one_pager.png` |
+| 8 | Three-minute demo | `report/demo_script.md` | Script written (19 Nov 2026): story page, then the live dashboard; recording to follow |
 
 ## Repository structure
 
@@ -160,8 +173,9 @@ The short list. `report/limitations.md` gives the full one, with the way each li
 | 1 | 22–28 Oct | Set-up, fire counts, district choice, datasets A and B, problem statement |
 | 2 | 29 Oct–4 Nov | Sentinel-2 burnt-area mapping, validation, maps, mission trade-off |
 | 3 | 5–11 Nov | ML classifier, forecast, 2021 comparison, dashboard v1 (light days 7–9 Nov for Diwali) |
-| 4 | 12–18 Nov | Product concept, report, one-pager, demo |
+| 4 | 12–19 Nov | Dataset A spot-check; product concept, report, one-pager and demo script |
+| Final | After 30 Nov | The 2026 forecast scored and the report finalised, in early December |
 
 ## Author
 
-**Mohit Sharma** ([@Panther2010](https://github.com/Panther2010)). The code licence will be added before the first release. Data keep their original licences.
+**Mohit Sharma** ([@Panther2010](https://github.com/Panther2010)). The code is under the MIT licence (`LICENSE`). Data keep their original licences: see *Data and licences* above.

@@ -30,8 +30,7 @@ c.page_header('Indian Startup Landscape',
               f'{len(companies)} Indian space companies across the seven value-chain categories of the brief, each '
               'with the page it came from and the date that page was read. Company statements, such as press '
               'releases, are flagged in the notes. [Reported]',
-              eyebrow='Research · dataset A',
-              pill='<i class="mc-dot amber"></i>Spot-check <b>in progress</b>')
+              eyebrow='Research · dataset A')
 
 # ---- The key numbers up front ------------------------------------------------------------------------------------
 states = companies['state'].value_counts()
@@ -41,7 +40,7 @@ c.tiles([c.tile('rocket', f'{len(companies)}', '', 'Indian space companies'),
                 f"{companies['state'].nunique()} states"),
          c.tile('satellite-dish', f"{companies['value_chain_category'].isin(NEAR).sum()}", '',
                 'In Earth observation and space data', 'closest to this product', glow='ember')],
-        note='Dataset A is being spot-checked, so some rows may still change.')
+        note='Counted from the dataset, which was spot-checked against its sources on 18–19 Nov 2026.')
 
 # ---- The rest, one tab at a time ----------------------------------------------------------------------------------
 with c.panel('startups'):
@@ -113,4 +112,5 @@ with c.panel('startups'):
                              f'{c.esc(r.value_chain_category)}</span></div>' for r in near.itertuples())
                    + '</div>')
 
-c.footer('Source: `data/raw/research/dataset_A_india_space_ecosystem.csv`.')
+c.footer('Source: `data/raw/research/dataset_A_india_space_ecosystem.csv`, spot-checked on 18–19 Nov 2026 and '
+         'corrected on 19 Nov 2026.')

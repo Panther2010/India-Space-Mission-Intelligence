@@ -57,11 +57,13 @@ with c.panel('startups'):
     t_map, t_counts, t_table, t_near = st.tabs(['Map', 'By category and state', 'All companies',
                                                 'Closest to this product'])
     with t_map:
-        m = c.dark_map(folium.Map(location=(21.5, 79.0), zoom_start=5, tiles='OpenStreetMap'))
+        m = c.dark_map(folium.Map(location=(21.5, 79.0), zoom_start=5, zoom_snap=0.25, tiles='OpenStreetMap'))
         cluster = MarkerCluster().add_to(m)
+        placed = []
         for _, r in shown.iterrows():
             if r['city'] not in CITY:
                 continue
+            placed.append(CITY[r['city']])
             colour = CATEGORY_COLOURS.get(r['value_chain_category'], '#555555')
             folium.CircleMarker(
                 CITY[r['city']], radius=8, color=colour, fill=True, fill_color=colour, fill_opacity=0.85,
@@ -69,6 +71,11 @@ with c.panel('startups'):
                 popup=folium.Popup(f"<b>{r['company']}</b><br>{r['city']}, {r['state']}<br>"
                                    f"{r['value_chain_category']}<br><br>{r['product_or_capability']}", max_width=320),
             ).add_to(cluster)
+        if placed:
+            # Open on every company shown: a fixed view of India left Thiruvananthapuram below the bottom edge.
+            # The padding keeps cluster bubbles whole; max_zoom stops a single company filling the map.
+            lats, lons = zip(*placed)
+            m.fit_bounds([(min(lats), min(lons)), (max(lats), max(lons))], padding=(40, 40), max_zoom=7)
         c.show_map(m, height=520, key='companies')
         unplaced = shown.loc[~shown['city'].isin(list(CITY)), 'company'].tolist()
         st.caption('Markers sit at approximate city centres, not company addresses; click a cluster to spread it.'

@@ -20,7 +20,7 @@ Hand-compiled from public sources. Every row carries the page it came from and t
 ## Verification
 
 - **Dataset B:** all 170 checks in its workbook were done on 25 Oct 2026, and 159 were confirmed. The rest, plus three items found on review, were re-checked on 26 Oct 2026, along with the wording of every revisit value. Seventeen rows were corrected, reworded or given a better source. Two more were updated on 18–19 Nov 2026: NOAA-20's archive start date and the launch date of GalaxEye's Drishti.
-- **Dataset A:** all 96 checks in its workbook (city, product and customer for each of the 32 companies) were done on 18–19 Nov 2026, and 76 were confirmed. The rest were re-checked on 19 Nov 2026. Eleven rows were corrected, given a working source, or given a source for a claim the evidence page didn't state.
+- **Dataset A:** all 96 checks in its workbook (city, product and customer for each of the 32 companies) were done on 18–19 Nov 2026, and 76 were confirmed. The rest were re-checked on 19 Nov 2026. Eleven rows were corrected, given a working source, or given a source for a claim the evidence page didn't state, and one note was reworded.
 
 Details of both are in `sources/verification_log.md`.
 

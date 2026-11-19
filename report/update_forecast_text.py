@@ -13,7 +13,8 @@ then rebuild the PDFs with python report/build_report.py.
 Each passage sits between markers that GitHub doesn't show, <!-- forecast:NAME --> and <!-- /forecast:NAME -->, and
 nothing outside them is touched. Table rows have no room for markers: those passages are found by how the row begins
 or by the clause that changes. For testing, --data DIR reads another copy of data/processed/, and --today YYYY-MM-DD
-sets the date the documents give (by default, today).
+sets the date the documents give (by default, today). When the data haven't changed since the last update, it writes
+nothing, so the documents keep the date of that update.
 """
 import argparse
 import datetime as dt
@@ -528,6 +529,12 @@ def rewrite(areas, ratio, today):
     return changes
 
 
+def date_given():
+    # The date the documents give now: the report's date line, set when the passages last changed.
+    m = re.search(r'<!-- forecast:date -->(\d{1,2} [A-Z][a-z]+ \d{4})<!-- /forecast:date -->', read(HERE / 'report.md'))
+    return dt.datetime.strptime(m.group(1), '%d %B %Y').date() if m else None
+
+
 def main():
     parser = argparse.ArgumentParser(description=__doc__.split('\n')[0])
     parser.add_argument('--check', action='store_true', help='show what would change, and write nothing')
@@ -535,8 +542,13 @@ def main():
     parser.add_argument('--today', type=dt.date.fromisoformat, default=dt.date.today())
     args = parser.parse_args()
     areas, ratio = load(args.data)
-    changes = rewrite(areas, ratio, args.today)
     state = 'final' if areas['Punjab'].final else f"interim, to week {int(areas['Punjab'].done.index.max())}"
+    # If only the dates would change, nothing has: the documents keep the date they were last updated.
+    given = date_given()
+    if given and all(read(path) == new for path, new in rewrite(areas, ratio, given).items()):
+        print(f'Forecast passages: {state}. Already up to date.')
+        return
+    changes = rewrite(areas, ratio, args.today)
     changed = False
     for path, new in changes.items():
         old = read(path)

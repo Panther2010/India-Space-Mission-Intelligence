@@ -2,6 +2,50 @@
 
 How the hand-compiled research datasets were checked against their sources, and what changed as a result. Newest first.
 
+## Dataset A (Indian space ecosystem): spot-check of 18–19 Nov 2026, corrections of 19 Nov 2026
+
+**The check.** All 96 checks in `sources/dataset_A_verification.xlsx` (city, product and customer for each of the 32 companies) were done against their linked pages on 18–19 Nov 2026.
+
+| Result | City | Product | Customer | All |
+|---|---|---|---|---|
+| Confirmed | 22 | 28 | 26 | 76 |
+| Not on page | 6 | 4 | 5 | 15 |
+| Partly | 1 | 0 | 1 | 2 |
+| Wrong | 0 | 0 | 0 | 0 |
+| n/a (the dataset gives no city) | 2 | 0 | 0 | 2 |
+| Not checked | 1 | 0 | 0 | 1 |
+
+Nine of the fifteen "not on page" results come from three pages that didn't load: Godrej Aerospace, Centum Electronics and Dhruva Space.
+
+**The re-check.** Every result other than confirmed was re-checked on 19 Nov 2026, against the same page or another dated one. That turned up two more items that later events had overtaken: Skyroot's Vikram-I, listed as in development, reached orbit in July 2026, and Azista's first satellite, listed as scheduled, launched in June 2023.
+
+| Check | Company and claim | Spot-check finding (18–19 Nov) | Re-check and change (19 Nov) | Source |
+|---|---|---|---|---|
+| A01 | Skyroot Aerospace: customer | **Not on page.** The ISRO page names no customer or use. | Inc42 (24 Oct 2023), already in `notes`, says Vikram-I can carry up to 300 kg to low Earth orbit, "multiple satellites into Earth's orbit". It is now cited for the claim, at the article's full address. Also found: Vikram-I reached orbit on its first flight on 18 Jul 2026, placing payloads in a 450 km orbit for domestic and international customers it doesn't name. Product and customer now say so. | [Inc42, 24 Oct 2023](https://inc42.com/buzz/shooting-for-the-moon-skyroot-unveils-orbital-rocket-vikram-i-at-its-new-hq-in-hyderabad); [Skyroot](https://skyroot.in/about.html); [Inc42, 18 Jul 2026](https://inc42.com/?p=565074) |
+| A06 | Bellatrix Aerospace: city | **Not on page** (the Payload article). | No change to the value. The Analytics India Magazine page already in `notes` (11 Mar 2022) says "Bengaluru-based space tech startup Bellatrix Aerospace"; the note now dates and quotes it. | [Analytics India Magazine](https://analyticsindiamag.com/bellatrix-aerospace-to-invest-76-mn-for-setting-up-rd-manufacturing-facility-in-bengaluru/) |
+| A08 | Godrej Aerospace: city, product, customer | **Not on page:** the release's web page didn't load. | No change to the values. The same release loads as a PDF. It is datelined "Mumbai, 29th March 2023" and names "the L110 engine for the core stage", "the CE20 engine thrust chamber for the upper stage", engines for PSLV and GSLV, satellite thrusters and antenna systems, with ISRO as the customer. `evidence_url` now points to the PDF. | [Godrej, release PDF](https://godrejenterprises.com/Resources/uploads/InnerPress/GodrejAerospacereleaseMarch20231_10090631.pdf) |
+| A10 | Azista BST Aerospace: city, product, customer | **Not on page**, and searches gave different details. | The page loads and states all three: a factory in Ahmedabad "capable of supporting the production of 2 satellites per week", the 80 kg AFR with its wide-swath panchromatic and multispectral payload, and "civilian and defense purposes" for the global market. Two things differ elsewhere: <ul><li>The company is registered in Hyderabad, and its June 2023 release was datelined Hyderabad, Ahmedabad and Berlin. The city stays Ahmedabad, the place the evidence page gives, as `data/raw/research/README.md` sets out, and `notes` now says it is the factory.</li><li>The launch happened. Business Standard reported it on 13 Jun 2023, so "scheduled on SpaceX Transporter-8 (12 Jun 2023)" now reads "launched on SpaceX Transporter-8 on 12 Jun 2023 (13 Jun in India)".</li></ul> | [Defence Industries, 12 Jun 2023](https://www.defence-industries.com/news/azista-bst-aerospace-rolls-out-maiden-satellite-from-its-mass-manufacturing-factory); [PR Newswire, 12 Jun 2023](https://www.prnewswire.com/in/news-releases/azista-bst-aerospace-rolls-out-maiden-satellite-from-its-mass-manufacturing-factory-301848054.html); [Tofler](https://www.tofler.in/azista-bst-aerospace-private-limited/company/U32303TG2019PTC136464); [Business Standard, 13 Jun 2023](https://business-standard.com/companies/news/indo-german-jv-launches-its-first-satellite-on-spacex-falcon-9-rocket-123061300316_1.html) |
+| A12 | HEX20: customer | **Partly.** The page also names government agencies and defence organisations. | The customer field now lists them too. The Technopark page couldn't be opened from the re-check, so this follows the spot-check's reading of it. | [Technopark](https://technopark.in/technopark-based-hex20-to-fly-its-maiden-satellite-with-spacex) |
+| A14 | Alpha Design Technologies: city | **Not on page** (The Quint). | No change to the value. Business Standard (30 Aug 2017) calls it "a Bengaluru-based aerospace firm", and `notes` now cites it. | [Business Standard, 30 Aug 2017](https://business-standard.com/amp/article/current-affairs/india-s-first-satellite-jointly-built-with-pvt-cos-set-for-launch-this-week-117083000586_1.html) |
+| A19 | GalaxEye: city | **Partly:** Inc42 needs a sign-in. | No change to the value. ThePrint (4 May 2026) says "Bengaluru-based startup GalaxEye Space" and that Drishti launched on 3 May. That settles the launch date the note asked to confirm: the product now says "launched on 3 May 2026", and dataset B's Drishti row gives the same date. | [ThePrint, 4 May 2026](https://theprint.in/science/bengaluru-startup-galaxeye-space-world-first-optosar-satellite/2921482/) |
+| A21 | Centum Electronics: city, product, customer | **Not on page:** the site couldn't be reached. | No change to the values. The same Udayavani article (24 Sep 2019) loads at another address: a Rs 50 crore space facility in Bengaluru, inaugurated by ISRO's chairman, for "multiple applications in satellites and launch vehicles". The article itself, not ISRO, calls Centum "a leading electronics industry partner for ISRO", and `notes` now says so. `evidence_url` points to the working address. | [Udayavani, 24 Sep 2019](https://udayavani.com/english-news/centum-electronics-opens-rs-50-cr-space-facility-in-bengaluru) |
+| A24 | KaleidEO: city | **n/a:** blank in the dataset. The spot-check found Bengaluru on the page. | That page calls SatSure, KaleidEO's parent, Bengaluru-based, not KaleidEO itself. A KaleidEO release (CXOToday, 18 Sep 2024) says "Bengaluru-based KaleidEO", so city and state are now Bengaluru, Karnataka, with that page in `notes`. | [CXOToday, 18 Sep 2024](https://cxotoday.com/press-release/kaleideo-unveils-a-high-resolution-multispectral-payload-delivering-the-largest-area-coverage-from-india/) |
+| A25 | Dhruva Space: city, product, customer | **Not on page:** the release didn't load. | One wording change; the values stand. The release has moved under dhruvaspace.com/press-releases/ and loads. It says the company is "based in Hyderabad, India", lists six VHF/UHF and two S- and/or X-band ground stations and the S&X station set up at IIT Hyderabad in 2021, and names satellite operators and "Civilian and Defence clients worldwide". It gives no date for the authorisation itself, so "authorised by IN-SPACe on 15 Jul 2024" now reads "authorised by IN-SPACe (company release, 15 Jul 2024)". The deployer release in `notes` has moved too. | [Dhruva Space, 15 Jul 2024](https://www.dhruvaspace.com/press-releases/dhruva-space-authorisation-from-inspace-gsaas-ground-station-as-a-service) |
+| A26 | Avantel: city | Not checked. | No change to the value. The company's NSE filing of 27 Feb 2026 prints its registered office as "Visakhapatnam - 531 163, Andhra Pradesh", and `notes` now cites that filing. | [NSE filing, 27 Feb 2026](https://nsearchives.nseindia.com/corporate/AVANTEL_27022026152003_Outcome27022026.pdf) |
+
+**Rows changed.** Eleven rows were changed: Skyroot Aerospace, Bellatrix Aerospace, Godrej Aerospace, Azista BST Aerospace, HEX20, Alpha Design Technologies, GalaxEye, Centum Electronics, KaleidEO, Dhruva Space and Avantel. Their `date_accessed` is now the date their evidence page was last read: 18 Nov 2026 for Skyroot and Bellatrix, read in the spot-check, and 19 Nov 2026 for the rest. No row was removed. One blank field, KaleidEO's city, was filled from a dated page; nothing was filled by guesswork. The HAL and L&T consortium keeps a blank city, as it has no single location. The other 21 companies were confirmed as written and are unchanged.
+
+**Effect.** On the dashboard's Startups page, the counts of companies (32), categories (7) and companies in Earth observation and space data (9) are unchanged. Karnataka now has 14 companies, up from 13, and KaleidEO appears on the map.
+
+## Dataset B (satellite missions): follow-up of 18–19 Nov 2026
+
+| Satellite | Field | Was | Now | Why | Source |
+|---|---|---|---|---|---|
+| NOAA-20 (JPSS-1) | `data_product` | VIIRS_NOAA20_SP from 1 Jan 2020 | VIIRS_NOAA20_SP from 1 Apr 2018 | Closes the open item below. FIRMS's data-availability service, queried with the map key on 18 Nov 2026, lists VIIRS_NOAA20_SP from 2018-04-01 to 2026-07-31. Requests over Punjab's bounding box for 1–5 Nov returned NOAA-20 detections in 2018 (11,719) and 2019 (12,454), beside Suomi NPP's 12,937 and 13,677. The FAQ's 1 Jan 2020 is out of date. No result changes: Notebook 04 converts NOAA-20 counts with the 2026 ratio. Adding 2018 and 2019 to the ratio's overlap is a suggestion for after the release. | [FIRMS API](https://firms.modaps.eosdis.nasa.gov/api) (the service needs a map key) |
+| GalaxEye Drishti | `launch_date` | 2026-05 | 2026-05-03 | ThePrint (4 May 2026) gives the day, as dataset A now does. No company or IN-SPACe statement was checked. | [ThePrint, 4 May 2026](https://theprint.in/science/bengaluru-startup-galaxeye-space-world-first-optosar-satellite/2921482/) |
+
+The two rows' `access_date` is now 2026-11-18 (NOAA-20) and 2026-11-19 (Drishti).
+
 ## Dataset B (satellite missions): spot-check of 25 Oct 2026, corrections of 26 Oct 2026
 
 **The check.** All 170 checks in `sources/dataset_B_verification.xlsx` were done against their linked pages on 25 Oct 2026.
@@ -44,8 +88,4 @@ How the hand-compiled research datasets were checked against their sources, and 
 
 The other revisit values match their sources in both number and meaning: Sentinel-5P, Suomi NPP, NOAA-20, NOAA-21, Terra, Aqua, NISAR and Meteosat-9. INSAT-3DS and GalaxEye Drishti stay blank, as no source states a revisit. The rows above now have an `access_date` of 2026-10-26.
 
-**Open item.** FIRMS gives two start dates for NOAA-20's standard-processing archive: 1 Jan 2020 in its FAQ and 1 Apr 2018 in the data-availability listing. If the 2018 date is right, the 2018 and 2019 seasons could join the Suomi NPP/NOAA-20 overlap behind Notebook 01's ratio, which now uses 2020–2025. The live data-availability service, which needs the map key, would settle it.
-
-## Dataset A (Indian space ecosystem)
-
-Spot-check under way (`sources/dataset_A_verification.xlsx`).
+**Open item, closed on 18 Nov 2026.** FIRMS gives two start dates for NOAA-20's standard-processing archive: 1 Jan 2020 in its FAQ and 1 Apr 2018 in the data-availability listing. If the 2018 date is right, the 2018 and 2019 seasons could join the Suomi NPP/NOAA-20 overlap behind Notebook 01's ratio, which now uses 2020–2025. The live data-availability service, which needs the map key, would settle it. It did: the service gives 1 Apr 2018 (see the follow-up of 18–19 Nov 2026 above).

@@ -13,14 +13,16 @@ Hand-compiled from public sources. Every row carries the page it came from and t
 - Engines and thrusters count as Propulsion, whoever designed them.
 - Companies whose business is not one of the seven are placed by what they build or sell: in-space servicing and orbital computing count as Satellites, and space surveillance data counts as Space Data/Analytics.
 
-**Location.** The city is the one the evidence page gives. Where it names a facility rather than a headquarters, `notes` says so. The state is filled in from the city. Two rows leave the city blank: the HAL and L&T consortium, and KaleidEO, whose source gives no location of its own.
+**Location.** The city is the one the evidence page gives. Where it names a facility rather than a headquarters, `notes` says so. The state is filled in from the city. Where the evidence page gives no city, another dated page may supply it, and `notes` names that page. One row leaves the city blank: the HAL and L&T consortium, which has no single location.
 
 **Claims.** Press releases and funding announcements are company statements. `notes` flags these, along with old sources and anything not yet checked, such as whether a planned launch happened.
 
 ## Verification
 
-- **Dataset B:** all 170 checks in its workbook were done on 25 Oct 2026, and 159 were confirmed. The rest, plus three items found on review, were re-checked on 26 Oct 2026, along with the wording of every revisit value. Seventeen rows were corrected, reworded or given a better source. Details are in `sources/verification_log.md`.
-- **Dataset A:** spot-check under way.
+- **Dataset B:** all 170 checks in its workbook were done on 25 Oct 2026, and 159 were confirmed. The rest, plus three items found on review, were re-checked on 26 Oct 2026, along with the wording of every revisit value. Seventeen rows were corrected, reworded or given a better source. Two more were updated on 18–19 Nov 2026: NOAA-20's archive start date and the launch date of GalaxEye's Drishti.
+- **Dataset A:** all 96 checks in its workbook (city, product and customer for each of the 32 companies) were done on 18–19 Nov 2026, and 76 were confirmed. The rest were re-checked on 19 Nov 2026. Eleven rows were corrected, given a working source, or given a source for a claim the evidence page didn't state.
+
+Details of both are in `sources/verification_log.md`.
 
 ## Updating a row
 

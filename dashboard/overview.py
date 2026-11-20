@@ -262,6 +262,8 @@ with c.panel('overview'):
                 with col:
                     update = (latest_update.loc[area] if latest_update is not None and area in latest_update.index
                               else None)
+                    if update is not None and int(update['next_week']) <= last_week:
+                        update = None           # that week has been checked: after the final run, nothing is ahead
                     c.html(forecast_row(area, head, checked, last_week, update))
             c.html(f'<div class="mc-small">Headline method: {head.loc["Punjab", "method"]}. "Seen" counts the season '
                    'to date; weeks are checked as each weekly run of Notebook 04 is committed.'

@@ -10,6 +10,7 @@
 | `findings_numbers.py` | Prints every number in `findings.md` and in sections 3 and 6 of the report, from the committed outputs. |
 | `compare_classifiers.py` | Runs six other classifiers against the Random Forest and the burn rule, and writes `data/processed/ml_model_comparison_sangrur_2025.csv`. |
 | `build_report.py`, `report.css` | Build the two PDFs and the PNG. |
+| `update_forecast_text.py` | Rewrites every passage about the 2026 forecast from Notebook 04's committed outputs, interim or final. |
 
 ## The report's sections
 
@@ -37,8 +38,16 @@ python report/build_report.py
 
 It also needs Playwright and Pillow, which `dashboard/take_screenshots.py` uses too. It prints with Microsoft Edge where it is installed, and with Playwright's own Chromium otherwise. `python report/build_report.py report` or `... one-pager` builds just one of them. The markers that shape the PDF without showing on GitHub are listed at the top of `build_report.py`.
 
-## After the final forecast run (after 30 Nov 2026)
+## After a Notebook 04 run, and after the final one
 
-1. Run Notebook 04 and commit its outputs.
-2. Run `python report/findings_numbers.py`, then update section 6.5 of `report.md` and section 5 of `findings.md` with the final score. Remove "interim" from the status line at the top of `report.md`.
-3. Rebuild with `python report/build_report.py`, and retake screenshots 01, 08 and 09 with `dashboard/take_screenshots.py 01 08 09`.
+Every passage about the 2026 forecast is written from the data, so the documents never need editing by hand for it:
+
+1. Commit the run's outputs, as usual.
+2. Run `python report/update_forecast_text.py` (add `--check` to see the changes first). It rewrites section 6.5 of `report.md` and its status line and date, section 5 of `findings.md`, the results line in `methodology/methodology.md`, the forecast answer in `demo_script.md` and Notebook 04's entry in the project README. Once every week to 30 Nov has been checked, it switches them to the final wording, gives the report its last next step, and marks the READMEs complete.
+3. Rebuild with `python report/build_report.py`.
+
+After the final run only, also:
+- retake screenshots 01, 08 and 09 with `python dashboard/take_screenshots.py 01 08 09`;
+- update the story page's roadmap, which is a claude.ai page rather than a file here.
+
+The dashboard needs nothing: it reads the committed outputs, and its forecast panels switch to the final score by themselves once every week has been checked.

@@ -614,8 +614,18 @@ with c.panel('eo'):
             else:
                 name = head['method']
                 ratio = np.where(done['actual'] > 0, done[name] / done['actual'].where(done['actual'] > 0), np.nan)
-                st.markdown(f"**Weeks checked so far** (to week {int(done['week'].max())}, from the last committed run of "
-                            'Notebook 04; the check is committed after each weekly run)')
+                every = check[check['area'] == area]
+                final = len(done) == len(every)
+                if final:
+                    total = done['actual'].sum()
+                    inside = head['rest_low'] <= total <= head['rest_high']
+                    st.markdown(f"**Every forecast week checked: the final score.** Weeks {int(done['week'].min())}–"
+                                f"{int(done['week'].max())} together: **{total:,.0f}** detections against "
+                                f"**{head['forecast_rest']:,.0f}** forecast by {name}, {'inside' if inside else 'outside'} "
+                                f"its 80% range of {head['rest_low']:,.0f}–{head['rest_high']:,.0f}. [Ours]")
+                else:
+                    st.markdown(f"**Weeks checked so far** (to week {int(done['week'].max())}, from the last committed "
+                                'run of Notebook 04; the check is committed after each weekly run)')
                 st.dataframe(pd.DataFrame({
                     'week': done['week'],
                     'dates': [span(a, b) for a, b in zip(done['week_start'], done['week_end'])],

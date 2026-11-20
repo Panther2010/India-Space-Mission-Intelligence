@@ -166,6 +166,13 @@ def report_html():
             f'<style>{font_faces()}</style><style>{css}</style></head><body>{body}</body></html>')
 
 
+def report_month():
+    # The month and year of the report's date line, which report/update_forecast_text.py keeps current.
+    text = (HERE / 'report.md').read_text(encoding='utf-8')
+    m = re.search(r'<!-- forecast:date -->\d{1,2} (\w+ \d{4})<!-- /forecast:date -->', text)
+    return m.group(1) if m else ''
+
+
 def browser(p):
     from playwright.sync_api import Error as PlaywrightError
     try:
@@ -191,7 +198,7 @@ def build_report(build):
         page.pdf(path=str(out), format='A4', print_background=True, margin=MARGIN, display_header_footer=True,
                  header_template='<span></span>',
                  footer_template=FOOTER.format(left='Paddy burnt-area intelligence for Punjab · Technical and '
-                                                    'product report · Mohit Sharma, November 2026'))
+                                                    f'product report · Mohit Sharma, {report_month()}'))
         b.close()
     print(f'{out.relative_to(PROJECT)}: {page_count(out)} pages, {out.stat().st_size / 1e6:.1f} MB')
 

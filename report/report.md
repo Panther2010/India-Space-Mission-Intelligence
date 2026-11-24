@@ -2,13 +2,13 @@
 
 **What fire counts miss, and a five-day straw map for buyers of paddy straw**
 
-Technical and product report for the *Satellite Mission Intelligence for India* portfolio brief · Mohit Sharma · <!-- forecast:date -->20 November 2026<!-- /forecast:date -->
+Technical and product report for the *Satellite Mission Intelligence for India* portfolio brief · Mohit Sharma · <!-- forecast:date -->24 November 2026<!-- /forecast:date -->
 
 Live dashboard: <https://india-space-mission-intelligence-dashboard.streamlit.app> · Code and data: <https://github.com/Panther2010/India-Space-Mission-Intelligence>
 
 <!-- forecast:status -->
 
-> **Status: interim.** Everything here is final except the 2026 forecast (section 6.5), which is scored to 16 Nov 2026 and will be finalised after 30 Nov 2026.
+> **Status: interim.** Everything here is final except the 2026 forecast (section 6.5), which is scored to 23 Nov 2026 and will be finalised after 30 Nov 2026.
 
 <!-- /forecast:status -->
 
@@ -139,22 +139,22 @@ The analysis runs as notebooks on an ordinary laptop CPU, with Sentinel-2 proces
 
 <!-- forecast:section -->
 
-### 6.5 The 2026 forecast so far (interim, to 16 Nov)
+### 6.5 The 2026 forecast so far (interim, to 23 Nov)
 
 - **The forecast, issued 1 Nov from data to 26 Oct** [Ours]:
   - *Punjab:* about 2,700 more Suomi NPP detections by 30 Nov (80% range 2,200–6,400), or about 3,500 for the season, against 4,269 in 2025.
   - *Sangrur:* about 44 more (range 23–65). It rested on only 3 detections, a weakness recorded the day it was issued.
   - *Busiest week:* most likely week 8 (3–9 Nov), for both.
-- **Checked over weeks 7–9, 27 Oct to 16 Nov** [Ours]:
-  - *Punjab:* 3,322 detections against 2,681 forecast, about a fifth too few. The last-season baseline came closest (3,110, 6% too few), and SARIMA forecast more than twice as many (7,246).
-  - *Sangrur:* 333 against 38 forecast, about nine times too few. SARIMA came closest (332), and the last-season baseline forecast about a quarter too many (428). The fragile forecast failed, as flagged when it was issued.
+- **Checked over weeks 7–10, 27 Oct to 23 Nov** [Ours]:
+  - *Punjab:* 3,916 detections against 2,879 forecast, about a quarter too few. The last-season baseline came closest (3,242, about a sixth too few), and SARIMA forecast more than twice as many (8,315).
+  - *Sangrur:* 373 against 39 forecast, about ten times too few. SARIMA came closest (353, 5% too few), and the last-season baseline forecast about a sixth too many (430). The fragile forecast failed, as flagged when it was issued.
   - *The busiest week so far was right for both:* week 8.
-- **The season so far** [Ours]. Punjab's 4,071 detections to 16 Nov already exceed the 1 Nov forecast for the whole season (about 3,500), but lie inside its 80% range of 2,954–7,143. The updated forecast of 18 Nov puts the season at 4,236, close to 2025's 4,269.
+- **The season so far** [Ours]. Punjab's 4,666 detections to 23 Nov already exceed the 1 Nov forecast for the whole season (about 3,500), but lie inside its 80% range of 2,954–7,143. The updated forecast of 24 Nov puts the season at 4,688, above 2025's 4,269.
 - **Caveat.** From week 8, the actual counts are NOAA-20's converted to Suomi NPP terms, which adds uncertainty [Ours]. The score is final after 30 Nov.
 
 ![Forecast against what happened](../maps/notebook04/04_forecast_check.png)
 
-*Figure 3. Weekly detections forecast by the three methods against what happened, weeks 7–11 of the 2026 season. Weeks 10 and 11 are still to come [Ours, Notebook 04, data to 16 Nov 2026].*
+*Figure 3. Weekly detections forecast by the three methods against what happened, weeks 7–11 of the 2026 season. Week 11 is still to come [Ours, Notebook 04, data to 23 Nov 2026].*
 
 <!-- /forecast:section -->
 

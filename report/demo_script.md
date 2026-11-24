@@ -68,5 +68,5 @@ The spoken lines come to about 400 words: just under three minutes at a calm pac
 | Didn't machine learning help? | A Random Forest tied the rule (F1 0.92), and six other models scored 0.89–0.94; none beat it beyond chance | Section 6.1 |
 | How many detections were there? | 1,500 VIIRS detections in the district in 2025, 1,143 of them in the three busiest windows | Section 6.2 |
 | What about clouds and smoke? | Sentinel-2 saw at least 99.9% of the district clearly in every window from 15 Oct except 25–29 Oct (71%); Sentinel-1 radar is the next test | Sections 6.3 and 7 |
-| And the 2026 forecast? | For Punjab's first three weeks it was about a fifth too low, and the busiest week so far was right; Sangrur's forecast, made from 3 detections, failed as flagged. Final score after 30 Nov | Section 6.5 |
+| And the 2026 forecast? | For Punjab's first four weeks it was about a quarter too low, and the busiest week so far was right; Sangrur's forecast, made from 3 detections, failed as flagged. Final score after 30 Nov | Section 6.5 |
 | Who else works on this in India? | 32 companies in dataset A; 9 in Earth observation and space data; SatSure, Satyukt and Cropin sell agri analytics; Blue Sky Analytics' Zuri (2019) used fire data | Section 3 |

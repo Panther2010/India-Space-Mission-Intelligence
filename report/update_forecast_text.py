@@ -36,8 +36,8 @@ CALLED = {'past seasons rescaled': 'the headline method', 'last season': 'the la
 FRAGILE = {'Sangrur'}           # flagged as fragile the day the forecast was issued (decision log, 1 Nov 2026)
 TIMES = {2: 'twice', 3: 'three times', 4: 'four times', 5: 'five times', 6: 'six times', 7: 'seven times',
          8: 'eight times', 9: 'nine times', 10: 'ten times', 11: 'eleven times', 12: 'twelve times'}
-FRACTIONS = [(0.1, 'a tenth'), (0.2, 'a fifth'), (0.25, 'a quarter'), (1 / 3, 'a third'), (0.4, 'two-fifths'),
-             (0.5, 'half'), (2 / 3, 'two-thirds'), (0.75, 'three-quarters')]
+FRACTIONS = [(0.1, 'a tenth'), (1 / 6, 'a sixth'), (0.2, 'a fifth'), (0.25, 'a quarter'), (1 / 3, 'a third'),
+             (0.4, 'two-fifths'), (0.5, 'half'), (2 / 3, 'two-thirds'), (0.75, 'three-quarters')]
 WORDS = {1: 'one', 2: 'two', 3: 'three', 4: 'four', 5: 'five'}
 
 
